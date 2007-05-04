@@ -1,0 +1,125 @@
+\encoding{latin1}
+
+\name{ics}
+\alias{ics}
+
+\title{ Two Scatter Matrix ICS Transformation }
+\description{
+  This function implements the 2 scatter matrix transformation to obtain an invariant coordinate sytem or independent 
+  components, depending on the underlying assumptions.
+}
+\usage{
+ics(X, S1 = cov, S2 = cov4, S1args = list(), S2args = list(), 
+standardize = "Z", na.action = na.fail)
+}
+
+\arguments{
+  \item{X}{ numeric data matrix or dataframe.}
+  \item{S1}{ name of the first scatter matrix. Default is the regular covariance matrix.}
+  \item{S2}{ name of the second scatter matrix. Default is the covariance matrix based on forth order moments.}
+  \item{S1args}{ list with optional additional arguments for S1.}
+  \item{S2args}{ list with optional additional arguments for S2.}
+  \item{standardize}{ either "B" or "Z". Defines the way to standardize the matrix B. Default is "Z". Details are given below.}
+  \item{na.action}{ a function which indicates what should happen when the data
+          contain 'NA's.  Default is to fail.}
+}
+\details{
+  Seeing this function as a tool for data transformation the result is an invariant coordinate selection which can be used for testing and estimation. And
+  if needed the results can be easily retransformed to the original scale. It is possible to use it also for dimension reduction, finding outliers or when 
+  searching for clusters in the data.
+  The function can, however, also be used in a modelling framework. In this case it is assumed that the data were created by mixing independent components which
+  have different kurtosis values. If the two scatter matrices used have then the so-called independence property the function can recover the independet components
+  by estimating the unmixing matrix.
+  
+  The general idea of the \code{ics} function is to find the unmixing matrix B and the invariant coordinates (independent coordinates) Z in such a way, that:
+  \describe{
+  \item{(i)}{The elements of Z are standardized with respect to S1 (S1(Z)=I).}
+  \item{(ii)}{The elements of Z are uncorrelated with respect to S2. (S2(Z)=D, where D is a diagonal matrix).}
+  \item{(iii)}{The elements of Z are ordered according to their kurtosis.}}
+  
+  Given those criteria, B is unique  upto sign changes of its rows. The function provides two options to decide the exact form of B.
+  \describe{
+  \item{(i)}{Method 'Z' standardizes B such, that all components are right skewed. The criterion used, is the sign of each componentwise difference of mean vector and 
+  transformation retransformation median. This standardization is prefered in an invariant coordinate framework.}
+  \item{(ii)}{Method 'B' standardizes B independent of Z such that the maximum element per row is positive and each row has norm 1. Usual way in an independent
+  component analysis framework.}
+  }   
+}
+\value{
+  an object of class \code{ics}.
+}
+\references{
+   Oja, H., \enc{Sirkiä}{Sirkia}, S. and Eriksson, J. (2006), Scatter matrices and independent component analysis, \emph{Austrian Journal of Statistics}, \bold{35},  175--189.   
+}
+\author{Klaus Nordhausen, \email{klaus.nordhausen@uta.fi}}
+
+
+\seealso{  \code{\link{ICS-package}} }
+\examples{
+    set.seed(123456)
+    X1 <- rmvnorm(250, rep(0,8), diag(c(rep(1,6),0.04,0.04)))
+    X2 <- rmvnorm(50, c(rep(0,6),2,0), diag(c(rep(1,6),0.04,0.04)))
+    X3 <- rmvnorm(200, c(rep(0,7),2), diag(c(rep(1,6),0.04,0.04)))
+
+    X.comps <- rbind(X1,X2,X3)
+    A <- matrix(rnorm(64),nrow=8)
+    X <- X.comps \%*\% A
+
+    ics.X.1 <- ics(X)
+    summary(ics.X.1)
+    plot(ics.X.1)
+
+    # compare to
+    pairs(X)
+    pairs(princomp(X,cor=TRUE)$scores)
+
+    # slow:
+    
+    # library(ICSNP)
+    # ics.X.2 <- ics(X, tyler.shape, duembgen.shape, S1args=list(location=0))
+    # summary(ics.X.2)
+    # plot(ics.X.2)
+    
+    rm(.Random.seed)
+    
+    # example using three pictures
+    library(pixmap)
+    
+    fig1 <- read.pnm(system.file("pictures/cat.pgm", package = "ICS")[1])
+    fig2 <- read.pnm(system.file("pictures/road.pgm", package = "ICS")[1])
+    fig3 <- read.pnm(system.file("pictures/sheep.pgm", package = "ICS")[1])
+    
+    p <- dim(fig1@grey)[2]
+
+    fig1.v <- as.vector(fig1@grey)
+    fig2.v <- as.vector(fig2@grey)
+    fig3.v <- as.vector(fig3@grey)
+    X <- cbind(fig1.v,fig2.v,fig3.v)
+    
+    set.seed(4321)
+    A <- matrix(rnorm(9), ncol = 3)
+    X.mixed <- X \%*\% A
+
+    ICA.fig <- ics(X.mixed)
+    
+    par.old <- par()
+    par(mfrow=c(3,3), omi = c(0.1,0.1,0.1,0.1), mai = c(0.1,0.1,0.1,0.1))
+
+    plot(fig1)
+    plot(fig2)
+    plot(fig3)
+
+    plot(pixmapGrey(X.mixed[,1],ncol=p))
+    plot(pixmapGrey(X.mixed[,2],ncol=p))
+    plot(pixmapGrey(X.mixed[,3],ncol=p))
+
+    plot(pixmapGrey(ics.components(ICA.fig)[,1],ncol=p))
+    plot(pixmapGrey(ics.components(ICA.fig)[,2],ncol=p))
+    plot(pixmapGrey(ics.components(ICA.fig)[,3],ncol=p))
+
+    par(par.old)
+    rm(.Random.seed)
+    }  
+
+\keyword{models}
+\keyword{multivariate}

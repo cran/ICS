@@ -21,13 +21,13 @@ mvnorm.skew.test(X, na.action = na.fail)
 }
 \value{
   A list with class 'htest' containing the following components:
-  \item{statistic }{the value of the U-statistic.}
-  \item{parameter}{the degrees of freedom for the U-statistic.}
+  \item{statistic }{the value of the test statistic U.}
+  \item{parameter}{the degrees of freedom for the statistic U.}
   \item{p.value}{the p-value for the test.}
   \item{method}{a character string indicating what type of test was performed.}
   \item{data.name}{a character string giving the name of the data.}
 }
-\references{\cite{Kankainen, A., Taskinen, S. and Oja, H. (2007),Tests of Multinormality Based on Location Vectors and Scatter Matrices, \emph{Statistical Methods and Applications}, \bold{??},  ??--??.}}
+\references{\cite{Kankainen, A., Taskinen, S. and Oja, H. (2007),Tests of multinormality based on location vectors and scatter matrices, \emph{Statistical Methods and Applications}, \bold{16},  357--379.}}
 \author{Klaus Nordhausen, \email{klaus.nordhausen@uta.fi}}
 \seealso{ \code{\link{mvnorm.kur.test}} }
 \examples{

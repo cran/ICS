@@ -1,0 +1,56 @@
+\encoding{latin1}
+
+\name{covAxis}
+\alias{covAxis}
+
+\title{ One step Tyler Shape Matrix}
+\description{
+  This matrix can be used to get from \code{\link{ics}} the principal axes which is then known
+  as principal axis analysis. 
+}
+\usage{
+covAxis(X, na.action = na.fail)
+}
+
+\arguments{
+  \item{X}{numeric data matrix or dataframe. }
+  \item{na.action}{ a function which indicates what should happen when the data
+          contain 'NA's.  Default is to fail.}
+}
+\details{
+ The \code{covAxis} matrix \eqn{V}{V} is a given for a sample of size \eqn{n}{n} as 
+ \deqn{p \ ave_{i}\{[(x_{i}-\bar{x})S^{-1}(x_{i}-\bar{x})']^{-1}(x_{i}-\bar{x})'(x_{i}-\bar{x})\},}{%
+  p ave{[(x_i-x_bar)S^{-1}(x_i-x_bar)']^(-1) (x_i-x_bar)'(x_i-x_bar)},}
+  where \eqn{\bar{x}}{x_bar} is the mean vector and \eqn{S}{S} the regular covariance matrix.
+  
+  \code{covAxis} can be used to perform a Prinzipal Axis Analysis (Critchley et al. 2007) using the function \code{\link{ics}}.
+  In that case for a centered data matrix X \code{covAxis} can be used as S2 in \code{\link{ics}}, where S1 should be in that 
+  case the regular covariance matrix. 
+}
+\value{
+  Matrix of the estimated scatter.
+}
+\references{ \cite{Critchley , F., Pires, A. and Amado, C. (2007),  Principal axis analysis, \emph{manuscript}, \bold{?}, ?--?.}
+
+             \cite{Tyler, D.E., Critchley, F., \enc{Dümbgen}{Duembgen}, L. and Oja, H. (2007), Invariant coordinate selecetion, \emph{submitted}, \bold{?},  ?--?. }   }
+\author{Klaus Nordhausen, \email{klaus.nordhausen@uta.fi}}
+
+\seealso{\code{\link{ics}} }
+\examples{
+
+data(iris)
+iris.centered <- sweep(iris[,1:4], 2, colMeans(iris[,1:4]), "-")
+iris.paa <- ics(iris.centered, cov, covAxis, stdKurt = FALSE)
+summary(iris.paa)
+plot(iris.paa, col=as.numeric(iris[,5]))    
+mean(iris.paa@gKurt)
+emp.align <- iris.paa@gKurt
+emp.align
+
+screeplot(iris.paa)
+abline(h = 1)
+
+
+
+}
+\keyword{multivariate}

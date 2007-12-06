@@ -13,7 +13,7 @@ cov4(X, location = "Mean", na.action = na.fail)
 
 \arguments{
   \item{X}{numeric data matrix or dataframe, missing values are not allowed. }
-  \item{location}{can be either \code{Mean},\code{Origin} or numeric. If numeric 
+  \item{location}{can be either \code{Mean}, \code{Origin} or numeric. If numeric 
             the matrix is computed wrt to the given location.}
   \item{na.action}{ a function which indicates what should happen when the data
           contain 'NA's.  Default is to fail.}
@@ -21,11 +21,11 @@ cov4(X, location = "Mean", na.action = na.fail)
 \details{
   If location is \code{Mean} the scatter matrix of 4th moments is computed wrt to the sample mean.
   For location = \code{Origin} it is the scatter matrix of 4th moments wrt to the origin. 
-  The scatter matrix is standardized in such a way to be consistent for the regular covariance matrix at the multinomal model.
+  The scatter matrix is standardized in such a way to be consistent for the regular covariance matrix at the multinormal model.
   It is given for \eqn{n \times p}{n x p} matrix X by
-  \deqn{S= \frac{1}{p+2} ave_{i}[r_{i}^2(x_{i}-\bar{x})'(x_{i}-\bar{x})],}{%
-  S= 1/(p+2) ave[r_i^2 (x_i-x_bar)'(x_i-x_bar)],}
-  where \eqn{r_{i}}{r_i} is the Mahalanobis distance between \eqn{x_{i}}{x_i} and the mean with respect to the regular covariance matrix.
+  \deqn{\frac{1}{p+2} ave_{i}\{[(x_{i}-\bar{x})S^{-1}(x_{i}-\bar{x})'](x_{i}-\bar{x})'(x_{i}-\bar{x})\},}{%
+   1/(p+2) ave{[(x_i-x_bar)S^{-1}(x_i-x_bar)'] (x_i-x_bar)'(x_i-x_bar)},}
+  where \eqn{\bar{x}}{x_bar} is the mean vector and \eqn{S}{S} the regular covariance matrix.
 }
 \value{
   A matrix.

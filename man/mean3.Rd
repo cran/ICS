@@ -5,7 +5,7 @@
 
 \title{ Location Estimate based on Third Moments}
 \description{
-  ~~ Estimates the location based on third moments. ~~
+  Estimates the location based on third moments.
 }
 \usage{
 mean3(X, na.action = na.fail)
@@ -17,9 +17,9 @@ mean3(X, na.action = na.fail)
 }
 \details{
   This Location Estimate is defined for \eqn{n \times p}{n x p} matrix X as
-  \deqn{T= \frac{1}{p} ave_{i}[r_{i}^{2} x_{i}],}{%
-  S= 1/(p) ave[r_i^2 x_i],}
-  where \eqn{r_{i}}{r_i} is Mahalanobis distance between \eqn{x_{i}}{x_i} and the mean with respect to the regular covariance matrix.
+  \deqn{ \frac{1}{p} ave_{i}\{[(x_{i}-\bar{x})S^{-1}(x_{i}-\bar{x})'] x_{i}\},}{%
+   1/p ave{[(x_i-x_bar)S^{-1}(x_i-x_bar)'] x_i},}
+  where \eqn{\bar{x}}{x_bar} is the mean vector and \eqn{S}{S} the regular covariance matrix.
 }
 \value{
  A vector.

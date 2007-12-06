@@ -1,0 +1,17 @@
+LOG of the CHANGES in the package ICS
+
+Version 1.1-0:
+
+* Changing the package title description
+* Adding more slots to the ICS class and renaming some
+* Giving the option to submit also 2 scatter matrices to the function ics.
+  This changes the way of the computation method and leads to a new option on how to
+  standardize the Kurtosis values. Note that code for ics of version 1.0-0 might break.
+* New function tM
+* New function covAxis
+* Updating some references
+* Some new examples and changing examples so, that X %*% A is now X %*% t(A)
+
+Version 1.0-0:
+
+First version released on CRAN

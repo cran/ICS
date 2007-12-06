@@ -32,7 +32,7 @@
 
     X.comps <- rbind(X1,X2,X3)
     A <- matrix(rnorm(64),nrow=8)
-    X <- X.comps \%*\% A
+    X <- X.comps \%*\% t(A)
 
     ics.X.1 <- ics(X)
     fitted(ics.X.1)
@@ -40,6 +40,6 @@
     
     rm(.Random.seed)
 }
-}
+
 
 \keyword{models}

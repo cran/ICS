@@ -1,32 +1,39 @@
 # defining the ics S4-class
 
-setClass("ics",representation(Kurt="numeric",UnMix="matrix",S1="character",S2="character",Scores="data.frame",
-DataNames="character",Standardize="character"))
+setClass("ics",representation(gKurt="numeric", UnMix="matrix", S1="matrix", S2="matrix", S1name="character", S2name="character",
+         Scores="data.frame", DataNames="character", StandardizeB="character", StandardizegKurt="logical"))
 
 setValidity("ics",function(object){
-    if(!is(object@Kurt, "numeric")) return("Kurtosis values of ics objects must be numeric")
+    if(!is(object@gKurt, "numeric")) return("Generalized kurtosis values of ics objects must be numeric")
     if(!(is(object@UnMix, "matrix") )) return("slot 'UnMix' of a ics object must be a numeric matrix")
     if(!(is.numeric(object@UnMix) )) return("slot 'UnMix' of a ics object must be a numeric matrix")
-    if(!is(object@S1, "character") || length(object@S1)!=1) return("slot 'S1' of a ics object must be the name of a scatter function")
+    if(!is(object@S1name, "character") || length(object@S1name)!=1) return("slot 'S1' of a ics object must be the name of a scatter function")
 
-    if(!is(object@S2, "character") || length(object@S2)!=1) return("slot 'S2' of a ics object must be the name of a scatter function")
+    if(!is(object@S2name, "character") || length(object@S2name)!=1) return("slot 'S2' of a ics object must be the name of a scatter function")
     if(!(is(object@Scores, "data.frame"))) return("slot 'Scores' of a ics object must be a numeric data frame")
     if(!all(sapply(object@Scores, is.numeric))) return("slot 'Scores' of a ics object must be a numeric data frame")
     if(!is(object@DataNames, "character")) return("slot 'DataNames' of a ics object must give the column names of the data matrix")
-    if(!is(object@Standardize, "character") || length(object@Standardize)!=1) return("slot 'Standardize' of a ics object must be the name of a standardization method of 'UnMix'")
+    if(!is(object@StandardizeB, "character") || length(object@StandardizeB)!=1) return("slot 'StandardizeB' of a ics object must be the name of a standardization method of 'UnMix'")
 
-    if(length(object@Kurt)!=dim(object@UnMix)[2]) return("length of 'Kurt' must correspond to the number of columns of 'UnMix'")
-    if(length(object@Kurt)!=dim(object@Scores)[2]) return("length of 'Kurt' must correspond to the number of columns of 'Scores'")
-    if(length(object@Kurt)!=length(object@DataNames)) return("length of 'Kurt' must be the same as length of 'DataNames'")
-    if(length(object@Kurt)<2) return("at least bivariate data is needed")
-
+    if(length(object@gKurt)!=dim(object@UnMix)[2]) return("length of 'gKurt' must correspond to the number of columns of 'UnMix'")
+    if(length(object@gKurt)!=dim(object@Scores)[2]) return("length of 'gKurt' must correspond to the number of columns of 'Scores'")
+    if(length(object@gKurt)!=length(object@DataNames)) return("length of 'gKurt' must be the same as length of 'DataNames'")
+    if(length(object@gKurt)<2) return("at least bivariate data is needed")
+    
+    if(!is(object@StandardizegKurt, "logical") || length(object@StandardizegKurt)!=1) return("slot 'StandardizegKurt' of a ics object must be 'TRUE' or 'FALSE'")
+    
+    if(!(is(object@S1, "matrix") )) return("slot 'S1' of a ics object must be a numeric matrix")
+    if(!(is.numeric(object@S1) )) return("slot 'S1' of a ics object must be a numeric matrix")
+    
+    if(!(is(object@S2, "matrix") )) return("slot 'S2' of a ics object must be a numeric matrix")
+    if(!(is.numeric(object@S2) )) return("slot 'S2' of a ics object must be a numeric matrix")
     return(TRUE)
 })
 
 setMethod("show",signature(object="ics"),
 function(object)
     {
-    tmp <- list(Kurt=object@Kurt,
+    tmp <- list(gKurt=object@gKurt,
                 UnMix=object@UnMix)
     print(tmp,quote=F)
     invisible(tmp)  
@@ -51,11 +58,11 @@ setMethod("summary",signature(object="ics"),
 function(object,digits=4)
     {   
     cat("\nICS based on two scatter matrices \n")
-    cat("S1: ", object@S1) 
-    cat("\nS2: ",object@S2)
+    cat("S1: ", object@S1name) 
+    cat("\nS2: ",object@S2name)
     cat("\n")
-    cat("\nThe Kurtosis measures of the components are:\n")
-    print(format(round(object@Kurt,digits)),quote=F)
+    cat("\nThe generalized kurtosis measures of the components are:\n")
+    print(format(round(object@gKurt,digits)),quote=F)
     cat("\n")
     cat("\nThe Unmixing matrix is:\n")
     print(round(object@UnMix,digits))

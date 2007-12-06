@@ -6,8 +6,9 @@
   Plots the kurtosis measures of an \code{ics} object against its index number. Two versions of this screeplot are available.
 }
 \usage{
-\method{screeplot}{ics}(x, index = NULL, type = "barplot", main = deparse(substitute(x)),
- ylab = "kurtosis measure", xlab = "component", ...)
+\method{screeplot}{ics}(x, index = NULL, type = "barplot", 
+          main = deparse(substitute(x)), ylab = "generalized kurtosis", 
+          xlab = "component", ...)
 }
 
 \arguments{
@@ -32,8 +33,8 @@ sqrt.A <- eigen.A$vectors \%*\% (diag(eigen.A$values))^0.5 \%*\% t(eigen.A$vecto
 normal.ic <- cbind(rnorm(800), rnorm(800), rnorm(800))
 mix.ic <- cbind(rt(800,4), rnorm(800), runif(800,-2,2))
 
-data.normal <- normal.ic \%*\% sqrt.A
-data.mix <- mix.ic \%*\% sqrt.A
+data.normal <- normal.ic \%*\% t(sqrt.A)
+data.mix <- mix.ic \%*\% t(sqrt.A)
 
 par(mfrow=c(1,2))
 screeplot(ics(data.normal))

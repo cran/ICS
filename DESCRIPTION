@@ -1,8 +1,8 @@
 Package: ICS 
 Type: Package 
 Title: Tools for Exploring Multivariate Data via ICS/ICA
-Version: 1.1-0 
-Date: 2007-12-06
+Version: 1.1-1 
+Date: 2008-02-18
 Author: Klaus Nordhausen, Hannu Oja, David E. Tyler 
 Maintainer: Klaus Nordhausen <klaus.nordhausen@uta.fi> 
 Depends: R (>= 2.5.0), methods, mvtnorm, survey 
@@ -13,4 +13,4 @@ Description: The package implements Tyler et al.'s and Oja et al.'s method of tw
 License: GPL (>= 2)
 LazyLoad: yes
 Encoding: latin1 
-Packaged: Fri Dec  7 10:21:01 2007; kn66583
+Packaged: Mon Feb 18 14:56:46 2008; kn66583

@@ -1,3 +1,7 @@
+### function to constract ICS or ICA based on two scatter matrices
+### returns an object of S4 class ics
+###
+
 `ics` <-
     function (X, S1 = cov, S2 = cov4, S1args = list(), S2args = list(), 
     stdB = "Z", stdKurt=TRUE, na.action = na.fail) 
@@ -50,6 +54,9 @@
         if (stdKurt == TRUE) DiagB2 <- DiagB2/prod(DiagB2)^(1/p)
         X2 <- X1 %*% U2
         B <- t(U2) %*% B1
+        
+        # choosing the signs of B
+        
         if (stdB == "B") {
             row.signs <- apply(B, 1, .sign.max)
             row.norms <- sqrt(rowSums((B)^2))

@@ -1,3 +1,7 @@
+### Location estimate based on 3rd moments
+###
+###
+
 mean3 <- function(X, na.action = na.fail)
     {
     X<-na.action(X)

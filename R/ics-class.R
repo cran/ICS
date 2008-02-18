@@ -1,8 +1,14 @@
-# defining the ics S4-class
+### defining the ics S4-class
 
+### class definition
+###
+###
 setClass("ics",representation(gKurt="numeric", UnMix="matrix", S1="matrix", S2="matrix", S1name="character", S2name="character",
          Scores="data.frame", DataNames="character", StandardizeB="character", StandardizegKurt="logical"))
 
+### checking the validity of an ics object
+###
+###
 setValidity("ics",function(object){
     if(!is(object@gKurt, "numeric")) return("Generalized kurtosis values of ics objects must be numeric")
     if(!(is(object@UnMix, "matrix") )) return("slot 'UnMix' of a ics object must be a numeric matrix")
@@ -30,6 +36,11 @@ setValidity("ics",function(object){
     return(TRUE)
 })
 
+### show / print method for an ics object
+### only general kurtosis and unmixing matrix as output
+###
+
+
 setMethod("show",signature(object="ics"),
 function(object)
     {
@@ -41,7 +52,9 @@ function(object)
 )
 
 
-
+### plot method for an ics object
+### -> scatterplot matrix, for larger matrices only first and last 3 coordinates are plotted
+###
 
 setMethod("plot",signature(x="ics",y="missing"),
 function(x,index=NULL,...)
@@ -53,6 +66,10 @@ function(x,index=NULL,...)
     if (length(index)>1) pairs(x@Scores[,index],...)
     }
 )
+
+### summary method for an ics object
+### -> more detailed, nicer output than print
+###
 
 setMethod("summary",signature(object="ics"),
 function(object,digits=4)
@@ -70,6 +87,9 @@ function(object,digits=4)
     }
 )
 
+### fitted method for an ics object
+### only of interest if index is used.
+### Otherwise returns just the original data
 
 setMethod("fitted",signature(object="ics"),
 function(object, index=NULL)
@@ -82,6 +102,10 @@ function(object, index=NULL)
     return(as.data.frame(fits))
     }
 )
+
+### coef method for an ics object
+### extracts the unmixing matrix
+### 
 
 setMethod("coef",signature(object="ics"),
 function(object)

@@ -1,3 +1,7 @@
+### multinormal test based on skewness
+### only assymptotic p-value returned
+###
+
 mvnorm.skew.test <- function(X, na.action = na.fail)
     {
     DNAME<-deparse(substitute(X))

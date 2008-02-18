@@ -1,3 +1,6 @@
+### Internal function for joint norm of a location and matrix
+### used in tM to decide about convergence
+###
 
 .norm.mu.V<-function(a,B,A)
     {
@@ -6,7 +9,11 @@
     square <- t(a) %*% A.inv %*% (a) + sum(diag( BA.inv %*% BA.inv))
     as.vector(sqrt(square))
     }
-    
+
+### Internal function for tM
+### computes location and scatter according to Algorithm 1
+### in Kent and Tyler
+
 .alg1<-function(X,mu.init,V.init,nu,eps,maxiter)
     {
     p<-dim(X)[2]
@@ -29,6 +36,10 @@
         }
     return(list(mu=mu.new, V=V.new, iter=iter))
     }
+
+### Internal function for tM
+### computes location and scatter according to Algorithm 2
+### in Kent and Tyler
 
 .alg2<-function(X,mu.init,V.init, gamma.init,nu,eps,maxiter)
     {
@@ -56,7 +67,9 @@
     return(list(mu=mu.new, V=V.new,gam=gamma.i, iter=iter))
     }
 
-
+### Internal function for tM
+### computes location and scatter according to Algorithm 3
+### in Kent and Tyler
 
 .alg3<-function(X,mu.init,V.init, nu,eps,maxiter)
     {
@@ -83,7 +96,9 @@
     return(list(mu=mu.new, V=V.new, iter=iter))
     }
 
-
+### function to compute the location and scatter for a multivariate t-distribution
+### for a given degree of freedom
+### is basically a wrapper around the subroutines .alg1, .alg2 and .alg3
 
 tM<-function(X,df=1,alg="alg3",mu.init=NULL,V.init=NULL,gamma.init=NULL,eps=1e-06,maxiter=100, na.action=na.fail)
     {

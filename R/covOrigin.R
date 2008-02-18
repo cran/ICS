@@ -1,3 +1,7 @@
+### computes the regular covariance matrix with respect to a fixed location
+### the default is the origin
+###
+
 `covOrigin` <-
 function(X,location=NULL,na.action=na.fail)   
     {
@@ -17,4 +21,3 @@ function(X,location=NULL,na.action=na.fail)
     res<-(1/n)*t(X.matrix)%*%X.matrix
     return(res)
     }
-

@@ -1,3 +1,7 @@
+### covAxis computes a scatter functional that is needed for PAA
+### The matrix can be seen as a one step Tyler functional
+###
+
 `covAxis` <-
 function(X, na.action = na.fail)
     {

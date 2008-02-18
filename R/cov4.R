@@ -1,3 +1,7 @@
+### Wrapper for the covariance matrix of fourth moments
+### calls depending on the location argument different subroutines
+###
+
 `cov4` <-
 function(X, location="Mean", na.action=na.fail)
     {

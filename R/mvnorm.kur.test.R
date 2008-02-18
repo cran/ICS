@@ -1,3 +1,7 @@
+### multinormal test based on kurtosis measures
+### several options for p-value computation
+### result of class htest
+
 mvnorm.kur.test <- function(X, method = "integration", n.simu = 1000, na.action = na.fail)
     {
     DNAME<-deparse(substitute(X))
@@ -11,7 +15,8 @@ mvnorm.kur.test <- function(X, method = "integration", n.simu = 1000, na.action 
     
     method <- match.arg(method, c("integration", "satterthwaite", "simulation"), several.ok = FALSE)
   
-    
+    # internal function for test statistic computation
+        
     .W.stat.func<-function(X)
         {
         C.1<-cov(X)
@@ -24,6 +29,8 @@ mvnorm.kur.test <- function(X, method = "integration", n.simu = 1000, na.action 
     dfs <- c(0.5*p*(p+1)-1,1)
     chi.fac <- c(4*(p+4)/((p+2)^2),8/(p+2))
     p.value <- 1-pchisqsum(n*W.stat,chi.fac,dfs)
+    
+    # p-value computation based on the different options
     
     p.value<-switch(method, "integration"=1-pchisqsum(n*W.stat,df=dfs,a=chi.fac,method="integration"),
                   "satterthwaite"=1-pchisqsum(n*W.stat,df=dfs,a=chi.fac,method="satterthwaite"),

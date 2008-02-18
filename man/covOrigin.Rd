@@ -12,7 +12,7 @@ covOrigin(X, location = NULL, na.action = na.fail)
 
 \arguments{
   \item{X}{ a numeric data matrix or dataframe.}
-  \item{location} {optional location value which serves then as the center instead of the origin.}
+  \item{location}{ optional location value which serves then as the center instead of the origin.}
   \item{na.action}{ a function which indicates what should happen when the data
           contain 'NA's.  Default is to fail.}
 }

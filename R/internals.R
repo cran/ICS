@@ -1,4 +1,8 @@
-# covariance matrix based on 4th moments wrt to the mean vector
+### Internal functions for cov4 and ics
+
+### covariance matrix based on 4th moments wrt to the mean vector
+### subroutine of cov4
+###
 
 .cov4moments.mean<-function(X)
     {
@@ -11,7 +15,9 @@
     return(V) 
     }
 
-# covariance matrix based on 4th moments wrt to origin
+### covariance matrix based on 4th moments wrt to origin
+### subroutine of cov4
+###
 
 .cov4moments.origin<-function(X)
     {
@@ -23,19 +29,11 @@
     return(V) 
     }
     
-# Iteration step for Tyler's shape matrix
-    
-.tyler.step<-function(V.old,datas,p,n)
-        {
-        sqrt.V.old<-mat.sqrt(V.old)
-        r<-sqrt(rowSums((datas %*% sqrt.V.old)^2))
-        M.V.old<-p/n*(t(((1/r)*datas%*%sqrt.V.old))%*%((1/r)*datas%*%sqrt.V.old))
-        V.new<-sum(diag(sqrt.V.old %*% solve(M.V.old)))^(-1)*(sqrt.V.old %*% solve(M.V.old) %*% sqrt.V.old)
-        return(V.new)
-        }
 
-# Sign of the maximum element of a row in a matrix
-      
+### Sign of the maximum element of a vector
+### returns 1 if the absolute largest value is positive and -1 otherwise
+### subroutine in ics
+     
 .sign.max<-function(x)
  {
  ifelse(identical(max(x),max(abs(x))),1,-1)

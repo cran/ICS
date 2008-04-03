@@ -11,7 +11,8 @@
     data.centered<-sweep(X,2,colMeans(X),"-")
     Sigma.data.sqrt<-mat.sqrt(cov(X)) 
     radius<-sqrt(rowSums((data.centered%*%solve(Sigma.data.sqrt))^2))
-    V<-((n+1)/(n*(p+2)))*cov(radius*data.centered)  
+    y<-radius*data.centered
+    V<-(1/(n*(p+2)))*t(y) %*% y  
     return(V) 
     }
 

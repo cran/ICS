@@ -1,5 +1,9 @@
 LOG of the CHANGES in the package ICS
 
+Version 1.1-2:
+
+* Fixing a bug in cov4 (reported by Sara Taskinen). 
+
 Version 1.1-1:
 
 * Minor changes in documentation. 

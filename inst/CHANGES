@@ -1,5 +1,9 @@
 LOG of the CHANGES in the package ICS
 
+Version 1.1-3:
+
+* The covariance matrix for the mahalabobis distance in mean3 is now devided by n instead of n-1.
+
 Version 1.1-2:
 
 * Fixing a bug in cov4 (reported by Sara Taskinen). 

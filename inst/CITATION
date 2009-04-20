@@ -15,7 +15,7 @@ citEntry(entry = "Article",
   textVersion  =
   paste("Klaus Nordhausen, Hannu Oja, David E. Tyler (2008).",
         "Tools for Exploring Multivariate Data: The Package ICS.",
-        "Journal of Statistical Software 28(6).",
+        "Journal of Statistical Software, 28(6), 1-31.",
         "URL http://www.jstatsoft.org/v28/i06/.")
 )
 

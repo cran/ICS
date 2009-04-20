@@ -34,7 +34,7 @@ ics(X, S1 = cov, S2 = cov4, S1args = list(), S2args = list(),
   by estimating the unmixing matrix.
   
   By default S1 is the regular covariance matrix \code{\link{cov}} and S2 the matrix of fourth moments \code{\link{cov4}}. However those can be replaced with any other 
-  scatter matrix the user prefers. The package \pkg{ICS} offers for example also \code{\link{covAxis}}, \code{\link{covOrigin}} or \code{\link{tM}} and in the \pkg{ICSNP}
+  scatter matrix the user prefers. The package \pkg{ICS} offers for example also \code{\link{cov4.wt}}, \code{\link{covAxis}}, \code{\link{covOrigin}} or \code{\link{tM}} and in the \pkg{ICSNP}
   are for example further scatters as \code{\link[ICSNP]{duembgen.shape}}, \code{\link[ICSNP]{tyler.shape}}, \code{\link[ICSNP]{HR.Mest}} or \code{\link[ICSNP]{HP1.shape}}. 
   But of course also scatters from any other package can be used. 
   
@@ -71,7 +71,7 @@ ics(X, S1 = cov, S2 = cov4, S1args = list(), S2args = list(),
   an object of class \code{ics}.
 }
 \references{
-   \cite{Tyler, D.E., Critchley, F., \enc{Dümbgen}{Duembgen}, L. and Oja, H. (2007), Invariant coordinate selecetion, \emph{submitted}, \bold{?},  ?--?. }
+   \cite{Tyler, D.E., Critchley, F., \enc{Dümbgen}{Duembgen}, L. and Oja, H. (2009), Invariant coordinate selecetion, \emph{Journal of the Royal Statistical Society}, Series B, \bold{?},  ?--?. }
 
    \cite{Oja, H., \enc{Sirkiä}{Sirkia}, S. and Eriksson, J. (2006), Scatter matrices and independent component analysis, \emph{Austrian Journal of Statistics}, \bold{35},  175--189.}   
 }

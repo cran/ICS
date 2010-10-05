@@ -71,7 +71,7 @@ ics(X, S1 = cov, S2 = cov4, S1args = list(), S2args = list(),
   an object of class \code{ics}.
 }
 \references{
-   \cite{Tyler, D.E., Critchley, F., \enc{Dümbgen}{Duembgen}, L. and Oja, H. (2009), Invariant coordinate selecetion, \emph{Journal of the Royal Statistical Society}, Series B, \bold{?},  ?--?. }
+   \cite{Tyler, D.E., Critchley, F., \enc{Dümbgen}{Duembgen}, L. and Oja, H. (2009), Invariant co-ordinate selecetion, \emph{Journal of the Royal Statistical Society},Series B, \bold{71},  549--592.}
 
    \cite{Oja, H., \enc{Sirkiä}{Sirkia}, S. and Eriksson, J. (2006), Scatter matrices and independent component analysis, \emph{Austrian Journal of Statistics}, \bold{35},  175--189.}   
 }

@@ -14,8 +14,8 @@ Besides generic functions to create and work with an \code{ics} object the packa
 \tabular{ll}{
 Package: \tab ICS\cr
 Type: \tab Package\cr
-Version: \tab 1.2-1\cr
-Date: \tab 2009-04-20\cr
+Version: \tab 1.2-2\cr
+Date: \tab 2010-10-05\cr
 License: \tab GPL (>= 2)\cr
 }
 Some multivariate tests and estimates are not affine equivariant by nature. A possible remedy for the lack of that property is to transform the data points to an invariant coordinate system,
@@ -26,6 +26,8 @@ the \code{ics} function can recover the independent components and estimate the 
 Besides the function \code{ics}, which creates an S4 object of class \code{ics}, provides this package tools to work with objects of that class and some
 scatter matrices which can be used in the \code{ics} function. Furthermore are there also two tests for multinormality.  
 }
+
+
 \author{
 Klaus Nordhausen, Hannu Oja and David E. Tyler
 

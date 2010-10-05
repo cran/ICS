@@ -1,5 +1,10 @@
 LOG of the CHANGES in the package ICS
 
+Version 1.2-2
+
+* added the function scovq
+* updating of references
+
 Version 1.2-1
 
 * added the function cov4.wt

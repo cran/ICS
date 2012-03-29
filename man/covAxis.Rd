@@ -23,14 +23,14 @@ covAxis(X, na.action = na.fail)
   p ave{[(x_i-x_bar)S^{-1}(x_i-x_bar)']^(-1) (x_i-x_bar)'(x_i-x_bar)},}
   where \eqn{\bar{x}}{x_bar} is the mean vector and \eqn{S}{S} the regular covariance matrix.
   
-  \code{covAxis} can be used to perform a Prinzipal Axis Analysis (Critchley et al. 2007) using the function \code{\link{ics}}.
+  \code{covAxis} can be used to perform a Prinzipal Axis Analysis (Critchley et al. 2006) using the function \code{\link{ics}}.
   In that case for a centered data matrix X \code{covAxis} can be used as S2 in \code{\link{ics}}, where S1 should be in that 
   case the regular covariance matrix. 
 }
 \value{
   Matrix of the estimated scatter.
 }
-\references{ \cite{Critchley , F., Pires, A. and Amado, C. (2007),  Principal axis analysis, \emph{manuscript}, \bold{?}, ?--?.}
+\references{ \cite{Critchley , F., Pires, A. and Amado, C. (2006),  Principal axis analysis, \emph{Technical Report}, \bold{06/14}, The Open University Milton Keynes.}
 
              \cite{Tyler, D.E., Critchley, F., \enc{Dümbgen}{Duembgen}, L. and Oja, H. (2009), Invariant co-ordinate selecetion, \emph{Journal of the Royal Statistical Society},Series B, \bold{71},  549--592. }   }
 \author{Klaus Nordhausen, \email{klaus.nordhausen@uta.fi}}

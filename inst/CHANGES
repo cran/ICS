@@ -1,5 +1,10 @@
 LOG of the CHANGES in the package ICS
 
+Version 1.2-3
+
+* fixing some problems related to R2.15.0
+* updating some help files
+
 Version 1.2-2
 
 * added the function scovq

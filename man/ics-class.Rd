@@ -30,7 +30,7 @@ For this class the following generic functions are available: \code{\link{print.
 In case no extractor function for the slots exists, the component can be extracted the usual way using '@'.
 }
 
-\author{Klaus Nordhausen, \email{klaus.nordhausen@uta.fi}}
+\author{Klaus Nordhausen}
 
 
 

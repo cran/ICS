@@ -27,7 +27,7 @@ covOrigin(X, location = NULL, na.action = na.fail)
   A matrix.
 }
 
-\author{Klaus Nordhausen, \email{klaus.nordhausen@uta.fi}}
+\author{Klaus Nordhausen}
 \seealso{ \code{\link{cov}}}
 \examples{
 set.seed(654321)

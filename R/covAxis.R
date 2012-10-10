@@ -6,7 +6,6 @@
 function(X, na.action = na.fail)
     {
     X<-na.action(X)
-    if(!all(sapply(X, is.numeric))) stop("'X' must be numeric")
     X<-as.matrix(X)
     
     n <- dim(X)[1]
@@ -18,6 +17,6 @@ function(X, na.action = na.fail)
     X.centered <- sweep(X, 2, Xmeans)
     Y<-sweep(X.centered,1,di,FUN="/")
 
-    v.tilde <- p*t(Y)%*%Y / n
+    v.tilde <- p*crossprod(Y) / n
     return(v.tilde)
     }

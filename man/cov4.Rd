@@ -35,7 +35,7 @@ cov4(X, location = "Mean", na.action = na.fail)
    
    Oja, H., \enc{Sirkiä}{Sirkia}, S. and Eriksson, J. (2006), Scatter matrices and independent component analysis, \emph{Austrian Journal of Statistics}, \bold{35},  175--189.   
 }
-\author{Klaus Nordhausen, \email{klaus.nordhausen@uta.fi}}
+\author{Klaus Nordhausen}
 \examples{
 set.seed(654321)
 cov.matrix <- matrix(c(3,2,1,2,4,-0.5,1,-0.5,2), ncol=3)

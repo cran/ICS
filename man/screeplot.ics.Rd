@@ -22,7 +22,7 @@
 }
 
 
-\author{Klaus Nordhausen, \email{klaus.nordhausen@uta.fi}}
+\author{Klaus Nordhausen}
 
 \seealso{\code{\link{plot.ics}}, \code{\link{ics-class}} and \code{\link{ics}}}
 \examples{

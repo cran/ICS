@@ -31,7 +31,7 @@ cov4.wt(x, wt = rep(1/nrow(x), nrow(x)), location = TRUE,
   A matrix.
 }
 
-\author{Klaus Nordhausen, \email{klaus.nordhausen@uta.fi}}
+\author{Klaus Nordhausen}
 
 \seealso{\code{\link{cov4}}, \code{\link{cov.wt}}}
 \examples{

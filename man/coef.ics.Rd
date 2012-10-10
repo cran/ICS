@@ -18,7 +18,7 @@
   The unmixing matrix of an class \code{ics} object.
 }
 
-\author{Klaus Nordhausen, \email{klaus.nordhausen@uta.fi}}
+\author{Klaus Nordhausen}
 
 \seealso{\code{\link{ics-class}} and \code{\link{ics}}}
 

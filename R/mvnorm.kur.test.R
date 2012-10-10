@@ -7,7 +7,6 @@ mvnorm.kur.test <- function(X, method = "integration", n.simu = 1000, na.action 
     DNAME<-deparse(substitute(X))
     
     X<-na.action(X)
-    if(!all(sapply(X, is.numeric))) stop("'X' must be numeric")
     X<-as.matrix(X)
     
     n<-dim(X)[1]
@@ -21,8 +20,13 @@ mvnorm.kur.test <- function(X, method = "integration", n.simu = 1000, na.action 
         {
         C.1<-cov(X)
         C.2<-cov4(X)
-        frobenius.norm(solve(C.1) %*% C.2 - diag(p))^2
+        
+        C.1.eigen <- eigen(C.1, symmetric = TRUE)
+        C.1.sqrt.inv <- C.1.eigen$vectors%*%(diag(C.1.eigen$values^-0.5))%*%t(C.1.eigen$vectors)
+        # better test statistic than in the paper since it guaranties affine invarince:
+        frobenius.norm(C.1.sqrt.inv %*% C.2 %*% C.1.sqrt.inv - diag(p))^2
         }
+    
     
     W.stat <- .W.stat.func(X)
     

@@ -75,7 +75,7 @@ ics(X, S1 = cov, S2 = cov4, S1args = list(), S2args = list(),
 
    \cite{Oja, H., \enc{Sirkiä}{Sirkia}, S. and Eriksson, J. (2006), Scatter matrices and independent component analysis, \emph{Austrian Journal of Statistics}, \bold{35},  175--189.}   
 }
-\author{Klaus Nordhausen, \email{klaus.nordhausen@uta.fi}}
+\author{Klaus Nordhausen}
 
 
 \seealso{  \code{\link{ICS-package}} }

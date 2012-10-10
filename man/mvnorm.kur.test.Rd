@@ -25,6 +25,8 @@ mvnorm.kur.test(X, method = "integration", n.simu = 1000,
   Exact limiting p-values or approximated p-values are obtained by using the function \code{\link[survey]{pchisqsum}}. However Kankainen et al.
   mention that even for n = 200 the convergence can be poor, therefore also p-values simulated under the NULL can be obtained.  
   
+  Note that the test statistic used is a symmetric version of the one in the paper to guarantee affine invariance.
+  
 }
 \value{
   A list with class 'htest' containing the following components:
@@ -34,8 +36,8 @@ mvnorm.kur.test(X, method = "integration", n.simu = 1000,
   \item{method}{a character string indicating what type of test was performed.}
   \item{data.name}{a character string giving the name of the data.}
 }
-\references{\cite{Kankainen, A., Taskinen, S. and Oja, H. (2007),Tests of multinormality based on location vectors and scatter matrices, \emph{Statistical Methods and Applications}, \bold{16},  357--379.}}
-\author{Klaus Nordhausen, \email{klaus.nordhausen@uta.fi}}
+\references{\cite{Kankainen, A., Taskinen, S. and Oja, H. (2007), Tests of multinormality based on location vectors and scatter matrices, \emph{Statistical Methods and Applications}, \bold{16},  357--379.}}
+\author{Klaus Nordhausen}
 \seealso{ \code{\link{mvnorm.skew.test}} }
 \examples{
 X<-rmvnorm(100, c(2, 4, 5))

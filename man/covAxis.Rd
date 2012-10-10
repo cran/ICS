@@ -33,7 +33,7 @@ covAxis(X, na.action = na.fail)
 \references{ \cite{Critchley , F., Pires, A. and Amado, C. (2006),  Principal axis analysis, \emph{Technical Report}, \bold{06/14}, The Open University Milton Keynes.}
 
              \cite{Tyler, D.E., Critchley, F., \enc{Dümbgen}{Duembgen}, L. and Oja, H. (2009), Invariant co-ordinate selecetion, \emph{Journal of the Royal Statistical Society},Series B, \bold{71},  549--592. }   }
-\author{Klaus Nordhausen, \email{klaus.nordhausen@uta.fi}}
+\author{Klaus Nordhausen}
 
 \seealso{\code{\link{ics}} }
 \examples{

@@ -7,11 +7,8 @@
     stdB = "Z", stdKurt=TRUE, na.action = na.fail) 
     {
         X <- na.action(X)
-        if (!all(sapply(X, is.numeric))) 
-            stop("'X' must be numeric")
         data.matrix <- as.matrix(X)
-        if (is.numeric(data.matrix) == FALSE) 
-            stop("'X' must be numeric")
+        
         if (stdB != "B" & stdB != "Z") 
             stop("'stdB' must be 'B' or 'Z'")
         p <- dim(X)[2]
@@ -32,7 +29,7 @@
         if (!isSymmetric(S2)) stop("'S2' must be a symmetric matrix")
         if (p1[1]!=p2[1]) stop("'S1' and 'S2' must have the same dimension")
     
-        B1 <- solve(ICS:::mat.sqrt(S1))
+        B1 <- solve(mat.sqrt(S1))
         X1 <- data.matrix %*% B1
         B2 <- B1 %*% S2 %*% B1
         }
@@ -41,7 +38,7 @@
         {
         if (!is.function(S2)) stop("'S1' and 'S2' must be both functions or both symmetric matrices")
         S1 <- do.call("S1", c(list(X), S1args))
-        B1 <- solve(ICS:::mat.sqrt(S1))
+        B1 <- solve(mat.sqrt(S1))
         X1 <- data.matrix %*% B1
         S2 <- do.call("S2", c(list(X), S2args))
         B2 <- B1 %*% S2 %*% B1

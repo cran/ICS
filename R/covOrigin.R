@@ -6,7 +6,6 @@
 function(X,location=NULL,na.action=na.fail)   
     {
     X<-na.action(X)
-    if(!all(sapply(X, is.numeric))) stop("'X' must be numeric")
     X.matrix<-as.matrix(X)
     
     p<-dim(X.matrix)[2]

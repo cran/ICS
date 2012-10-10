@@ -6,8 +6,6 @@ cov4.wt <- function(x, wt = rep(1/nrow(x), nrow(x)), location = TRUE, method="ML
     X <- data.frame(wt=wt)
     X$x <- x
     X <- na.action(X)
-    if (!all(sapply(X, is.numeric))) 
-        stop("'x' and 'wt' must be numeric")
     x <- as.matrix(X$x)
     wt<- X$wt
     

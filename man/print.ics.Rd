@@ -15,7 +15,7 @@
   \item{object}{object of class \code{ics}. }
 }
 
-\author{Klaus Nordhausen, \email{klaus.nordhausen@uta.fi}}
+\author{Klaus Nordhausen}
 
 \seealso{\code{\link{ics-class}} and \code{\link{ics}}}
 

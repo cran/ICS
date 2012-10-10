@@ -7,7 +7,6 @@ mvnorm.skew.test <- function(X, na.action = na.fail)
     DNAME<-deparse(substitute(X))
     
     X<-na.action(X)
-    if(!all(sapply(X, is.numeric))) stop("'X' must be numeric")
     X<-as.matrix(X)
     
     n<-dim(X)[1]

@@ -17,7 +17,7 @@ ics.components(object)
 \value{
  Dataframe that contains the components.
 }
-\author{Klaus Nordhausen, \email{klaus.nordhausen@uta.fi}}
+\author{Klaus Nordhausen}
 
 \seealso{\code{\link{ics-class}} and \code{\link{ics}}}
 

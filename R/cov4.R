@@ -6,7 +6,6 @@
 function(X, location="Mean", na.action=na.fail)
     {
     X<-na.action(X)
-    if(!all(sapply(X, is.numeric))) stop("'X' must be numeric")
     X.matrix<-as.matrix(X)
     
     

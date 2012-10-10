@@ -24,7 +24,7 @@
 }
 
 
-\author{Klaus Nordhausen, \email{klaus.nordhausen@uta.fi}}
+\author{Klaus Nordhausen}
 
 \seealso{\code{\link{screeplot.ics}}, \code{\link{ics-class}} and \code{\link{ics}}}
 

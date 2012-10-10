@@ -28,7 +28,7 @@ mvnorm.skew.test(X, na.action = na.fail)
   \item{data.name}{a character string giving the name of the data.}
 }
 \references{\cite{Kankainen, A., Taskinen, S. and Oja, H. (2007),Tests of multinormality based on location vectors and scatter matrices, \emph{Statistical Methods and Applications}, \bold{16},  357--379.}}
-\author{Klaus Nordhausen, \email{klaus.nordhausen@uta.fi}}
+\author{Klaus Nordhausen}
 \seealso{ \code{\link{mvnorm.kur.test}} }
 \examples{
 X<-rmvnorm(100,c(2,4,5))

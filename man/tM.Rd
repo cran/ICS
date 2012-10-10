@@ -46,7 +46,7 @@ tM(X, df = 1, alg = "alg3", mu.init = NULL, V.init = NULL,
 
             \cite{Arslan, O., Constable, P.D.L.  and Kent, J.T. (1995), Convergence behaviour of the EM algorithm for the multivariate t-distribution, \emph{Communications in Statistics, Theory and Methods}, \bold{24}, 2981--3000.}}
             
-\author{Klaus Nordhausen, \email{klaus.nordhausen@uta.fi}}
+\author{Klaus Nordhausen}
 
 \seealso{  \code{\link[MASS]{cov.trob}} }
 

@@ -103,7 +103,6 @@
 tM<-function(X,df=1,alg="alg3",mu.init=NULL,V.init=NULL,gamma.init=NULL,eps=1e-06,maxiter=100, na.action=na.fail)
     {
     X<-na.action(X)
-    if(!all(sapply(X, is.numeric))) stop("'X' must be numeric")
     X<-as.matrix(X)
     if (is.null(mu.init)) mu.init<-colMeans(X)
     if (is.null(V.init)) V.init<-cov(X)

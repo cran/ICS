@@ -25,7 +25,7 @@ mean3(X, na.action = na.fail)
  A vector.
 }
 \references{\cite{Oja, H., \enc{Sirkiä}{Sirkia}, S. and Eriksson, J. (2006), Scatter matrices and independent component analysis, \emph{Austrian Journal of Statistics}, \bold{35},  175--189.}}
-\author{Klaus Nordhausen, \email{klaus.nordhausen@uta.fi}}
+\author{Klaus Nordhausen}
 
 \examples{
 set.seed(654321)

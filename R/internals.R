@@ -12,7 +12,7 @@
     Sigma.data.sqrt<-mat.sqrt(cov(X)) 
     radius<-sqrt(rowSums((data.centered%*%solve(Sigma.data.sqrt))^2))
     y<-radius*data.centered
-    V<-(1/(n*(p+2)))*t(y) %*% y  
+    V<-(1/(n*(p+2)))*crossprod(y) 
     return(V) 
     }
 

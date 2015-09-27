@@ -98,7 +98,7 @@ function(object, index=NULL)
     if (is.null(index)==FALSE && max(index)>p) stop("undefined columns selected")
     Mix<-solve(object@UnMix)
     if (is.null(index)) index=1:p
-    fits<-as.matrix(object@Scores[,index])%*%t(Mix[,index])
+    fits<-tcrossprod(as.matrix(object@Scores[,index]), Mix[,index])
     return(as.data.frame(fits))
     }
 )

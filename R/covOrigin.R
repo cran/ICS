@@ -17,6 +17,6 @@ function(X,location=NULL,na.action=na.fail)
         }
     
     n<-dim(X.matrix)[1]
-    res<-(1/n)*t(X.matrix)%*%X.matrix
+    res<-(1/n)*crossprod(X.matrix)
     return(res)
     }

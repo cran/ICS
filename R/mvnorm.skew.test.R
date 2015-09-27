@@ -16,7 +16,7 @@ mvnorm.skew.test <- function(X, na.action = na.fail)
     T.2<-mean3(X)
     C.M<-cov(X)
     
-    U.stat <- t(T.1-T.2) %*% solve(C.M) %*% (T.1-T.2)
+    U.stat <- crossprod((T.1-T.2), solve(C.M)) %*% (T.1-T.2)
     chi.fac <- 2*(p+2)/(p^2)
     p.value <- 1-pchisq(n*U.stat/chi.fac,p)
     
@@ -27,7 +27,7 @@ mvnorm.skew.test <- function(X, na.action = na.fail)
     PARAMETER<-c(p)
     names(PARAMETER)<-c("df")
     PVAL<-p.value
-    res<-list(method=METHOD,statistic=STATISTIC,data.name=DNAME,parameter=PARAMETER,p.value=PVAL)
+    res<-list(method=METHOD, statistic=STATISTIC, data.name=DNAME, parameter=PARAMETER, p.value=PVAL)
     class(res)<-"htest"
     return(res)
     

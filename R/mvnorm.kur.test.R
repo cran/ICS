@@ -22,7 +22,7 @@ mvnorm.kur.test <- function(X, method = "integration", n.simu = 1000, na.action 
         C.2<-cov4(X)
         
         C.1.eigen <- eigen(C.1, symmetric = TRUE)
-        C.1.sqrt.inv <- C.1.eigen$vectors%*%(diag(C.1.eigen$values^-0.5))%*%t(C.1.eigen$vectors)
+        C.1.sqrt.inv <- C.1.eigen$vectors %*% (diag(C.1.eigen$values^-0.5))%*%t(C.1.eigen$vectors)
         # better test statistic than in the paper since it guaranties affine invarince:
         frobenius.norm(C.1.sqrt.inv %*% C.2 %*% C.1.sqrt.inv - diag(p))^2
         }

@@ -1,5 +1,5 @@
-importFrom(graphics, plot,pairs,barplot)
-importFrom(utils, combn)
+importFrom(graphics, plot,pairs,barplot, axis)
+importFrom(utils, combn, data)
 importFrom(mvtnorm, rmvnorm)
 importFrom(survey, pchisqsum)
 import("stats","methods")

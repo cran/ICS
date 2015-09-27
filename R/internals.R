@@ -10,7 +10,7 @@
     n<-dim(X)[1]
     data.centered<-sweep(X,2,colMeans(X),"-")
     Sigma.data.sqrt<-mat.sqrt(cov(X)) 
-    radius<-sqrt(rowSums((data.centered%*%solve(Sigma.data.sqrt))^2))
+    radius<-sqrt(rowSums((data.centered %*% solve(Sigma.data.sqrt))^2))
     y<-radius*data.centered
     V<-(1/(n*(p+2)))*crossprod(y) 
     return(V) 
@@ -25,7 +25,7 @@
     p<-dim(X)[2]
     n<-dim(X)[1]
     Sigma.data.sqrt<-mat.sqrt(covOrigin(X)) 
-    radius<-sqrt(rowSums((X%*%solve(Sigma.data.sqrt))^2))
+    radius<-sqrt(rowSums((X %*% solve(Sigma.data.sqrt))^2))
     V<-(1/(p+2))*covOrigin(radius*X)  
     return(V) 
     }

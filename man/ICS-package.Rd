@@ -14,8 +14,8 @@ Besides generic functions to create and work with an \code{ics} object the packa
 \tabular{ll}{
 Package: \tab ICS\cr
 Type: \tab Package\cr
-Version: \tab 1.2-4\cr
-Date: \tab 2013-10-10\cr
+Version: \tab 1.2-5\cr
+Date: \tab 2015-09-26\cr
 License: \tab GPL (>= 2)\cr
 }
 Some multivariate tests and estimates are not affine equivariant by nature. A possible remedy for the lack of that property is to transform the data points to an invariant coordinate system,

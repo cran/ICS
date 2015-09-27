@@ -50,7 +50,7 @@
         DiagB2 <- B2.eigen$values
         if (stdKurt == TRUE) DiagB2 <- DiagB2/prod(DiagB2)^(1/p)
         X2 <- X1 %*% U2
-        B <- t(U2) %*% B1
+        B <- crossprod(U2, B1)
         
         # choosing the signs of B
         
@@ -58,14 +58,14 @@
             row.signs <- apply(B, 1, .sign.max)
             row.norms <- sqrt(rowSums((B)^2))
             B.res <- sweep(B, 1, row.norms * row.signs, "/")
-            Z <- as.data.frame(data.matrix %*% t(B.res))
+            Z <- as.data.frame(tcrossprod(data.matrix, B.res))
         }
         if (stdB == "Z") {
-            Z1 <- data.matrix %*% t(B)
+            Z1 <- tcrossprod(data.matrix, B)
             skewness <- colMeans(Z1) - apply(Z1, 2, median)
             skew.signs <- ifelse(skewness > 0, 1, -1)
             B.res <- sweep(B, 1, skew.signs, "*")
-            Z <- as.data.frame(data.matrix %*% t(B.res))
+            Z <- as.data.frame(tcrossprod(data.matrix, B.res))
         }
         names(Z) <- paste(rep("IC", p), 1:p, sep = ".")
         if (is.null(colnames(X)) == TRUE) 

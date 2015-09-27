@@ -1,11 +1,18 @@
 LOG of the CHANGES in the package ICS
 
+Version 1.2-5
+
+* changing maintainer email address
+* cleaning the depends and imports
+* fixing some vignette issues
+* some minor code improvements
+
 Version 1.2-4
 
 * changing the test statistic in mvnorm.kur.test to make the test affine invariant, thanks to Sara Taskinen
 * dropping the internal check if a matrix is numeric since that is quite time consuming
 * some minor code improvements
-* changeing the maintainer email address
+* changing the maintainer email address
 
 Version 1.2-3
 

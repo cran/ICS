@@ -46,7 +46,7 @@ function(object)
     {
     tmp <- list(gKurt=object@gKurt,
                 UnMix=object@UnMix)
-    print(tmp,quote=F)
+    print(tmp, quote = FALSE)
     invisible(tmp)  
     }
 )

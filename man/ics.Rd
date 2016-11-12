@@ -3,9 +3,9 @@
 \name{ics}
 \alias{ics}
 
-\title{ Two Scatter Matrix ICS Transformation }
+\title{ Two Scatter Matrices ICS Transformation }
 \description{
-  This function implements the 2 scatter matrix transformation to obtain an invariant coordinate sytem or independent 
+  This function implements the two scatter matrices transformation to obtain an invariant coordinate sytem or independent 
   components, depending on the underlying assumptions.
 }
 \usage{
@@ -30,7 +30,7 @@ ics(X, S1 = cov, S2 = cov4, S1args = list(), S2args = list(),
   if needed the results can be easily retransformed to the original scale. It is possible to use it also for dimension reduction, finding outliers or when 
   searching for clusters in the data.
   The function can, however, also be used in a modelling framework. In this case it is assumed that the data were created by mixing independent components which
-  have different kurtosis values. If the two scatter matrices used have then the so-called independence property the function can recover the independet components
+  have different kurtosis values. If the two scatter matrices used have then the so-called independence property the function can recover the independent components
   by estimating the unmixing matrix.
   
   By default S1 is the regular covariance matrix \code{\link{cov}} and S2 the matrix of fourth moments \code{\link{cov4}}. However those can be replaced with any other 
@@ -71,9 +71,11 @@ ics(X, S1 = cov, S2 = cov4, S1args = list(), S2args = list(),
   an object of class \code{ics}.
 }
 \references{
-   \cite{Tyler, D.E., Critchley, F., \enc{Dümbgen}{Duembgen}, L. and Oja, H. (2009), Invariant co-ordinate selecetion, \emph{Journal of the Royal Statistical Society},Series B, \bold{71},  549--592.}
+   \cite{Tyler, D.E., Critchley, F., \enc{Dümbgen}{Duembgen}, L. and Oja, H. (2009), Invariant co-ordinate selecetion, \emph{Journal of the Royal Statistical Society},Series B, \bold{71},  549--592. <doi:10.1111/j.1467-9868.2009.00706.x>.}
 
-   \cite{Oja, H., \enc{Sirkiä}{Sirkia}, S. and Eriksson, J. (2006), Scatter matrices and independent component analysis, \emph{Austrian Journal of Statistics}, \bold{35},  175--189.}   
+   \cite{Oja, H., \enc{Sirkiä}{Sirkia}, S. and Eriksson, J. (2006), Scatter matrices and independent component analysis, \emph{Austrian Journal of Statistics}, \bold{35},  175--189.} 
+   
+   \cite{Nordhausen, K., Oja, H. and Tyler, D.E. (2008), Tools for exploring multivariate data: The package ICS, \emph{Journal of Statistical Software}, \bold{28}, 1--31. <doi:10.18637/jss.v028.i06>.}  
 }
 \author{Klaus Nordhausen}
 

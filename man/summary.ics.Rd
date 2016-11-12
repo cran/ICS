@@ -1,7 +1,7 @@
 \name{summary.ics}
 \docType{methods}
 \alias{summary.ics}
-\alias{summary-method}
+%\alias{summary-method}
 \alias{summary,ics-method}
 
 \title{Summarize a ICS object}

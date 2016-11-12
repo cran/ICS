@@ -42,9 +42,10 @@ tM(X, df = 1, alg = "alg3", mu.init = NULL, V.init = NULL,
   \item{iter }{number of iterations.}
 }
 
-\references{ \cite{Kent, J.T., Tyler, D.E. and Vardi, Y. (1994),  A curious likelihood identity for the multivariate t-distribution, \emph{Communications in Statistics, Theory and Methods}, \bold{23},  441--453.   }
+\references{ \cite{Kent, J.T., Tyler, D.E. and Vardi, Y. (1994),  A curious likelihood identity for the multivariate t-distribution, \emph{Communications in Statistics, Simulation and Computation}, \bold{23},  441--453. 
+             <doi:10.1080/03610919408813180>. }
 
-            \cite{Arslan, O., Constable, P.D.L.  and Kent, J.T. (1995), Convergence behaviour of the EM algorithm for the multivariate t-distribution, \emph{Communications in Statistics, Theory and Methods}, \bold{24}, 2981--3000.}}
+            \cite{Arslan, O., Constable, P.D.L.  and Kent, J.T. (1995), Convergence behaviour of the EM algorithm for the multivariate t-distribution, \emph{Communications in Statistics, Theory and Methods}, \bold{24}, 2981--3000. <doi:10.1080/03610929508831664>.}}
             
 \author{Klaus Nordhausen}
 

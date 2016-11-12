@@ -8,7 +8,7 @@
 \usage{
 \method{screeplot}{ics}(x, index = NULL, type = "barplot", 
           main = deparse(substitute(x)), ylab = "generalized kurtosis", 
-          xlab = "component", ...)
+          xlab = "component", names.arg = index, labels = TRUE, ...)
 }
 
 \arguments{
@@ -18,6 +18,8 @@
   \item{main}{ main title of the plot. }
   \item{ylab}{ y-axis label. }
   \item{xlab}{ x-axis label. }
+  \item{names.arg}{\code{names.arg} argument passed on to \code{barplot}. }
+  \item{labels}{\code{labels} argument for the labels of the x-axis passed on to \code{axis}. }
   \item{\dots}{other arguments for the plotting functions. }
 }
 
@@ -41,6 +43,8 @@ screeplot(ics(data.normal))
 screeplot(ics(data.mix), type="lines")
 par(mfrow=c(1,1))
 rm(.Random.seed)
+
+screeplot(ics(data.normal), names.arg=paste("IC", 1:ncol(A), sep=""), xlab="")
 }
 
 \keyword{ hplot }

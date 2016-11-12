@@ -45,7 +45,7 @@
         }
     
     
-        B2.eigen <- eigen(B2)
+        B2.eigen <- eigen(B2, symmetric=TRUE)
         U2 <- B2.eigen$vectors
         DiagB2 <- B2.eigen$values
         if (stdKurt == TRUE) DiagB2 <- DiagB2/prod(DiagB2)^(1/p)

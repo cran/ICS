@@ -27,7 +27,7 @@ mvnorm.skew.test(X, na.action = na.fail)
   \item{method}{a character string indicating what type of test was performed.}
   \item{data.name}{a character string giving the name of the data.}
 }
-\references{\cite{Kankainen, A., Taskinen, S. and Oja, H. (2007),Tests of multinormality based on location vectors and scatter matrices, \emph{Statistical Methods and Applications}, \bold{16},  357--379.}}
+\references{\cite{Kankainen, A., Taskinen, S. and Oja, H. (2007),Tests of multinormality based on location vectors and scatter matrices, \emph{Statistical Methods and Applications}, \bold{16},  357--379. <doi:10.1007/s10260-007-0045-9>.}}
 \author{Klaus Nordhausen}
 \seealso{ \code{\link{mvnorm.kur.test}} }
 \examples{

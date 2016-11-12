@@ -31,7 +31,7 @@ cov4(X, location = "Mean", na.action = na.fail)
   A matrix.
 }
 \references{
-   Cardoso, J.F. (1989), Source separation using higher order moments, in \emph{Proc. IEEE Conf. on Acoustics, Speech and Signal Processing (ICASSP'89)}, 2109--2112.
+   Cardoso, J.F. (1989), Source separation using higher order moments, in \emph{Proc. IEEE Conf. on Acoustics, Speech and Signal Processing (ICASSP'89)}, 2109--2112. <doi:10.1109/ICASSP.1989.266878>.
    
    Oja, H., \enc{Sirkiä}{Sirkia}, S. and Eriksson, J. (2006), Scatter matrices and independent component analysis, \emph{Austrian Journal of Statistics}, \bold{35},  175--189.   
 }

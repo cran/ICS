@@ -1,7 +1,7 @@
 \name{print.ics}
 \docType{methods}
 \alias{print.ics}
-\alias{show-method}
+%\alias{show-method}
 \alias{show,ics-method}
 \title{Basic information of ICS Object}
 \description{

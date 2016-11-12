@@ -1,5 +1,13 @@
 LOG of the CHANGES in the package ICS
 
+Version 1.3-0
+
+* adding new function ics2 and the corresponding print and summary methods
+* making the screeplot function a method and improving it
+* improving the code of the ics function
+* general revision of the help files
+* new functions MeanCov and Mean3Cov4
+
 Version 1.2-5
 
 * changing maintainer email address

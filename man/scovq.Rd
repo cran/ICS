@@ -64,8 +64,10 @@ see the example below.
 a matrix.
 }
 \references{
-\cite{Liski, E., Nordhausen, K. and Oja, H. (2013), Supervised invariant coordinate selection, \emph{To appear in Statistics}, \bold{???},  ???--???.}
+\cite{Liski, E., Nordhausen, K. and Oja, H. (2014), Supervised invariant coordinate selection, \emph{Statistics: A Journal of Theoretical and Applied Statistics}, \bold{48},  711--731. <doi:10.1080/02331888.2013.800067>.}
 }
+
+
 \author{Klaus Nordhausen}
 \seealso{ \code{\link{cov.wt}} and \code{\link{ics}}}
 \examples{

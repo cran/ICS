@@ -1,4 +1,4 @@
-fd036ae60a2ae5f41487204a25974e07 *DESCRIPTION
+5b4f8a29979e48005c247215af3b700b *DESCRIPTION
 24c2a4d70bce17d1780dff5f2f8a5c65 *NAMESPACE
 6461c8838c39447046a365c66af97530 *R/Mean3Cov4.R
 dc6a0e8edb9b2bd955537d707089d113 *R/MeanCov.R
@@ -20,16 +20,16 @@ f648103bf122144bf36cdeb0bc9625d2 *R/mvnorm.skew.test.R
 041e55c3f6fcb6ca5f8c7e6620e9e157 *R/scovq.R
 916049439b7c6fdc0f2cd1b84577f399 *R/screeplot.ics.R
 1f6d7ba9d7854d27d7052569b7e1fa22 *R/tM.R
-9ec5551be050d8bed7e97690a931cdf0 *build/vignette.rds
-7fb0eb59051ad0cfb95faa577f249ddf *inst/CHANGES
+bdd7d23c47882a677a517d9c65c8c214 *build/vignette.rds
+1cacbba88db5cd39741d9c987e31673d *inst/CHANGES
 a28a4eec6bb52f6ae7b1dfe0d1df6d28 *inst/CITATION
 44861ebb53add4ee0b907489d857aea2 *inst/doc/ICS.R
 da52bdd8ca6008ecddd13868aa919eb2 *inst/doc/ICS.Rnw
-a060afaf62b7e1c7a2702c8060267cf1 *inst/doc/ICS.pdf
+faee464ba7b1c313d2e6141b8219f25f *inst/doc/ICS.pdf
 bebd89679864283abbde86ea8d226a29 *inst/pictures/cat.pgm
 c9ff96e184da6433b1acd488c90b58de *inst/pictures/road.pgm
 842b4b3485a1acf9405c8844d102ec36 *inst/pictures/sheep.pgm
-7ed8526d57e5d73bb3d036d8c45eedcf *man/ICS-package.Rd
+e1619fe4e366b5f2b7a25e50fce634a0 *man/ICS-package.Rd
 e12b5b3a7cb52e50d422de31c6b94b9b *man/Mean3Cov4.Rd
 93d5851d5fa6650008e714cf2b993fa7 *man/MeanCov.Rd
 d98634f7a54308b4086a436a0c786076 *man/coef.ics.Rd

@@ -23,9 +23,6 @@ f648103bf122144bf36cdeb0bc9625d2 *R/mvnorm.skew.test.R
 bdd7d23c47882a677a517d9c65c8c214 *build/vignette.rds
 1cacbba88db5cd39741d9c987e31673d *inst/CHANGES
 a28a4eec6bb52f6ae7b1dfe0d1df6d28 *inst/CITATION
-44861ebb53add4ee0b907489d857aea2 *inst/doc/ICS.R
-da52bdd8ca6008ecddd13868aa919eb2 *inst/doc/ICS.Rnw
-faee464ba7b1c313d2e6141b8219f25f *inst/doc/ICS.pdf
 bebd89679864283abbde86ea8d226a29 *inst/pictures/cat.pgm
 c9ff96e184da6433b1acd488c90b58de *inst/pictures/road.pgm
 842b4b3485a1acf9405c8844d102ec36 *inst/pictures/sheep.pgm
@@ -54,4 +51,3 @@ e8f12b1064598d29febaee88607408db *man/scovq.Rd
 160fce0076f2a05bfb3b72601273802b *man/summary.ics.Rd
 1ed1c9750f6938fa9b6b7d8508b41895 *man/summary.ics2.Rd
 4b79dfb17182a2dbb64cede030bd9a66 *man/tM.Rd
-da52bdd8ca6008ecddd13868aa919eb2 *vignettes/ICS.Rnw

@@ -1,7 +1,8 @@
 ### screeplot method for an ics object
 ### barplot or lineplot are options
 ###
-
+#' @export
+#' @importFrom graphics plot barplot axis
 `screeplot.ics` <-
     function(x,index=NULL,type="barplot",
                main = deparse(substitute(x)),ylab="generalized kurtosis",xlab= "component", names.arg=index, labels=TRUE,...)

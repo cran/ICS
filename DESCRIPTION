@@ -15,8 +15,9 @@ Description: Implementation of Tyler, Critchley, Duembgen and Oja's (JRSS B, 200
             components, depending on the underlying assumptions. 
 License: GPL (>= 2)
 LazyLoad: yes
-Encoding: latin1
+Encoding: UTF-8
 NeedsCompilation: no
 Packaged: 2018-03-02 18:07:39 UTC; klanor
 Repository: CRAN
 Date/Publication: 2018-03-03 00:53:56 UTC
+RoxygenNote: 7.2.3

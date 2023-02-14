@@ -29,14 +29,17 @@ ICS.function <- function(X, S1 = cov, S2 = cov4, S1_args = list(),
     # TODO: perform algorithm based on QR decomposition
   } else {
     # obtain first scatter matrix
-    if (is.function(S1)) S1 <- get_scatter(X, fun = S1, args = S1_args)
-    else S1 <- to_ICS_scatter(S1)
+    S1_label <- deparse(substitute(S1))
+    if (is.function(S1)) {
+      S1 <- get_scatter(X, fun = S1, args = S1_args, label = S1_label)
+    } else S1 <- to_ICS_scatter(S1, label = S1_label)
     # whiten the data if requested
     if (whiten) {
       # TODO
     }
     # obtain second scatter matrix
-    S2 <- get_scatter(X, fun = S2, args = S2_args)
+    S2_label <- deparse(substitute(S2))
+    S2 <- get_scatter(X, fun = S2, args = S2_args, label = S2_label)
     # TODO: can we call the default method now?
   }
 }
@@ -54,8 +57,8 @@ ICS.default <- function(X, S1, S2, center = FALSE,
   # convert scatter matrices to class "ICS_scatter"
   # (Andreas: in principle, we could allow that the first scatter matrix is a
   # function, but I'm not sure whether this is useful)
-  S1 <- to_ICS_scatter(S1)
-  S2 <- to_ICS_scatter(S2)
+  S1 <- to_ICS_scatter(S1, label = deparse(substitute(S1)))
+  S2 <- to_ICS_scatter(S2, label = deparse(substitute(S2)))
   # centering only makes sense if the scatter objects have location components
   if (center && (is.null(S1$location) || is.null(S2$location))) {
       center <- FALSE
@@ -66,20 +69,15 @@ ICS.default <- function(X, S1, S2, center = FALSE,
 }
 
 
-## FIXME: default labels in the internal functions below don't work properly
-##        when called from function ICS(). We need to pass down the correct
-##        environment so that deparse(substitute()) works as intended.
-
-
 ## internal function to apply a scatter function to the data matrix
 # X ......... data matrix
 # fun ....... function to compute a scatter matrix
 # args ...... list of additional arguments to be passed to the function
 # convert ... logical indicating whether the scatter matrix should be converted
-#             to class "ICS_scatter". This is useful for the algorithm based on
-#             the QR decomposition, which needs functions that return just the
-#             scatter matrix.
-get_scatter <- function(X, fun = cov, args = list(), convert = TRUE) {
+#             to class "ICS_scatter"
+# label ..... typically constructed beforehand via deparse(substitute())
+# TODO: perhaps argument 'convert' is unnecessary?
+get_scatter <- function(X, fun = cov, args = list(), convert = TRUE, label) {
   if (length(args) == 0) scatter <- fun(X)
   else {
     # there should be a more efficient way of doing this, for example via call()
@@ -88,10 +86,7 @@ get_scatter <- function(X, fun = cov, args = list(), convert = TRUE) {
   }
   # if requested, convert to class "ICS_scatter": use the function name as
   # label if the function does not return an object of this class already
-  if (convert) {
-    default_label = deparse(substitute(fun))
-    scatter <- to_ICS_scatter(scatter, label = default_label)
-  }
+  if (convert) scatter <- to_ICS_scatter(scatter, label = label)
   # return scatter matrix
   scatter
 }
@@ -101,26 +96,28 @@ get_scatter <- function(X, fun = cov, args = list(), convert = TRUE) {
 
 to_ICS_scatter <- function(object, ...) UseMethod("to_ICS_scatter")
 
-to_ICS_scatter.matrix <- function(object, label = NULL, ...) {
-  # if not supplied, use object name as label
-  if (is.null(label)) label <- deparse(substitute(object))
+# object ... a scatter matrix
+# label .... typically constructed beforehand via deparse(substitute())
+to_ICS_scatter.matrix <- function(object, label, ...) {
   # convert to class "ICS_scatter" with empty location estimate
   out <- list(location = NULL, scatter = object, label = label)
   class(out) <- "ICS_scatter"
   out
 }
 
-to_ICS_scatter.list <- function(object, label = NULL) {
+# object ... typically a list with components 'location' and 'scatter', but it
+#            can also have a component 'label'
+# label .... typically constructed beforehand via deparse(substitute()) and
+#            ignored if the list already has a component 'label'
+to_ICS_scatter.list <- function(object, label) {
   # check that list has a component 'scatter'
   scatter <- object$scatter
   if (is.null(scatter)) {
     stop("list should have components 'scatter' (required) as well as ",
          "'location' and 'label' (optional)")
   }
-  # check if there already  is a component 'label', otherwise use the supplied
-  # label, or use the object name if no label is supplied
+  # check if there already is a component 'label' in the list
   if (!is.null(object$label)) label <- object$label
-  if (is.null(label)) label <- deparse(substitute(object))
   # convert to class "ICS_scatter"
   out <- list(location = object$location, scatter = scatter, label = label)
   class(out) <- "ICS_scatter"

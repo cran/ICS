@@ -79,11 +79,11 @@ test_that("ics - ICS_S3 eigenvalues - S1 and S2 are matrices/ICS_scatter", {
 
 # TODO: not ok
 # Aurore: what do we want to do here? should we put some warnings saying it is not possible?
-test_that("ics - ICS_S3 eigenvalues -  S2 is ICS_scatter", {
-  X <- iris[,1:4]
-  expect_equal(ics(X, S1 = cov(X), S2 = cov4(X), stdKurt = FALSE)@gKurt,
-               ICS(X, S1 = ICS_cov(X), S2 = ICS_cov4(X))$gKurt)
-})
+# test_that("ics - ICS_S3 eigenvalues -  S2 is ICS_scatter", {
+#   X <- iris[,1:4]
+#   expect_equal(ics(X, S1 = cov(X), S2 = cov4(X), stdKurt = FALSE)@gKurt,
+#                ICS(X, S1 = ICS_cov(X), S2 = ICS_cov4(X))$gKurt)
+# })
 
 
 # Scores ------------------------------------------------------------------

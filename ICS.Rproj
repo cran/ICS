@@ -19,5 +19,5 @@ LineEndingConversion: Posix
 BuildType: Package
 PackageUseDevtools: Yes
 PackageInstallArgs: --no-multiarch --with-keep.source
-PackageBuildArgs: --compact-vignettes=gs+qpdf
+PackageBuildArgs: --no-manual --compact-vignettes=gs+qpdf
 PackageRoxygenize: rd,namespace

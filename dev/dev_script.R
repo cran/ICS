@@ -1,4 +1,7 @@
 
+# Package development
+devtools::load_all()
+
 ## Edit DESCRIPTION
 usethis::use_readme_rmd()
 

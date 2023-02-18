@@ -180,9 +180,9 @@ S2_Y.ICS_scatter <- S2_Y.matrix
 #' @param S2_args
 #' @param center logical indicating whether to center the ICS coordinates (scores)
 #' @param QR
-#' @param standardize character string specifying how to standardize the ICS
+#' @param fix_signs character string specifying how to fix_signs the ICS
 #                 coordinates, either 'scores' or 'eigenvectors'
-#' @param stdKurt
+#' @param scale_lambda
 #' @param na.action
 #' @param whiten
 #' @param ...
@@ -191,11 +191,13 @@ S2_Y.ICS_scatter <- S2_Y.matrix
 #' @export
 #'
 #' @examples
-ICS <- function(X, S1, S2, S1_args = list(), S2_args =  list(),
-                center = FALSE, QR = NULL,
-                standardize = c("scores", "eigenvectors"),
-                stdKurt=FALSE, na.action = na.fail,
+ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(), S2_args =  list(),
+                center = FALSE,
+                QR = NULL,
+                fix_signs = c("scores", "W"),
+                scale_lambda = FALSE,
                 whiten = NULL,
+                na.action = na.fail,
                 ...) {
   # initializations - data matrix
   X <- na.action(X)
@@ -227,17 +229,16 @@ ICS <- function(X, S1, S2, S1_args = list(), S2_args =  list(),
 
     }
   }
-
   S2_Y <- S2_Y(X, S1.X = S1.X, S2 = S2, S2_args = S2_args,
                whiten = whiten, QR = QR, S1_label, S2_label, ... )
   X_Z <- S2_Y$X_Z
   center <- isTRUE(center)
-  standardize <- match.arg(standardize)
+  fix_signs <- match.arg(fix_signs)
 
   # decomposition of S2
   S2.Y.eigen <- eigen(S2_Y$S2.Y$scatter, symmetric=TRUE)
   U2 <- S2.Y.eigen$vectors
-  gKurt <- S2.Y.eigen$values
+  lambda <- S2.Y.eigen$values
   if (isTRUE(QR)) {
     # Eigenvectors by rows
     Rinv <- qr.solve(S2_Y$R)
@@ -278,29 +279,30 @@ ICS <- function(X, S1, S2, S1_args = list(), S2_args =  list(),
     T1.Z <- S1.X$location %*% B
     T2.Z <- S2.X$location %*% B
 
-    gSkew <- T1.Z - T2.Z
-    skew.signs <- ifelse(gSkew >= 0, 1, -1)
+    gamma <- T1.Z - T2.Z
+    skew.signs <- ifelse(gamma >= 0, 1, -1)
+    gamma <- as.vector(skew.signs*gamma)
 
     B.res <- sweep(B, 1, skew.signs, "*")
     X_Z <- sweep(X_Z, 2, S1.X$location, "-")
     # What should it be
 
-    standardize <- "scores"
-    stdKurt <- FALSE
+    fix_signs <- "scores"
+    scale_lambda <- FALSE
     stdB = "Z"
   }else{
-    if (stdKurt == TRUE) gKurt <- gKurt/prod(gKurt)^(1/p)
-    if (standardize == "eigenvectors") {
-      stdB = "B"
+    if (scale_lambda == TRUE) lambda <- lambda/prod(lambda)^(1/p)
+    if (fix_signs == "W") {
       row.signs <- apply(B, 1, .sign.max)
       row.norms <- sqrt(rowSums((B)^2))
       B.res <- sweep(B, 1, row.norms * row.signs, "/")
+      gamma <- NULL
     }
-    if (standardize == "scores" & center == FALSE) {
-      stdB = "Z"
+    if (fix_signs == "scores" & center == FALSE) {
       Z1 <- tcrossprod(X_Z, B)
-      skewness <- colMeans(Z1) - apply(Z1, 2, median)
-      skew.signs <- ifelse(skewness > 0, 1, -1)
+      gamma <- colMeans(Z1) - apply(Z1, 2, median)
+      skew.signs <- ifelse(gamma > 0, 1, -1)
+      gamma <- as.vector(skew.signs*gamma)
       B.res <- sweep(B, 1, skew.signs, "*")
     }
   }
@@ -313,23 +315,98 @@ ICS <- function(X, S1, S2, S1_args = list(), S2_args =  list(),
     names.X <- paste(rep("X", p), 1:p, sep = ".")
   else names.X <- colnames(X)
 
-  res <- list(gKurt = gKurt, UnMix = B.res, S1 = S1, S2 = S2, S1name = S1_label,
-              S2name = S2_label, Scores = Z, DataNames = names.X,
-              StandardizeB = stdB, StandardizegKurt = stdKurt,
-              standardize = standardize)
+  res <- list(lambda = lambda, W = B.res,
+              scores = Z,
+              gamma = gamma,
+              S1_label = S1_label,
+              S2_label = S2_label,
+              S1_args = S1_args,
+              S2_args = S2_args,
+              center = center,
+              QR = ifelse(is.null(QR), FALSE, QR),
+              fix_signs = fix_signs,
+              scale_lambda = scale_lambda,
+              whiten = ifelse(is.null(whiten), FALSE, whiten),
+              X = X) # it is required if we want to plot X.
 
-  # res <- list(eigenvalues = gKurt, W = B.res, S1 = S1, S2 = S2,
-  #             S1name = S1_label,
-  #             S2name = S2_label,
-  #             Scores = Z,
-  #             standardize_eigenvalues = stdKurt,
-  #             standardize = standardize)
   class(res) <- "ICS"
   res
 
 }
 
 
+
+
+#' @method summary ICS
+#' @export
+summary.ICS <- function(object,digits=4)
+{
+  cat("\nICS with the following parameters: \n")
+  cat("S1:", object$S1_label)
+  if (length(object$S1_args)>0){
+    sapply(1:length(object$S1_args), function(i)
+      cat("\n", paste0(names(object$S1_args)[i],":"), object$S1_args[[i]]))
+  }
+  if (length(object$S2_args)>0){
+    cat("\nS2:", object$S2_label)
+    sapply(1:length(object$S2_args), function(i)
+      cat("\n", paste0(names(object$S2_args)[i],":"), object$S2_args[[i]]))
+  }
+  cat("\nQR:", object$QR)
+  cat("\nwhiten:", object$whiten)
+  cat("\nscale_lambda:", object$scale_lambda)
+  cat("\nfix_signs:", object$fix_signs)
+  cat("\ncenter:", object$center)
+  cat("\n")
+  cat("\nThe generalized kurtosis measures (lambda) of the components are:\n")
+  print(format(round(object$lambda,digits)),quote=F)
+  cat("\n")
+  cat("\nThe W matrix is:\n")
+  print(round(object$W,digits))
+  invisible(object)
+}
+
+#' @method coef ICS
+#' @export
+coef.ICS <- function(object){
+  return(object$W)
+}
+
+#' @method fitted ICS
+#' @export
+fitted.ICS <- function(object, index=NULL) {
+  p <- ncol(object$scores)
+  if (is.null(index) == FALSE && max(index)>p) stop("undefined columns selected")
+  Mix <- solve(object$W)
+  if (is.null(index)) index=1:p
+  fits <- tcrossprod(as.matrix(object$scores[,index]), Mix[,index])
+  return(as.data.frame(fits))
+}
+
+
+#' @method plot ICS
+#' @export
+#' @importFrom graphics pairs
+plot.ICS <- function(x,index=NULL,...){
+  p<-ncol(x$W)
+  if (is.null(index) & p<=6) pairs(x$scores,...)
+  if (is.null(index) & p>6) pairs(x$scores[,c(1:3,p-2:0)],...)
+  if (length(index)==1) stop("index must be NULL or at least a vector of length 2")
+  if (length(index)>1) pairs(x$scores[,index],...)
+}
+
+#' @method print ICS
+#' @export
+print.ICS <- function(object){
+  tmp <- list(lambda=object$lambda,
+              W=object$W)
+  print(tmp, quote = FALSE)
+  invisible(tmp)
+}
+
+
+
+## internal function to convert scatter matrices to the required class
 ## internal function to apply a scatter function to the data matrix
 # X ......... data matrix
 # fun ....... function to compute a scatter matrix
@@ -353,7 +430,6 @@ get_scatter <- function(X, fun = cov, args = list(), convert = TRUE, label) {
 }
 
 
-## internal function to convert scatter matrices to the required class
 
 to_ICS_scatter <- function(object, ...) UseMethod("to_ICS_scatter")
 

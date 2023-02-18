@@ -4,21 +4,43 @@
 #' @export
 #' @importFrom graphics plot barplot axis
 `screeplot.ics` <-
-    function(x,index=NULL,type="barplot",
-               main = deparse(substitute(x)),ylab="generalized kurtosis",xlab= "component", names.arg=index, labels=TRUE,...)
-    {
+  function(x,index=NULL,type="barplot",
+           main = deparse(substitute(x)),ylab="generalized kurtosis",xlab= "component", names.arg=index, labels=TRUE,...)
+  {
     #if(class(x)!="ics") stop("'x' must be of class ics")
     type<-match.arg(type,c("barplot","lines"))
     if (is.null(index)) index=1:length(x@gKurt)
     if (type=="barplot")
-        {
-        barplot(x@gKurt[index],names.arg=names.arg,ylab=ylab,xlab=xlab,main=main,...)
-        }
-    else
-        {
-        plot(index,x@gKurt[index],type="b",ylab=ylab,xlab=xlab,axes=FALSE,main=main,...)
-        axis(2)
-        axis(1, at = seq_along(index), labels = labels)
-        }
-    invisible()
+    {
+      barplot(x@gKurt[index],names.arg=names.arg,ylab=ylab,xlab=xlab,main=main,...)
     }
+    else
+    {
+      plot(index,x@gKurt[index],type="b",ylab=ylab,xlab=xlab,axes=FALSE,main=main,...)
+      axis(2)
+      axis(1, at = seq_along(index), labels = labels)
+    }
+    invisible()
+  }
+
+#' @export
+#' @method screeplot ICS
+#' @importFrom graphics plot barplot axis
+screeplot.ICS <- function(x, index = NULL, type = "barplot",
+                          main = deparse(substitute(x)), ylab = "generalized kurtosis",
+                          xlab = "component", names.arg = index, labels = TRUE,...)  {
+  #if(class(x)!="ics") stop("'x' must be of class ics")
+  type<-match.arg(type,c("barplot","lines"))
+  if (is.null(index)) index=1:length(x$lambda)
+  if (type=="barplot")
+  {
+    barplot(x$lambda[index],names.arg=names.arg,ylab=ylab,xlab=xlab,main=main,...)
+  }
+  else
+  {
+    plot(index,x$lambda[index],type="b",ylab=ylab,xlab=xlab,axes=FALSE,main=main,...)
+    axis(2)
+    axis(1, at = seq_along(index), labels = labels)
+  }
+  invisible()
+}

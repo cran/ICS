@@ -339,18 +339,18 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(), S2_args =  lis
 
 #' @method summary ICS
 #' @export
-summary.ICS <- function(object,digits=4)
+summary.ICS <- function(object, digits = 4)
 {
   cat("\nICS with the following parameters: \n")
   cat("S1:", object$S1_label)
-  if (length(object$S1_args)>0){
+  if (length(object$S1_args) > 0){
     sapply(1:length(object$S1_args), function(i)
-      cat("\n", paste0(names(object$S1_args)[i],":"), object$S1_args[[i]]))
+      cat("\n", paste0(names(object$S1_args)[i], ":"), object$S1_args[[i]]))
   }
+  cat("\nS2:", object$S2_label)
   if (length(object$S2_args)>0){
-    cat("\nS2:", object$S2_label)
     sapply(1:length(object$S2_args), function(i)
-      cat("\n", paste0(names(object$S2_args)[i],":"), object$S2_args[[i]]))
+      cat("\n", paste0(names(object$S2_args)[i], ":"), object$S2_args[[i]]))
   }
   cat("\nQR:", object$QR)
   cat("\nwhiten:", object$whiten)
@@ -359,10 +359,10 @@ summary.ICS <- function(object,digits=4)
   cat("\ncenter:", object$center)
   cat("\n")
   cat("\nThe generalized kurtosis measures (lambda) of the components are:\n")
-  print(format(round(object$lambda,digits)),quote=F)
+  print(format(round(object$lambda, digits)), quote = FALSE)
   cat("\n")
   cat("\nThe W matrix is:\n")
-  print(round(object$W,digits))
+  print(round(object$W, digits))
   invisible(object)
 }
 

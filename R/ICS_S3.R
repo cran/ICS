@@ -326,8 +326,7 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(), S2_args =  lis
               QR = ifelse(is.null(QR), FALSE, QR),
               fix_signs = fix_signs,
               scale_lambda = scale_lambda,
-              whiten = ifelse(is.null(whiten), FALSE, whiten),
-              X = X) # it is required if we want to plot X.
+              whiten = ifelse(is.null(whiten), FALSE, whiten))
 
   class(res) <- "ICS"
   res
@@ -339,31 +338,9 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(), S2_args =  lis
 
 #' @method summary ICS
 #' @export
-summary.ICS <- function(object, digits = 4)
-{
-  cat("\nICS with the following parameters: \n")
-  cat("S1:", object$S1_label)
-  if (length(object$S1_args) > 0){
-    sapply(1:length(object$S1_args), function(i)
-      cat("\n", paste0(names(object$S1_args)[i], ":"), object$S1_args[[i]]))
-  }
-  cat("\nS2:", object$S2_label)
-  if (length(object$S2_args)>0){
-    sapply(1:length(object$S2_args), function(i)
-      cat("\n", paste0(names(object$S2_args)[i], ":"), object$S2_args[[i]]))
-  }
-  cat("\nQR:", object$QR)
-  cat("\nwhiten:", object$whiten)
-  cat("\nscale_lambda:", object$scale_lambda)
-  cat("\nfix_signs:", object$fix_signs)
-  cat("\ncenter:", object$center)
-  cat("\n")
-  cat("\nThe generalized kurtosis measures (lambda) of the components are:\n")
-  print(format(round(object$lambda, digits)), quote = FALSE)
-  cat("\n")
-  cat("\nThe W matrix is:\n")
-  print(round(object$W, digits))
-  invisible(object)
+summary.ICS <- function(object){
+  return(object)
+
 }
 
 #' @method coef ICS
@@ -397,11 +374,30 @@ plot.ICS <- function(x,index=NULL,...){
 
 #' @method print ICS
 #' @export
-print.ICS <- function(object){
-  tmp <- list(lambda=object$lambda,
-              W=object$W)
-  print(tmp, quote = FALSE)
-  invisible(tmp)
+print.ICS <- function(object, digits = 4){
+  cat("\nICS with the following parameters: \n")
+  cat("S1:", object$S1_label)
+  if (length(object$S1_args) > 0){
+    sapply(1:length(object$S1_args), function(i)
+      cat("\n", paste0(names(object$S1_args)[i], ":"), object$S1_args[[i]]))
+  }
+  cat("\nS2:", object$S2_label)
+  if (length(object$S2_args)>0){
+    sapply(1:length(object$S2_args), function(i)
+      cat("\n", paste0(names(object$S2_args)[i], ":"), object$S2_args[[i]]))
+  }
+  cat("\nQR:", object$QR)
+  cat("\nwhiten:", object$whiten)
+  cat("\nscale_lambda:", object$scale_lambda)
+  cat("\nfix_signs:", object$fix_signs)
+  cat("\ncenter:", object$center)
+  cat("\n")
+  cat("\nThe generalized kurtosis measures (lambda) of the components are:\n")
+  print(format(round(object$lambda, digits)), quote = FALSE)
+  cat("\n")
+  cat("\nThe W matrix of coefficients is:\n")
+  print(round(object$W, digits))
+  invisible(object)
 }
 
 

@@ -73,14 +73,19 @@ ICS_covW <- function(x, na.action = na.fail, alpha = 1, cf = 1 ) {
 
 S2_Y <- function(X, S1, S2, ...) UseMethod("S2_Y", S2)
 
-S2_Y.function <- function(X, S1.X, S2, S2_args = list(),
-                          whiten = NULL,
-                          QR = NULL, S1_label, S2_label, ...) {
+S2_Y.function <- function(X, S1.X, S2, S2_args = list(), QR = FALSE,
+                          whiten = !QR, S1_label, S2_label, ...) {
   # Initialization
   S2.X <- S2
 
-  if (isTRUE(QR)) {
-    whiten <- FALSE
+  if (QR) {
+
+    # TODO: I think this can be deleted since we don't do anything with it?
+    # whiten <- FALSE
+
+    # TODO: Since this is an internal function, we should make sure in ICS()
+    #       that it is called correctly, then we don't need further checks
+    #       here.  And let's avoid 'break' statements.
     if (!(S1_label %in% c("cov", "ICS_cov") &  S2_label %in% c("covW", "ICS_covW"))){
 
       warning("'QR' is possible only for 'S1' being 'cov' or 'ICS_cov' and ",
@@ -88,6 +93,7 @@ S2_Y.function <- function(X, S1.X, S2, S2_args = list(),
       break
 
     }
+
     # Aurore: do we want to change cov4 to covW with correct arguments?
     # same for CovAxis?
 
@@ -119,34 +125,37 @@ S2_Y.function <- function(X, S1.X, S2, S2_args = list(),
 
     # Spectral decomposition (SEP) of S2.Y
     # Computation of S2 - with general one-step M-estimators
+    S2.Y <- S2_args$cf*1/n*(n-1)*t(Q) %*% diag(d_i^S2_args$alpha) %*% Q
     # convert scatter matrices to class "ICS_scatter"
-    S2.Y <- to_ICS_scatter(S2_args$cf*1/n*(n-1)*t(Q) %*% diag(d_i^S2_args$alpha) %*% Q, label = S2_label)
+    S2.Y <- to_ICS_scatter(S2.Y, label = S2_label)
 
     # Reorder the rows and cols of X
     X_Z <-  X_row_per[order(order_rows),qr_X$pivot]
     B1 <- NULL
+
   } else {
+
     # compute B1 = S1.X^-1/2
     S1.X.eigen <- eigen(S1.X$scatter, symmetric=TRUE)
     B1 <- S1.X.eigen$vectors %*% tcrossprod(diag(S1.X.eigen$values^(-0.5)), S1.X.eigen$vectors)
 
-    # obtain second scatter matrix
-    # whiten the data if requested - only possible if S2 is a function
+    # obtain second scatter matrix and whiten the data if requested
     # convert scatter matrices to class "ICS_scatter"
-    if (whiten & is.function(S2)) {
+    if (whiten) {
       Y <- X %*% B1
       S2.Y <- get_scatter(Y, fun = S2, args = S2_args, label = S2_label)
-    }else{
+    } else {
       # or compute S1.X^-1/2*S2.Y*S1.X^-1/2
       S2.X <- get_scatter(X, fun = S2, args = S2_args)
       S2.Y <- to_ICS_scatter(B1 %*% S2.X$scatter %*% B1, label = S2_label)
     }
     X_Z <- X
     R <- NULL
+
   }
-  # call the default method
-  list(X, S2.X = S2.X, S2.Y = S2.Y, B1 = B1, R = R, X_Z = X_Z,
-       ...)
+
+  # return list of results
+  list(X, S2.X = S2.X, S2.Y = S2.Y, B1 = B1, R = R, X_Z = X_Z, ...)
 }
 
 
@@ -163,6 +172,7 @@ S2_Y.matrix <- function(X, S1.X, S2, S1_label, S2_label, ...) {
   S2.X <- to_ICS_scatter(S2, label = S2_label)
   S2.Y <- to_ICS_scatter(B1 %*% S2.X$scatter %*% B1, label = S2_label)
 
+  # return list of results
   list(S2.X = S2.X, S2.Y = S2.Y, B1 = B1, X_Z = X, ...)
 }
 
@@ -178,33 +188,29 @@ S2_Y.ICS_scatter <- S2_Y.matrix
 #' @param S2
 #' @param S1_args
 #' @param S2_args
-#' @param center logical indicating whether to center the ICS coordinates (scores)
 #' @param QR
+#' @param whiten
+#' @param center logical indicating whether to center the ICS coordinates (scores)
 #' @param fix_signs character string specifying how to fix_signs the ICS
 #                 coordinates, either 'scores' or 'eigenvectors'
 #' @param scale_lambda
 #' @param na.action
-#' @param whiten
 #' @param ...
 #'
 #' @return
 #' @export
 #'
 #' @examples
-ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(), S2_args =  list(),
-                center = FALSE,
-                QR = NULL,
-                fix_signs = c("scores", "W"),
-                scale_lambda = FALSE,
-                whiten = NULL,
-                na.action = na.fail,
-                ...) {
+ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
+                S2_args =  list(), QR = NULL,  whiten = NULL,
+                center = FALSE, fix_signs = c("scores", "W"),
+                scale_lambda = FALSE, na.action = na.fail, ...) {
+
   # initializations - data matrix
   X <- na.action(X)
   X <- as.matrix(X)
-  p <- dim(X)[2]
-  if (p < 2)
-    stop("'X' must be at least bivariate")
+  p <- ncol(X)
+  if (p < 2) stop("'X' must be at least bivariate")
 
   # obtain first scatter matrix
   S1_label <- deparse(substitute(S1))
@@ -214,65 +220,78 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(), S2_args =  lis
   if (is.function(S1)) {
     S1.X <- get_scatter(X, fun = S1, args = S1_args, label = S1_label)
   } else S1.X <- to_ICS_scatter(S1, label = S1_label)
+  # TODO: I think we need to update S1_label here to S1.X$label
+  #       (then the check below for the default value of 'QR'
+  #       may need to be adjusted accordingly)
 
+  # if S2 is a function, we need to set some default values
+  if (is.function(S2)) {
+    # QR algorithm can only be applied for a certain class of scatter pairs
+    if (S1_label %in% c("cov", "ICS_cov") && S2_label %in% c("covW", "ICS_covW")) {
+      if (is.null(QR)) QR <- TRUE  # use QR algorithm by default
+      else QR <- isTRUE(QR)        # otherwise ensure correct user input
+    } else QR <- FALSE             # not applicable for other scatter pairs
+    # whitening is only relevant when we don't have the QR algorithm
+    if (QR) whiten <- FALSE
+    else {
+      # use whitening by default, otherwise ensure correct user input
+      if (is.null(whiten)) whiten <- TRUE
+      else whiten <- isTRUE(whiten)
+    }
+  } else {
+    # when S2 is a scatter matrix, QR algorithm or whitening are not applicable
+    QR <- FALSE
+    whiten <- FALSE
+  }
 
   # compute S2_Y
-  # determine which should be the best default value of whiten
-  if(is.null(whiten) & is.function(S2)){
-    whiten <- TRUE
-  }
-  # determine which should be the best default value of QR
-  if(is.null(QR) & is.function(S2)){
-    if (S1_label %in% c("cov", "ICS_cov") &
-        S2_label %in% c("covW", "ICS_covW")){
-      QR <- TRUE
-
-    }
-  }
   S2_Y <- S2_Y(X, S1.X = S1.X, S2 = S2, S2_args = S2_args,
-               whiten = whiten, QR = QR, S1_label, S2_label, ... )
+               QR = QR, whiten = whiten, S1_label, S2_label, ... )
   X_Z <- S2_Y$X_Z
-  center <- isTRUE(center)
-  fix_signs <- match.arg(fix_signs)
 
   # decomposition of S2
   S2.Y.eigen <- eigen(S2_Y$S2.Y$scatter, symmetric=TRUE)
   U2 <- S2.Y.eigen$vectors
   lambda <- S2.Y.eigen$values
-  if (isTRUE(QR)) {
+  if (QR) {
     # Eigenvectors by rows
     Rinv <- qr.solve(S2_Y$R)
     B <- t(U2) %*% t(Rinv)
 
-  }else{
+  } else {
     B <- crossprod(U2, S2_Y$B1)
   }
 
   # choosing the signs of B
   # centering only makes sense if the scatter objects have location components
+  center <- isTRUE(center)
   if (center){
-    if (is.function(S2)){
-      if(is.null(S1.X$location) & is.function(S2)) {
+    if (is.function(S2)) {
+      # TODO: Is this correct? If S2 is a function, we have S2.X in most cases
+      #       so that we can check if we have a location component, no? As far
+      #       as I can see, we only don't have a location component if the QR
+      #       algorithm has been used. Am I missing something?
+      if (is.null(S1.X$location) && is.function(S2)) {
         center <- FALSE
-        warning("'S1' need to have a location component for centering ",
+        warning("'S1' needs to have a location component for centering ",
                 "the data; proceeding without centering")
       }
-    }else{
-      if(is.null(S1.X$location) ||
-         is.null(S2_Y$S2.X$location)){
+    } else {
+      if (is.null(S1.X$location) || is.null(S2_Y$S2.X$location)) {
         center <- FALSE
-        warning("'S1' and 'S2' need to have a location component for centering ",
-                "the data; proceeding without centering")
+        warning("'S1' and 'S2' need to have a location component for ",
+                "centering the data; proceeding without centering")
       }
     }
   }
 
 
+  # TODO: add more comments for this next part
+  if (center) {
 
-  if (center){
     if (is.function(S2)) {
       S2.X <- get_scatter(X, fun = S2, args = S2_args)
-    }else{
+    } else {
       S2.X <- to_ICS_scatter(S2, label = deparse(substitute(S2)))
     }
 
@@ -289,45 +308,57 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(), S2_args =  lis
 
     fix_signs <- "scores"
     scale_lambda <- FALSE
-    stdB = "Z"
-  }else{
-    if (scale_lambda == TRUE) lambda <- lambda/prod(lambda)^(1/p)
+
+    # TODO: I think this is a leftover and can be deleted?
+    # stdB = "Z"
+
+  } else {
+
+    # further initializations
+    fix_signs <- match.arg(fix_signs)
+    scale_lambda <- isTRUE(scale_lambda)
+
+    if (scale_lambda) lambda <- lambda/prod(lambda)^(1/p)
     if (fix_signs == "W") {
       row.signs <- apply(B, 1, .sign.max)
       row.norms <- sqrt(rowSums((B)^2))
       B.res <- sweep(B, 1, row.norms * row.signs, "/")
       gamma <- NULL
     }
-    if (fix_signs == "scores" & center == FALSE) {
+    if (fix_signs == "scores" && !center) {
       Z1 <- tcrossprod(X_Z, B)
       gamma <- colMeans(Z1) - apply(Z1, 2, median)
       skew.signs <- ifelse(gamma > 0, 1, -1)
       gamma <- as.vector(skew.signs*gamma)
       B.res <- sweep(B, 1, skew.signs, "*")
     }
+
   }
 
   # compute the scores
+  # TODO: Do we really need a data frame here? Wouldn't it better to return a
+  #       matrix of scores? A user may want to do some linear algebra with it.
   Z <- as.data.frame(tcrossprod(X_Z, B.res))
   names(Z) <- paste(rep("IC", p), 1:p, sep = ".")
 
-  if (is.null(colnames(X)) == TRUE)
-    names.X <- paste(rep("X", p), 1:p, sep = ".")
-  else names.X <- colnames(X)
+  # TODO: I think this is a leftover and can be deleted?
+  # names.X <- colnames(X)
+  # if (is.null(names.X)) names.X <- paste(rep("X", p), 1:p, sep = ".")
 
-  res <- list(lambda = lambda, W = B.res,
+  # construct object to be returned
+  res <- list(lambda = lambda,
+              W = B.res,
               scores = Z,
               gamma = gamma,
               S1_label = S1_label,
               S2_label = S2_label,
               S1_args = S1_args,
               S2_args = S2_args,
+              QR = QR,
+              whiten = whiten,
               center = center,
-              QR = ifelse(is.null(QR), FALSE, QR),
-              fix_signs = fix_signs,
               scale_lambda = scale_lambda,
-              whiten = ifelse(is.null(whiten), FALSE, whiten))
-
+              fix_signs = fix_signs)
   class(res) <- "ICS"
   res
 
@@ -338,14 +369,13 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(), S2_args =  lis
 
 #' @method summary ICS
 #' @export
-summary.ICS <- function(object){
+summary.ICS <- function(object) {
   return(object)
-
 }
 
 #' @method coef ICS
 #' @export
-coef.ICS <- function(object){
+coef.ICS <- function(object) {
   return(object$W)
 }
 

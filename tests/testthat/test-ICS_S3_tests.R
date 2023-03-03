@@ -53,8 +53,8 @@ test_that("ics2 - ICS_S3 eigenvalues - S1 and S2 are functions", {
 
 test_that("ics - ICS_S3 eigenvalues - S1 and S2 are functions", {
   X <- iris[,1:4]
-  expect_equal(ICS(X, S1 = ICS_cov, S2 = ICS_cov4, withen = FALSE)$lambda,
-               ICS(X, S1 = ICS_cov, S2 = ICS_cov4, withen = TRUE)$lambda)
+  expect_equal(ICS(X, S1 = ICS_cov, S2 = ICS_cov4, whiten = FALSE)$lambda,
+               ICS(X, S1 = ICS_cov, S2 = ICS_cov4, whiten = TRUE)$lambda)
 })
 
 
@@ -88,23 +88,23 @@ test_that("ics - ICS_S3 eigenvalues -  S2 is ICS_scatter", {
 test_that("ics - ICS_S3 scores - S1 and S2 are functions - scores standardization", {
   X <- iris[,1:4]
   expect_equal(ics(X, S1 = cov, S2 = cov4, stdKurt = FALSE, stdB = "Z")@Scores,
-               ICS(X, S1 = ICS_cov, S2 = ICS_cov4, fix_signs = "scores",
-                   center = FALSE)$scores)
+               data.frame(ICS(X, S1 = ICS_cov, S2 = ICS_cov4, fix_signs = "scores",
+                   center = FALSE)$scores))
 })
 
 
 test_that("ics - ICS_S3 scores - S1 and S2 are functions - eigenvectors standardization", {
   X <- iris[,1:4]
   expect_equal(ics(X, S1 = cov, S2 = cov4, stdKurt = FALSE, stdB = "B")@Scores,
-               ICS(X, S1 = ICS_cov, S2 = ICS_cov4, fix_signs = "W",
-                   center = FALSE)$scores)
+               data.frame(ICS(X, S1 = ICS_cov, S2 = ICS_cov4, fix_signs = "W",
+                   center = FALSE)$scores))
 })
 
 test_that("ics2 - ICS_S3 scores - S1 and S2 are functions - centering", {
   X <- iris[,1:4]
   expect_equal(ics2(X, S1 = MeanCov, S2 = Mean3Cov4)@Scores,
-               ICS(X, S1 = ICS_cov, S2 = ICS_Mean3Cov4,
-                   fix_signs = "scores", center = TRUE)$scores)
+               data.frame(ICS(X, S1 = ICS_cov, S2 = ICS_Mean3Cov4,
+                   fix_signs = "scores", center = TRUE)$scores))
 })
 
 test_that("ics2 - ICS_S3 gSkew - S1 and S2 are functions - centering", {
@@ -133,7 +133,7 @@ test_that("ics - ICS_S3 eigenvalues - S1 and S2 are functions - QR", {
 test_that("ics - ICS_S3 scores - S1 and S2 are functions - QR ", {
   X <- iris[,1:4]
   expect_equal(ics(scale(X, center = TRUE, scale = FALSE), S1 = cov, S2 = cov4, stdB = "Z", stdKurt = FALSE)@Scores,
-               ICS(X, S1 = ICS_cov, S2 =  ICS_covW, S2_args = list(alpha = 1, cf = 1/(ncol(X)+2)), QR = TRUE, fix_signs = "scores")$scores)
+               data.frame(ICS(X, S1 = ICS_cov, S2 =  ICS_covW, S2_args = list(alpha = 1, cf = 1/(ncol(X)+2)), QR = TRUE, fix_signs = "scores")$scores))
 })
 
 test_that("ics2 - S1 and S2 are functions - QR", {

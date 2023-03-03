@@ -80,23 +80,6 @@ S2_Y.function <- function(X, S1.X, S2, S2_args = list(), QR = FALSE,
 
   if (QR) {
 
-    # TODO: I think this can be deleted since we don't do anything with it?
-    # whiten <- FALSE
-
-    # TODO: Since this is an internal function, we should make sure in ICS()
-    #       that it is called correctly, then we don't need further checks
-    #       here.  And let's avoid 'break' statements.
-    if (!(S1_label %in% c("cov", "ICS_cov") &  S2_label %in% c("covW", "ICS_covW"))){
-
-      warning("'QR' is possible only for 'S1' being 'cov' or 'ICS_cov' and ",
-              "'S2' being 'covW' or 'ICS_covW'")
-      break
-
-    }
-
-    # Aurore: do we want to change cov4 to covW with correct arguments?
-    # same for CovAxis?
-
     # Details
     n <- nrow(X)
     p <- ncol(X)
@@ -170,7 +153,8 @@ S2_Y.matrix <- function(X, S1.X, S2, S1_label, S2_label, ...) {
   # or compute S1.X^-1/2*S2.Y*S1.X^-1/2
   # convert scatter matrices to class "ICS_scatter"
   S2.X <- to_ICS_scatter(S2, label = S2_label)
-  S2.Y <- to_ICS_scatter(B1 %*% S2.X$scatter %*% B1, label = S2_label)
+  S2.Y <- B1 %*% S2.X$scatter %*% B1
+  S2.Y <- to_ICS_scatter(S2.Y, label = S2_label)
 
   # return list of results
   list(S2.X = S2.X, S2.Y = S2.Y, B1 = B1, X_Z = X, ...)
@@ -223,6 +207,7 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
   # TODO: I think we need to update S1_label here to S1.X$label
   #       (then the check below for the default value of 'QR'
   #       may need to be adjusted accordingly)
+  # Aurore: yes
 
   # if S2 is a function, we need to set some default values
   if (is.function(S2)) {
@@ -240,6 +225,7 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
     }
   } else {
     # when S2 is a scatter matrix, QR algorithm or whitening are not applicable
+    # TODO: should we add some warnings when we change the default values?
     QR <- FALSE
     whiten <- FALSE
   }
@@ -271,6 +257,7 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
       #       so that we can check if we have a location component, no? As far
       #       as I can see, we only don't have a location component if the QR
       #       algorithm has been used. Am I missing something?
+      # Aurore: for example TCOV is a function but has no location component
       if (is.null(S1.X$location) && is.function(S2)) {
         center <- FALSE
         warning("'S1' needs to have a location component for centering ",
@@ -309,9 +296,6 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
     fix_signs <- "scores"
     scale_lambda <- FALSE
 
-    # TODO: I think this is a leftover and can be deleted?
-    # stdB = "Z"
-
   } else {
 
     # further initializations
@@ -336,14 +320,8 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
   }
 
   # compute the scores
-  # TODO: Do we really need a data frame here? Wouldn't it better to return a
-  #       matrix of scores? A user may want to do some linear algebra with it.
-  Z <- as.data.frame(tcrossprod(X_Z, B.res))
-  names(Z) <- paste(rep("IC", p), 1:p, sep = ".")
-
-  # TODO: I think this is a leftover and can be deleted?
-  # names.X <- colnames(X)
-  # if (is.null(names.X)) names.X <- paste(rep("X", p), 1:p, sep = ".")
+  Z <- tcrossprod(X_Z, B.res)
+  colnames(Z) <- paste(rep("IC", p), 1:p, sep = ".")
 
   # construct object to be returned
   res <- list(lambda = lambda,

@@ -221,12 +221,13 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
     S1.X <- get_scatter(X, fun = S1, args = S1_args, label = S1_label)
   } else S1.X <- to_ICS_scatter(S1, label = S1_label)
   # TODO: I think we need to update S1_label here to S1.X$label
-  #       (then the check below for the default value of 'QR'
-  #       may need to be adjusted accordingly)
 
   # if S2 is a function, we need to set some default values
   if (is.function(S2)) {
     # QR algorithm can only be applied for a certain class of scatter pairs
+    # TODO: we should check whether we have the actual functions rather than
+    #       checking the labels, no? I can submit a scatter matrix named "cov"
+    #       (no matter how it was computed) and it would pass the check.
     if (S1_label %in% c("cov", "ICS_cov") && S2_label %in% c("covW", "ICS_covW")) {
       if (is.null(QR)) QR <- TRUE  # use QR algorithm by default
       else QR <- isTRUE(QR)        # otherwise ensure correct user input

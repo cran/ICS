@@ -4,7 +4,7 @@
 \alias{ICS_cov4}
 \title{Title}
 \usage{
-ICS_cov4(x)
+ICS_cov4(x, location = c("mean3", "mean", "none"))
 }
 \arguments{
 \item{x}{}

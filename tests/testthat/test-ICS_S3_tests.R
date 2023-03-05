@@ -103,15 +103,15 @@ test_that("ics - ICS_S3 scores - S1 and S2 are functions - eigenvectors standard
 test_that("ics2 - ICS_S3 scores - S1 and S2 are functions - centering", {
   X <- iris[,1:4]
   expect_equal(ics2(X, S1 = MeanCov, S2 = Mean3Cov4)@Scores,
-               data.frame(ICS(X, S1 = ICS_cov, S2 = ICS_Mean3Cov4,
-                   fix_signs = "scores", center = TRUE)$scores))
+               data.frame(ICS(X, S1 = ICS_cov, S2 = ICS_cov4, whiten = FALSE,
+                              center = TRUE, fix_signs = "scores")$scores))
 })
 
 test_that("ics2 - ICS_S3 gSkew - S1 and S2 are functions - centering", {
   X <- iris[,1:4]
   expect_equal(ics2(X, S1 = MeanCov, S2 = Mean3Cov4)@gSkew,
-               ICS(X, S1 = ICS_cov, S2 = ICS_Mean3Cov4,
-                   fix_signs = "scores", center = TRUE)$gamma)
+               ICS(X, S1 = ICS_cov, S2 = ICS_cov4, whiten = FALSE,
+                   center = TRUE, fix_signs = "scores")$gamma)
 })
 
 ## QR ----------------------------------------------------------------------

@@ -102,6 +102,14 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
   S1_label <- deparse(substitute(S1))
   S2_label <- deparse(substitute(S2))
 
+  # TODO: we first check 'QR' and 'whiten', and 'center' is only applicable if
+  #       both are FALSE.  That is, if a user supplies a function for S2 and
+  #       wants to center, simply setting 'center = TRUE' is not enough, they
+  #       also have to set 'whiten = FALSE' and/or 'QR = FALSE'. Is this the
+  #       behavior we want? We could check which arguments are supplied, and
+  #       set defaults for others, although that becomes rather cumbersome to
+  #       implement and document.
+
   # check argument for QR algorithm
   have_QR <- !is.null(QR)
   if (have_QR) QR <- isTRUE(QR)
@@ -126,8 +134,10 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
   if (is.function(S2)) {
     if (QR) {
       # whitening is not applicable when we have the QR algorithm
-      warning("whitening is not applicable for QR algorithm; ",
+      if (have_whiten && whiten) {
+        warning("whitening is not applicable for QR algorithm; ",
               "proceeding without whitening")
+      }
       whiten <- FALSE
     } else if (!have_whiten) {
       # use whitening by default

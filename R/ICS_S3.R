@@ -11,7 +11,7 @@
 ICS_cov <- function(x, location = c("mean", "none")) {
   # initializations
   location <- match.arg(location)
-  # compute center and scatter estimates
+  # compute location and scatter estimates
   location <- if (location == "mean") colMeans(x)
   out <- list(location = location, scatter = cov(x), label = "COV")
   # add class and return object
@@ -33,9 +33,10 @@ ICS_cov <- function(x, location = c("mean", "none")) {
 ICS_cov4 <- function(x, location = c("mean3", "mean", "none")) {
   # initializations
   location <- match.arg(location)
-  # compute center and scatter estimates
+  # compute location and scatter estimates
   location <- switch(location, "mean3" = mean3(x), "mean" = colMeans(x))
-  out <- list(location = location, scatter = cov4(x), label = "COV4")
+  out <- list(location = location, scatter = cov4(x),
+              label = get_cov4_label())
   # add class and return object
   class(out) <- "ICS_scatter"
   out
@@ -45,7 +46,6 @@ ICS_cov4 <- function(x, location = c("mean3", "mean", "none")) {
 #' Title
 #'
 #' @param x
-#' @param na.action
 #' @param alpha
 #' @param cf
 #'
@@ -53,11 +53,34 @@ ICS_cov4 <- function(x, location = c("mean3", "mean", "none")) {
 #' @export
 #'
 #' @examples
-ICS_covW <- function(x, na.action = na.fail, alpha = 1, cf = 1) {
-  # compute center and scatter estimates
-  scatter <- covW(x, na.action = na.fail, alpha = alpha, cf = cf)
+ICS_covW <- function(x, alpha = 1, cf = 1) {
+  # TODO: we may need an argument to use a different location estimate so
+  #       that fixing the signs based on generalized skewness makes sense
+  # compute location and scatter estimates
+  scatter <- covW(x, alpha = alpha, cf = cf)
   out <- list(location = colMeans(x), scatter = scatter,
               label = get_covW_label())
+  # add class and return object
+  class(out) <- "ICS_scatter"
+  out
+}
+
+
+#' Title
+#'
+#' @param x
+#'
+#' @return
+#' @export
+#'
+#' @examples
+## TODO: Do we need to allow passing other arguments to cov4? Then we also need
+##       to figure out what to do with the location argument of cov4().
+ICS_covAxis <- function(x) {
+  # compute location and scatter estimates
+  # TODO: what location estimate should we use?
+  out <- list(location = NULL, scatter = covAxis(x),
+              label = get_covAxis_label())
   # add class and return object
   class(out) <- "ICS_scatter"
   out
@@ -77,7 +100,7 @@ ICS_covW <- function(x, na.action = na.fail, alpha = 1, cf = 1) {
 #' @param whiten
 #' @param center logical indicating whether to center the ICS coordinates (scores)
 #' @param fix_signs character string specifying how to fix_signs the ICS
-#                 coordinates, either 'scores' or 'eigenvectors'
+#                 coordinates, either "scores" or "W"
 #' @param scale_lambda
 #' @param na.action
 #' @param ...
@@ -87,7 +110,7 @@ ICS_covW <- function(x, na.action = na.fail, alpha = 1, cf = 1) {
 #'
 #' @examples
 ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
-                S2_args =  list(), QR = NULL, whiten = NULL,
+                S2_args = list(), QR = NULL, whiten = NULL,
                 center = FALSE, scale_lambda = FALSE,
                 fix_signs = c("scores", "W"),
                 na.action = na.fail, ...) {
@@ -102,22 +125,15 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
   S1_label <- deparse(substitute(S1))
   S2_label <- deparse(substitute(S2))
 
-  # TODO: we first check 'QR' and 'whiten', and 'center' is only applicable if
-  #       both are FALSE.  That is, if a user supplies a function for S2 and
-  #       wants to center, simply setting 'center = TRUE' is not enough, they
-  #       also have to set 'whiten = FALSE' and/or 'QR = FALSE'. Is this the
-  #       behavior we want? We could check which arguments are supplied, and
-  #       set defaults for others, although that becomes rather cumbersome to
-  #       implement and document. My vote is to leave it as is, in particular
-  #       because I think that we can use centering when whitening.
-
   # check argument for QR algorithm
   have_QR <- !is.null(QR)
   if (have_QR) QR <- isTRUE(QR)
   # QR algorithm requires a certain class of scatter pairs supplied as functions
   have_cov <- identical(S1, cov) || identical(S1, ICS_cov)
+  have_cov4 <- identical(S2, cov4) || identical(S2, ICS_cov4)
   have_covW <- identical(S2, covW) || identical(S2, ICS_covW)
-  if (have_cov && have_covW) {
+  have_covAxis <- identical(S2, covAxis) || identical(S2, ICS_covAxis)
+  if (have_cov && (have_cov4 || have_covW || have_covAxis)) {
     # use QR algorithm by default
     if (!have_QR) QR <- TRUE
   } else {
@@ -151,14 +167,6 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
     whiten <- FALSE
   }
 
-  # check argument for centering
-  # TODO: see below, I think we can use centering when whitening
-  # if ((QR || whiten) && center) {
-  #   warning("centering the data is not applicable when QR algorithm ",
-  #           "or whitening are used; proceeding without centering")
-  #   center <- FALSE
-  # }
-
   # check remaining arguments
   center <- isTRUE(center)
   scale_lambda <- isTRUE(scale_lambda)
@@ -180,15 +188,21 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
     # further initializations
     n <- nrow(X)
 
+    # obtain column means: if ICS_cov() is used, we may already have them in
+    # location component of S1_X (S1 is either cov() or ICS_cov())
+    T1_X <- S1_X$location
+    if (is.null(T1_X)) T1_X <- colMeans(X)
     # center the columns of data matrix by the mean
-    X_centered = sweep(X, 2L, colMeans(X), "-")
+    X_centered <- sweep(X, 2L, T1_X, "-")
 
     # reorder rows by decreasing by infinity norm (maximum in absolute value)
     norm_inf <- apply(abs(X_centered), 1L, max)
     order_rows <- order(norm_inf, decreasing = TRUE)
     X_reordered <- X_centered[order_rows, ]
 
-    # compute QR decomposition with column pivoting from LAPACK
+    # compute QR decomposition with column pivoting from LAPACK: note that this
+    # changes the order of the columns internally, which we need to take into
+    # account when returning the matrix W of coefficients (or other output)
     qr_X <- qr(X_reordered / sqrt(n-1), LAPACK = TRUE)
 
     # extract components of the QR decomposition
@@ -198,36 +212,33 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
     # compute squared Mahalanobis distances (leverage scores)
     d <- (n-1) * rowSums(Q^2)
 
-    # extract relevant arguments for one-step M-estimator
-    alpha <- S2_args$alpha
-    if (is.null(alpha)) alpha <- formals(covW)$alpha
-    cf <- S2_args$cf
-    if (is.null(cf)) cf <- formals(covW)$cf
+    # obtain arguments for one-step M-estimator and update label for S2
+    if (have_cov4) {
+      alpha <- 1
+      cf <- 1 / (p+2)
+      S2_label <- get_cov4_label()
+    } else if (have_covAxis) {
+      alpha <- -1
+      cf <- p
+      S2_label <- get_covAxis_label()
+    } else {
+      # COVW: get arguments from supplied list or function defaults
+      alpha <- S2_args$alpha
+      if (is.null(alpha)) alpha <- formals(covW)$alpha
+      cf <- S2_args$cf
+      if (is.null(cf)) cf <- formals(covW)$cf
+      S2_label <- get_covW_label()
+    }
 
     # compute the second scatter matrix: this works for one-step M-estimators
     S2_Y <- cf*(n-1)/n * crossprod(sweep(Q, 1L, d^alpha, "*"), Q)
 
-    # convert second scatter matrix to class "ICS_scatter" and update label
-    S2_Y <- to_ICS_scatter(S2_Y, label = get_covW_label())
-    S2_label <- S2_Y$label
+    # convert second scatter matrix to class "ICS_scatter"
+    S2_Y <- to_ICS_scatter(S2_Y, label = S2_label)
 
-    # reorder columns of the centered data matrix
-    X_centered <-  X_centered[, qr_X$pivot]
-
-    # we don't have a location estimate for S2, so centering is not applicable
-    # TODO: Actually, we do center the scores, but we don't fix the signs based
-    #       on the generalized skewness values. Hence it is rather confusing
-    #       that 'center' is set to FALSE. Perhaps we need to change argument
-    #       'fix_signs' to take values "location" (center = TRUE), "skewness"
-    #       (currently "scores"), and "W" (same as currently)? Then argument
-    #       'center' would only control whether the scores should be computed
-    #       from the centered data matrix (so that it should be set to TRUE
-    #       when the QR algorithm is used).
-    if (center) {
-      warning("centering the data is not applicable for QR algorithm; ",
-              "proceeding without centering")
-      center <- FALSE
-    }
+    # set flag that we don't have location component in S2_X for fixing
+    # signs in W (since we don't have S2_X)
+    missing_T2_X <- TRUE
 
   } else {
 
@@ -241,8 +252,9 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
       # compute second scatter matrix on whitened data and update label
       S2_Y <- get_scatter(Y, fun = S2, args = S2_args, label = S2_label)
       S2_label <- S2_Y$label
-      # check if we have location component
-      is_null_T2 <- is.null(S2_Y$location)
+      # set flag that we don't have location component in S2_X for fixing
+      # signs in W (since we don't have S2_X)
+      missing_T2_X <- TRUE
     } else {
       # obtain second scatter matrix on original data matrix
       if (is.function(S2)) {
@@ -252,15 +264,21 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
       S2_label <- S2_X$label
       # transform second scatter matrix
       S2_Y <- to_ICS_scatter(W1 %*% S2_X$scatter %*% W1, label = S2_label)
-      # check if we have location component
-      is_null_T2 <- is.null(S2_X$location)
+      # check if we have location component in S2_X for fixing signs in W
+      T2_X <- S2_X$location
+      missing_T2_X <- is.null(T2_X)
     }
 
-    # if centering is requested, check if we have location components
-    if (center && (is.null(S1_X$location) || is_null_T2)) {
-      warning("location component in 'S1' and 'S2' required for centering ",
-              "the data; proceeding without centering")
-      center <- FALSE
+    # if requested, center the columns of the data matrix
+    if (center) {
+      # center by the location estimate from S1_X or give warning
+      # if S1_X doesn't have a location component
+      T1_X <- S1_X$location
+      if (is.null(T1_X)) {
+        warning("location component in 'S1' required for centering the data; ",
+                "proceeding without centering")
+        center <- FALSE
+      } else X_centered <- sweep(X, 2L, T1_X, "-")
     }
 
   }
@@ -268,75 +286,55 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
   # compute eigendecomposition of second scatter matrix
   S2_Y_eigen <- eigen(S2_Y$scatter, symmetric = TRUE)
   lambda <- S2_Y_eigen$values
-  if (QR) W <- t(qr.solve(R, S2_Y_eigen$vectors))
-  else W <- crossprod(S2_Y_eigen$vectors, W1)
-
-  # scale generalized kurtosis values and fix signs in the 'W' matrix
-  if (center) {
-
-    # overrride values of related arguments
-    # TODO: Would it make sense to allow scaling the generalized kurtosis
-    #       values, or does the scale of the generalized kurtosis values
-    #       matter for the interpretation of the distances? I don't see
-    #       how it would matter since below the scores are unchanged when
-    #       we scale the generalized kurtosis values.
-    if (scale_lambda) {
-      warning("when centering the data, scaling the generalized kurtosis ",
-              "values is not applicable; setting 'scale_lambda' to FALSE")
-      scale_lambda <- FALSE
-    }
-    if (fix_signs != "scores") {
-      warning("when centering the data, signs of 'W' matrix are set based on ",
-              "generalized skewness of components; setting 'fix_signs' to ",
-              '"scores"')
-      fix_signs <- "scores"
-    }
-
-    # compute location estimates of the scores
-    T1_X <- S1_X$location
-    T1_Z <- T1_X %*% W
-    # T2_Z <- S2_X$location %*% W
-    # TODO: Aurore, in an earlier version you mentioned that it's necessary
-    #       in case of whitening to apply S2 again for computing the location
-    #       estimate on the original data matrix X. But that is not true if
-    #       we have an affine equivariant scatter matrix, then we can simply
-    #       backtransform the location estimate for Y.
-    T2_X <- if (whiten) S2_Y$location %*% solve(W1) else S2_X$location
-    T2_Z <- T2_X %*% W
-    # center the columns of data matrix by the first location estimate
-    X_centered <- sweep(X, 2, T1_X, "-")
-
-  }
+  if (QR) {
+    # obtain matrix of coefficients in internal order from column pivoting
+    W <- t(qr.solve(R, S2_Y_eigen$vectors))
+    # reorder columns of W to correspond to original order of columns in X
+    W <- W[, order(qr_X$pivot)]
+  } else W <- crossprod(S2_Y_eigen$vectors, W1)
 
   # if requested, scale generalized kurtosis values
   if (scale_lambda) lambda <- lambda / prod(lambda)^(1/p)
 
-  # fix the signs in the 'W' matrix of coefficients
+  # fix the signs in matrix W of coefficients
   if (fix_signs == "scores") {
 
-    if (center) {
+    # TODO: Behavior is as follows: if we center the data (which requires a
+    #       location component in S1_X) and we have a location component in
+    #       S2_X as well, then we use those location estimates to compute
+    #       generalized skewness values (as ics2() does). Otherwise we compute
+    #       skewness values based on mean and median (as ics() does). Note that
+    #       this implies that we use the latter when we apply QR algorithm or
+    #       whitening, since we don't have S2_X then. Also note that we fall
+    #       back to computing the skewness values based on mean and median if
+    #       S1_X and S2_X use the same location estimate.
+
+    # the condition is phrased so that the last part is only evaluated when
+    # necessary (and it is guaranteed that T1_X and T2_X actually exist)
+    if (center && !(missing_T2_X || isTRUE(all.equal(T1_X, T2_X)))) {
       # compute generalized skewness values of each component
-      gamma <- T1_Z - T2_Z
+      T1_Z <- T1_X %*% W
+      T2_Z <- T2_X %*% W
+      gamma <- as.vector(T1_Z - T2_Z)
     } else {
-      # compute scores for initial 'W' matrix of coefficients
-      Z <- if (QR) tcrossprod(X_centered, W) else tcrossprod(X, W)
+      # compute scores for initial matrix W of coefficients
+      Z <- if (center) tcrossprod(X_centered, W) else tcrossprod(X, W)
       # compute skewness values of each component
       gamma <- colMeans(Z) - apply(Z, 2L, median)
     }
 
     # compute signs of (generalized) skewness values for each component
-    # TODO: For centering, we used '>=' below, but otherwise we used '>'.
-    #       I put >= to have the same in both cases, so that the sign is only
+    # TODO: ics() uses ">" but ics2() uses ">=" to compute signs in ifelse().
+    #       I used >= to have the same in both cases, so that the sign is only
     #       changed if the (generalized) skewness is negative. In practice,
-    #       this shouldn't really matter, as the skewness value will never be
-    #       exactly 0.
+    #       it shouldn't matter, as the skewness values will not be exactly 0.
     skewness_signs <- ifelse(gamma >= 0, 1, -1)
-    # fix signs in 'W' matrix so that generalized skewness values are positive
-    gamma <- as.vector(skewness_signs * gamma)
+    # fix signs in W so that generalized skewness values are positive
+    gamma <- skewness_signs * gamma
     W_final <- sweep(W, 1L, skewness_signs, "*")
 
   } else {
-    # fix signs in 'W' matrix so that the maximum element per row is positive
+    # fix signs in W so that the maximum element per row is positive
     # and that each row has norm 1
     row_signs <- apply(W, 1L, .sign.max)
     row_norms <- sqrt(rowSums(W^2))
@@ -345,12 +343,14 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
     gamma <- NULL
   }
 
-  # compute the scores
-  # TODO: perhaps we want to enable that we return the non-centered scores
-  #       when we use the QR algorithm (see also above)?
-  if (QR || center) Z_final <- tcrossprod(X_centered, W_final)
+  # compute the scores and set names for the components
+  if (center) Z_final <- tcrossprod(X_centered, W_final)
   else Z_final <- tcrossprod(X, W_final)
-  colnames(Z_final) <- paste("IC", 1:p, sep = ".")
+  colnames(Z_final) <- paste("IC", seq_len(p), sep = ".")
+
+  # TODO: Should row- and column names of W correspond to component names and
+  #       variable names, respectively? Should lambda and gamma be named with
+  #       the component names?
 
   # construct object to be returned
   res <- list(lambda = lambda, W = W_final, scores = Z_final, gamma = gamma,
@@ -503,5 +503,7 @@ mat_sqrt <- function(A, inverse = FALSE) {
 }
 
 # in QR algorithm, the function for the second scatter matrix is not actually
-# applied, so we need a different way to get the label for covW()
+# applied, so we need a different way to get the label for those scatters
+get_cov4_label <- function() "COV4"
 get_covW_label <- function() "COVW"
+get_covAxis_label <- function() "COVAxis"

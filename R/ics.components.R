@@ -5,8 +5,3 @@
 `ics.components` <- function(object){
   return(object@Scores)
 }
-
-#' @export
-ICS.components <- function(object){
-  return(object$scores)
-}

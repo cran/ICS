@@ -346,11 +346,15 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
   # compute the scores and set names for the components
   if (center) Z_final <- tcrossprod(X_centered, W_final)
   else Z_final <- tcrossprod(X, W_final)
-  colnames(Z_final) <- paste("IC", seq_len(p), sep = ".")
+  # colnames(Z_final) <- paste("IC", seq_len(p), sep = ".")
+  IC_names <- paste("IC", seq_len(p), sep = ".")
+  dimnames(Z_final) <- list(rownames(X), IC_names)
 
   # TODO: Should row- and column names of W correspond to component names and
   #       variable names, respectively? Should lambda and gamma be named with
   #       the component names?
+  dimnames(W_final) <- list(IC_names, colnames(X))
+
 
   # construct object to be returned
   res <- list(lambda = lambda, W = W_final, scores = Z_final, gamma = gamma,
@@ -367,32 +371,57 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
 
 #' @method summary ICS
 #' @export
-summary.ICS <- function(object) {
-  return(object)
+summary.ICS <- function(object, ...) {
+  # currently doesn't do anything but return the original object
+  object
 }
 
 #' @method coef ICS
+#' @importFrom stats coef
 #' @export
-coef.ICS <- function(object) {
-  return(object$W)
+coef.ICS <- function(object, index = NULL, ...) {
+  # extract coefficient matrix
+  W <- object$W
+  # check if we have index of components to return
+  if (!is.null(index)) {
+    # check index of components
+    if (length(index) == 0L) stop("no components selected")
+    else if (min(index) < 1L || max(index) > nrow(W)) {
+      stop("undefined components selected")
+    }
+    # select components
+    W <- W[index, , drop = FALSE]
+  }
+  # return coefficient matrix for selected components
+  W
 }
 
 #' @method fitted ICS
 #' @export
-fitted.ICS <- function(object, index=NULL) {
+fitted.ICS <- function(object, index = NULL, ...) {
+  # initializations
   p <- ncol(object$scores)
-  if (is.null(index) == FALSE && max(index)>p) stop("undefined columns selected")
-  Mix <- solve(object$W)
-  if (is.null(index)) index=1:p
-  fits <- tcrossprod(as.matrix(object$scores[,index]), Mix[,index])
-  return(as.data.frame(fits))
+  if (is.null(index)) index <- seq_len(p)
+  else if (length(index) == 0L) stop("no components selected")
+  else if (min(index) < 1L || max(index) > p) {
+    stop("undefined components selected")
+  }
+  # compute reconstructions from selected components
+  # ('drop = FALSE' preserves row and column names)
+  W_inverse <- solve(object$W)
+  tcrossprod(object$scores[, index, drop = FALSE],
+             W_inverse[, index, drop = FALSE])
 }
 
+#' @export
+ics_components <- function(object, ...) {
+  object$scores
+}
 
 #' @method plot ICS
 #' @export
 #' @importFrom graphics pairs
-plot.ICS <- function(x,index=NULL,...){
+plot.ICS <- function(x, index = NULL, ...) {
   p<-ncol(x$W)
   if (is.null(index) & p<=6) pairs(x$scores,...)
   if (is.null(index) & p>6) pairs(x$scores[,c(1:3,p-2:0)],...)
@@ -402,30 +431,31 @@ plot.ICS <- function(x,index=NULL,...){
 
 #' @method print ICS
 #' @export
-print.ICS <- function(object, digits = 4){
-  cat("\nICS with the following parameters: \n")
-  cat("S1:", object$S1_label)
-  if (length(object$S1_args) > 0){
-    sapply(1:length(object$S1_args), function(i)
-      cat("\n", paste0(names(object$S1_args)[i], ":"), object$S1_args[[i]]))
-  }
-  cat("\nS2:", object$S2_label)
-  if (length(object$S2_args)>0){
-    sapply(1:length(object$S2_args), function(i)
-      cat("\n", paste0(names(object$S2_args)[i], ":"), object$S2_args[[i]]))
-  }
-  cat("\nQR:", object$QR)
-  cat("\nwhiten:", object$whiten)
-  cat("\nscale_lambda:", object$scale_lambda)
-  cat("\nfix_signs:", object$fix_signs)
-  cat("\ncenter:", object$center)
+print.ICS <- function(x, digits = 4L, ...){
+  # Andreas: I uncommented the parameter values of the scatters because this
+  #          creates problems if the arguments are not single character,
+  #          numeric, or logical values
+  cat("\nICS based on two scatter matrices")
+  cat("\nS1:", x$S1_label)
+  # sapply(seq_along(x$S1_args), function(i) {
+  #   cat("\n", paste0(" ", names(x$S1_args)[i], ":"), x$S1_args[[i]])
+  # })
+  cat("\nS2:", x$S2_label)
+  # sapply(seq_along(x$S2_args), function(i) {
+  #   cat("\n", paste0(" ", names(x$S2_args)[i], ":"), x$S2_args[[i]])
+  # })
+  cat("\n\nAdditional argument values:")
+  cat("\nQR:", x$QR)
+  cat("\nwhiten:", x$whiten)
+  cat("\nscale_lambda:", x$scale_lambda)
+  cat("\nfix_signs:", x$fix_signs)
+  cat("\ncenter:", x$center)
   cat("\n")
   cat("\nThe generalized kurtosis measures (lambda) of the components are:\n")
-  print(format(round(object$lambda, digits)), quote = FALSE)
-  cat("\n")
-  cat("\nThe W matrix of coefficients is:\n")
-  print(round(object$W, digits))
-  invisible(object)
+  print(format(round(x$lambda, digits)), quote = FALSE)
+  cat("\nThe coefficient matrix (W) of the linear transformation is:\n")
+  print(round(x$W, digits))
+  invisible(x)
 }
 
 

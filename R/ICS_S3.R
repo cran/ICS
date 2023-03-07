@@ -343,17 +343,19 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
     gamma <- NULL
   }
 
-  # compute the scores and set names for the components
+  # compute the component scores
   if (center) Z_final <- tcrossprod(X_centered, W_final)
   else Z_final <- tcrossprod(X, W_final)
-  # colnames(Z_final) <- paste("IC", seq_len(p), sep = ".")
-  IC_names <- paste("IC", seq_len(p), sep = ".")
-  dimnames(Z_final) <- list(rownames(X), IC_names)
 
+  # set names for different parts of the output
   # TODO: Should row- and column names of W correspond to component names and
   #       variable names, respectively? Should lambda and gamma be named with
   #       the component names?
+  IC_names <- paste("IC", seq_len(p), sep = ".")
+  names(lambda) <- IC_names
   dimnames(W_final) <- list(IC_names, colnames(X))
+  dimnames(Z_final) <- list(rownames(X), IC_names)
+  if (!is.null(gamma)) names(gamma) <- IC_names
 
 
   # construct object to be returned
@@ -372,7 +374,8 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
 #' @method summary ICS
 #' @export
 summary.ICS <- function(object, ...) {
-  # currently doesn't do anything but return the original object
+  # currently doesn't do anything but add a subclass
+  class(object) <- c("summary_ICS", class(object))
   object
 }
 
@@ -414,24 +417,50 @@ fitted.ICS <- function(object, index = NULL, ...) {
 }
 
 #' @export
-ics_components <- function(object, ...) {
-  object$scores
+ics_components <- function(object, index = NULL, ...) {
+  # extract scores
+  scores <- object$scores
+  # check if we have index of components to return
+  if (!is.null(index)) {
+    # check index of components
+    if (length(index) == 0L) stop("no components selected")
+    else if (min(index) < 1L || max(index) > ncol(scores)) {
+      stop("undefined components selected")
+    }
+    # select components
+    scores <- scores[, index, drop = FALSE]
+  }
+  # return coefficient matrix for selected components
+  scores
 }
 
 #' @method plot ICS
 #' @export
 #' @importFrom graphics pairs
 plot.ICS <- function(x, index = NULL, ...) {
-  p<-ncol(x$W)
-  if (is.null(index) & p<=6) pairs(x$scores,...)
-  if (is.null(index) & p>6) pairs(x$scores[,c(1:3,p-2:0)],...)
-  if (length(index)==1) stop("index must be NULL or at least a vector of length 2")
-  if (length(index)>1) pairs(x$scores[,index],...)
+  # initializations
+  scores <- x$scores
+  p <- ncol(scores)
+  # create scatterplot matrix
+  if (is.null(index)) {
+    # no components specified, use defaults
+    if (p <= 6L) pairs(scores, ...)
+    else pairs(scores[, c(1:3, p-2:0)], ...)
+  } else {
+    # check index of components
+    if (length(index) < 2L) stop("'index' must specify at least two components")
+    else if (min(index) < 1L || max(index) > p) {
+      stop("undefined components selected")
+    }
+    # create scatterplot matrix of selected components
+    pairs(scores[, index], ...)
+  }
 }
 
 #' @method print ICS
 #' @export
-print.ICS <- function(x, digits = 4L, ...){
+print.ICS <- function(x, info = FALSE, digits = 4L, ...){
+  # print information on scatter matrices
   # Andreas: I uncommented the parameter values of the scatters because this
   #          creates problems if the arguments are not single character,
   #          numeric, or logical values
@@ -444,18 +473,31 @@ print.ICS <- function(x, digits = 4L, ...){
   # sapply(seq_along(x$S2_args), function(i) {
   #   cat("\n", paste0(" ", names(x$S2_args)[i], ":"), x$S2_args[[i]])
   # })
-  cat("\n\nAdditional argument values:")
-  cat("\nQR:", x$QR)
-  cat("\nwhiten:", x$whiten)
-  cat("\nscale_lambda:", x$scale_lambda)
-  cat("\nfix_signs:", x$fix_signs)
-  cat("\ncenter:", x$center)
-  cat("\n")
-  cat("\nThe generalized kurtosis measures (lambda) of the components are:\n")
-  print(format(round(x$lambda, digits)), quote = FALSE)
+  # if requested, print information on additional arguments
+  if (isTRUE(info)) {
+    cat("\n\nInformation on the algorithm:")
+    cat("\nQR:", x$QR)
+    cat("\nwhiten:", x$whiten)
+    cat("\nscale_lambda:", x$scale_lambda)
+    cat("\nfix_signs:", x$fix_signs)
+    cat("\ncenter:", x$center)
+  }
+  # print generalized kurtosis measures and coefficient matrix
+  cat("\n\nThe generalized kurtosis measures (lambda) of the components are:\n")
+  # print(formatC(x$lambda, digits = digits, format = "f"), quote = FALSE)
+  print(x$lambda, digits = digits, ...)
   cat("\nThe coefficient matrix (W) of the linear transformation is:\n")
-  print(round(x$W, digits))
+  # print(formatC(x$W, digits = digits, format = "f", flag = " "), quote = FALSE)
+  print(x$W, digits = digits, ...)
+  # return object invisibly
   invisible(x)
+}
+
+#' @method print summary_ICS
+#' @export
+print.summary_ICS <- function(x, info = TRUE, digits = 4L, ...) {
+  # call method for class "ICS" with default for printing additional information
+  print.ICS(x, info = info, digits = digits, ...)
 }
 
 

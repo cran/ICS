@@ -74,8 +74,6 @@ ICS_covW <- function(x, alpha = 1, cf = 1) {
 #' @export
 #'
 #' @examples
-## TODO: Do we need to allow passing other arguments to cov4? Then we also need
-##       to figure out what to do with the location argument of cov4().
 ICS_covAxis <- function(x) {
   # compute location and scatter estimates
   # TODO: what location estimate should we use?
@@ -299,16 +297,6 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
   # fix the signs in matrix W of coefficients
   if (fix_signs == "scores") {
 
-    # TODO: Behavior is as follows: if we center the data (which requires a
-    #       location component in S1_X) and we have a location component in
-    #       S2_X as well, then we use those location estimates to compute
-    #       generalized skewness values (as ics2() does). Otherwise we compute
-    #       skewness values based on mean and median (as ics() does). Note that
-    #       this implies that we use the latter when we apply QR algorithm or
-    #       whitening, since we don't have S2_X then. Also note that we fall
-    #       back to computing the skewness values based on mean and median if
-    #       S1_X and S2_X use the same location estimate.
-
     # the condition is phrased so that the last part is only evaluated when
     # necessary (and it is guaranteed that T1_X and T2_X actually exist)
     if (center && !(missing_T2_X || isTRUE(all.equal(T1_X, T2_X)))) {
@@ -324,10 +312,6 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
     }
 
     # compute signs of (generalized) skewness values for each component
-    # TODO: ics() uses ">" but ics2() uses ">=" to compute signs in ifelse().
-    #       I used >= to have the same in both cases, so that the sign is only
-    #       changed if the (generalized) skewness is negative. In practice,
-    #       it shouldn't matter, as the skewness values will not be exactly 0.
     skewness_signs <- ifelse(gamma >= 0, 1, -1)
     # fix signs in W so that generalized skewness values are positive
     gamma <- skewness_signs * gamma
@@ -348,9 +332,6 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
   else Z_final <- tcrossprod(X, W_final)
 
   # set names for different parts of the output
-  # TODO: Should row- and column names of W correspond to component names and
-  #       variable names, respectively? Should lambda and gamma be named with
-  #       the component names?
   IC_names <- paste("IC", seq_len(p), sep = ".")
   names(lambda) <- IC_names
   dimnames(W_final) <- list(IC_names, colnames(X))

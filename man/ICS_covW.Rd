@@ -4,7 +4,7 @@
 \alias{ICS_covW}
 \title{Title}
 \usage{
-ICS_covW(x, alpha = 1, cf = 1)
+ICS_covW(x, location = c("mean", "none"), alpha = 1, cf = 1)
 }
 \arguments{
 \item{cf}{}

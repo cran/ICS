@@ -10,6 +10,7 @@
 #' @examples
 ICS_cov <- function(x, location = c("mean", "none")) {
   # initializations
+  x <- as.matrix(x)
   location <- match.arg(location)
   # compute location and scatter estimates
   location <- if (location == "mean") colMeans(x)
@@ -28,15 +29,18 @@ ICS_cov <- function(x, location = c("mean", "none")) {
 #' @export
 #'
 #' @examples
+## TODO: Should the default location estimate be "mean3" or "mean"? I think
+##       that mean3 was only needed for fixing the signs in ics2? But it's
+##       more natural to use the mean as the default location estimate.
 ## TODO: Do we need to allow passing other arguments to cov4? Then we also need
 ##       to figure out what to do with the location argument of cov4().
 ICS_cov4 <- function(x, location = c("mean3", "mean", "none")) {
   # initializations
+  x <- as.matrix(x)
   location <- match.arg(location)
   # compute location and scatter estimates
   location <- switch(location, "mean3" = mean3(x), "mean" = colMeans(x))
-  out <- list(location = location, scatter = cov4(x),
-              label = get_cov4_label())
+  out <- list(location = location, scatter = cov4(x), label = get_cov4_label())
   # add class and return object
   class(out) <- "ICS_scatter"
   out
@@ -53,13 +57,14 @@ ICS_cov4 <- function(x, location = c("mean3", "mean", "none")) {
 #' @export
 #'
 #' @examples
-ICS_covW <- function(x, alpha = 1, cf = 1) {
-  # TODO: we may need an argument to use a different location estimate so
-  #       that fixing the signs based on generalized skewness makes sense
+ICS_covW <- function(x, location = c("mean", "none"), alpha = 1, cf = 1) {
+  # initializations
+  x <- as.matrix(x)
+  location <- match.arg(location)
   # compute location and scatter estimates
+  location <- if (location == "mean") colMeans(x)
   scatter <- covW(x, alpha = alpha, cf = cf)
-  out <- list(location = colMeans(x), scatter = scatter,
-              label = get_covW_label())
+  out <- list(location = location, scatter = scatter, label = get_covW_label())
   # add class and return object
   class(out) <- "ICS_scatter"
   out
@@ -74,10 +79,13 @@ ICS_covW <- function(x, alpha = 1, cf = 1) {
 #' @export
 #'
 #' @examples
-ICS_covAxis <- function(x) {
+ICS_covAxis <- function(x, location = c("mean", "none")) {
+  # initializations
+  x <- as.matrix(x)
+  location <- match.arg(location)
   # compute location and scatter estimates
-  # TODO: what location estimate should we use?
-  out <- list(location = NULL, scatter = covAxis(x),
+  location <- if (location == "mean") colMeans(x)
+  out <- list(location = location, scatter = covAxis(x),
               label = get_covAxis_label())
   # add class and return object
   class(out) <- "ICS_scatter"
@@ -398,7 +406,10 @@ fitted.ICS <- function(object, index = NULL, ...) {
 }
 
 #' @export
-ics_components <- function(object, index = NULL, ...) {
+components <- function(object, ...) UseMethod("components")
+
+#' @export
+components.ICS <- function(object, index = NULL, ...) {
   # extract scores
   scores <- object$scores
   # check if we have index of components to return
@@ -411,8 +422,29 @@ ics_components <- function(object, index = NULL, ...) {
     # select components
     scores <- scores[, index, drop = FALSE]
   }
-  # return coefficient matrix for selected components
+  # return matrix of scores for selected components
   scores
+}
+
+#' @export
+lambda <- function(object, ...) UseMethod("lambda")
+
+#' @export
+lambda.ICS <- function(object, index = NULL, ...) {
+  # extract generalized kurtosis values
+  lambda <- object$lambda
+  # check if we have index of components to return
+  if (!is.null(index)) {
+    # check index of components
+    if (length(index) == 0L) stop("no components selected")
+    else if (min(index) < 1L || max(index) > length(lambda)) {
+      stop("undefined components selected")
+    }
+    # select components
+    lambda <- lambda[index]
+  }
+  # return generalized kurtosis values for selected components
+  lambda
 }
 
 #' @method plot ICS

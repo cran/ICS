@@ -291,7 +291,16 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
 
   # compute eigendecomposition of second scatter matrix
   S2_Y_eigen <- eigen(S2_Y$scatter, symmetric = TRUE)
+  # extract generalized kurtosis values
   lambda <- S2_Y_eigen$values
+  if (!all(is.finite(lambda))) {
+    if (scale_lambda) {
+      suffix <- "; proceeding without scaling them"
+      scale_lambda <- FALSE
+    } else suffix <- ""
+    warning("some generalized kurtosis values are non-finite", suffix)
+  }
+  # obtain coefficient matrix of the linear transformation
   if (QR) {
     # obtain matrix of coefficients in internal order from column pivoting
     W <- t(qr.solve(R, S2_Y_eigen$vectors))

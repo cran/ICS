@@ -107,7 +107,7 @@ ICS_covAxis <- function(x, location = c("mean", "none")) {
 #' @param center logical indicating whether to center the ICS coordinates (scores)
 #' @param fix_signs character string specifying how to fix_signs the ICS
 #                 coordinates, either "scores" or "W"
-#' @param scale_lambda
+#' @param scale_gen_kurtosis
 #' @param na.action
 #' @param ...
 #'
@@ -117,7 +117,7 @@ ICS_covAxis <- function(x, location = c("mean", "none")) {
 #' @examples
 ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
                 S2_args = list(), QR = NULL, whiten = NULL,
-                center = FALSE, scale_lambda = FALSE,
+                center = FALSE, scale_gen_kurtosis = FALSE,
                 fix_signs = c("scores", "W"),
                 na.action = na.fail, ...) {
 
@@ -175,7 +175,7 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
 
   # check remaining arguments
   center <- isTRUE(center)
-  scale_lambda <- isTRUE(scale_lambda)
+  scale_gen_kurtosis <- isTRUE(scale_gen_kurtosis)
   fix_signs <- match.arg(fix_signs)
 
   # obtain first scatter matrix
@@ -292,11 +292,11 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
   # compute eigendecomposition of second scatter matrix
   S2_Y_eigen <- eigen(S2_Y$scatter, symmetric = TRUE)
   # extract generalized kurtosis values
-  lambda <- S2_Y_eigen$values
-  if (!all(is.finite(lambda))) {
-    if (scale_lambda) {
+  gen_kurtosis <- S2_Y_eigen$values
+  if (!all(is.finite(gen_kurtosis))) {
+    if (scale_gen_kurtosis) {
       suffix <- "; proceeding without scaling them"
-      scale_lambda <- FALSE
+      scale_gen_kurtosis <- FALSE
     } else suffix <- ""
     warning("some generalized kurtosis values are non-finite", suffix)
   }
@@ -309,7 +309,7 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
   } else W <- crossprod(S2_Y_eigen$vectors, W1)
 
   # if requested, scale generalized kurtosis values
-  if (scale_lambda) lambda <- lambda / prod(lambda)^(1/p)
+  if (scale_gen_kurtosis) gen_kurtosis <- gen_kurtosis / prod(gen_kurtosis)^(1/p)
 
   # fix the signs in matrix W of coefficients
   if (fix_signs == "scores") {
@@ -320,18 +320,18 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
       # compute generalized skewness values of each component
       T1_Z <- T1_X %*% W
       T2_Z <- T2_X %*% W
-      gamma <- as.vector(T1_Z - T2_Z)
+      gen_skewness <- as.vector(T1_Z - T2_Z)
     } else {
       # compute scores for initial matrix W of coefficients
       Z <- if (center) tcrossprod(X_centered, W) else tcrossprod(X, W)
       # compute skewness values of each component
-      gamma <- colMeans(Z) - apply(Z, 2L, median)
+      gen_skewness <- colMeans(Z) - apply(Z, 2L, median)
     }
 
     # compute signs of (generalized) skewness values for each component
-    skewness_signs <- ifelse(gamma >= 0, 1, -1)
+    skewness_signs <- ifelse(gen_skewness >= 0, 1, -1)
     # fix signs in W so that generalized skewness values are positive
-    gamma <- skewness_signs * gamma
+    gen_skewness <- skewness_signs * gen_skewness
     W_final <- sweep(W, 1L, skewness_signs, "*")
 
   } else {
@@ -341,7 +341,7 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
     row_norms <- sqrt(rowSums(W^2))
     W_final <- sweep(W, 1L, row_norms * row_signs, "/")
     # we don't have (generalized) skewness values in this case
-    gamma <- NULL
+    gen_skewness <- NULL
   }
 
   # compute the component scores
@@ -350,17 +350,18 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
 
   # set names for different parts of the output
   IC_names <- paste("IC", seq_len(p), sep = ".")
-  names(lambda) <- IC_names
+  names(gen_kurtosis) <- IC_names
   dimnames(W_final) <- list(IC_names, colnames(X))
   dimnames(Z_final) <- list(rownames(X), IC_names)
-  if (!is.null(gamma)) names(gamma) <- IC_names
+  if (!is.null(gen_skewness)) names(gen_skewness) <- IC_names
 
 
   # construct object to be returned
-  res <- list(lambda = lambda, W = W_final, scores = Z_final, gamma = gamma,
-              S1_label = S1_label, S2_label = S2_label, S1_args = S1_args,
-              S2_args = S2_args, QR = QR, whiten = whiten, center = center,
-              scale_lambda = scale_lambda, fix_signs = fix_signs)
+  res <- list(gen_kurtosis = gen_kurtosis, W = W_final, scores = Z_final,
+              gen_skewness = gen_skewness, S1_label = S1_label,
+              S2_label = S2_label, S1_args = S1_args, S2_args = S2_args,
+              QR = QR, whiten = whiten, center = center,
+              scale_gen_kurtosis = scale_gen_kurtosis, fix_signs = fix_signs)
   class(res) <- "ICS"
   res
 
@@ -436,24 +437,24 @@ components.ICS <- function(object, index = NULL, ...) {
 }
 
 #' @export
-lambda <- function(object, ...) UseMethod("lambda")
+gen_kurtosis <- function(object, ...) UseMethod("gen_kurtosis")
 
 #' @export
-lambda.ICS <- function(object, index = NULL, ...) {
+gen_kurtosis.ICS <- function(object, index = NULL, ...) {
   # extract generalized kurtosis values
-  lambda <- object$lambda
+  gen_kurtosis <- object$gen_kurtosis
   # check if we have index of components to return
   if (!is.null(index)) {
     # check index of components
     if (length(index) == 0L) stop("no components selected")
-    else if (min(index) < 1L || max(index) > length(lambda)) {
+    else if (min(index) < 1L || max(index) > length(gen_kurtosis)) {
       stop("undefined components selected")
     }
     # select components
-    lambda <- lambda[index]
+    gen_kurtosis <- gen_kurtosis[index]
   }
   # return generalized kurtosis values for selected components
-  lambda
+  gen_kurtosis
 }
 
 #' @method plot ICS
@@ -500,15 +501,15 @@ print.ICS <- function(x, info = FALSE, digits = 4L, ...){
     cat("\n\nInformation on the algorithm:")
     cat("\nQR:", x$QR)
     cat("\nwhiten:", x$whiten)
-    cat("\nscale_lambda:", x$scale_lambda)
+    cat("\nscale_gen_kurtosis:", x$scale_gen_kurtosis)
     cat("\nfix_signs:", x$fix_signs)
     cat("\ncenter:", x$center)
   }
   # print generalized kurtosis measures and coefficient matrix
-  cat("\n\nThe generalized kurtosis measures (lambda) of the components are:\n")
-  # print(formatC(x$lambda, digits = digits, format = "f"), quote = FALSE)
-  print(x$lambda, digits = digits, ...)
-  cat("\nThe coefficient matrix (W) of the linear transformation is:\n")
+  cat("\n\nThe generalized kurtosis measures of the components are:\n")
+  # print(formatC(x$gen_kurtosis, digits = digits, format = "f"), quote = FALSE)
+  print(x$gen_kurtosis, digits = digits, ...)
+  cat("\nThe coefficient matrix of the linear transformation is:\n")
   # print(formatC(x$W, digits = digits, format = "f", flag = " "), quote = FALSE)
   print(x$W, digits = digits, ...)
   # return object invisibly

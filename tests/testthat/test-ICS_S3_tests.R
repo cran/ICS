@@ -16,7 +16,7 @@ test_that("ics - ics2 eigenvalues", {
 test_that("ics - ICS_S3 eigenvalues - S1 and S2 are functions", {
   X <- iris[,1:4]
   expect_equal(ics(X, S1 = cov, S2 = cov4, stdKurt = FALSE)@gKurt,
-               ICS(X, S1 = ICS_cov, S2 = ICS_cov4)$lambda)
+               ICS(X, S1 = ICS_cov, S2 = ICS_cov4)$gen_kurtosis)
 })
 
 
@@ -24,7 +24,7 @@ test_that("ics - ICS_S3 eigenvalues - S1 and S2 are functions", {
 test_that("ics - ICS_S3 eigenvalues - S1 and S2 are functions", {
   X <- iris[,1:4]
   expect_equal(ics(X, S1 = cov, S2 = cov4, stdKurt = FALSE)@gKurt,
-               ICS(X, S1 = cov, S2 = ICS_cov4)$lambda)
+               ICS(X, S1 = cov, S2 = ICS_cov4)$gen_kurtosis)
 })
 
 test_that("ics - ICS_S3 eigenvalues - S1 and S2 are functions", {
@@ -32,14 +32,14 @@ test_that("ics - ICS_S3 eigenvalues - S1 and S2 are functions", {
   mcd <- function(x,...) robustbase::covMcd(x, ...)$cov
   expect_equal(ics(X, S1 = mcd, S2 = cov, S1args = list(nsamp = "deterministic", alpha = 0.5), stdKurt = FALSE)@gKurt,
                ICS(X, S1 = mcd, S2 = ICS_cov,
-                   S1_args = list(nsamp = "deterministic", alpha = 0.5))$lambda)
+                   S1_args = list(nsamp = "deterministic", alpha = 0.5))$gen_kurtosis)
 })
 
 test_that("ics - ICS_S3 scores - S1 and S2 are functions - eigenvalues standardization", {
   X <- iris[,1:4]
   expect_equal(ics(X, S1 = cov, S2 = cov4, stdKurt = TRUE)@gKurt,
-               ICS(X, S1 = ICS_cov, S2 = ICS_cov4, scale_lambda = TRUE,
-                   center = FALSE)$lambda)
+               ICS(X, S1 = ICS_cov, S2 = ICS_cov4, scale_gen_kurtosis = TRUE,
+                   center = FALSE)$gen_kurtosis)
 })
 
 
@@ -47,40 +47,40 @@ test_that("ics - ICS_S3 scores - S1 and S2 are functions - eigenvalues standardi
 test_that("ics2 - ICS_S3 eigenvalues - S1 and S2 are functions", {
   X <- iris[,1:4]
   expect_equal(ics2(X, S1 = MeanCov, S2 = Mean3Cov4)@gKurt,
-               ICS(X, S1 = ICS_cov, S2 = ICS_cov4)$lambda)
+               ICS(X, S1 = ICS_cov, S2 = ICS_cov4)$gen_kurtosis)
 })
 
 
 test_that("ics - ICS_S3 eigenvalues - S1 and S2 are functions", {
   X <- iris[,1:4]
-  expect_equal(ICS(X, S1 = ICS_cov, S2 = ICS_cov4, QR = FALSE, whiten = FALSE)$lambda,
-               ICS(X, S1 = ICS_cov, S2 = ICS_cov4, QR = FALSE, whiten = TRUE)$lambda)
+  expect_equal(ICS(X, S1 = ICS_cov, S2 = ICS_cov4, QR = FALSE, whiten = FALSE)$gen_kurtosis,
+               ICS(X, S1 = ICS_cov, S2 = ICS_cov4, QR = FALSE, whiten = TRUE)$gen_kurtosis)
 })
 
 
 test_that("ics - ICS_S3 eigenvalues - S1 and S2 are matrices", {
   X <- iris[,1:4]
   expect_equal(ics(X, S1 = cov(X), S2 = cov4(X), stdKurt = FALSE)@gKurt,
-              ICS(X, S1 = cov(X), S2 = cov4(X))$lambda)
+              ICS(X, S1 = cov(X), S2 = cov4(X))$gen_kurtosis)
 })
 test_that("ics - ICS_S3 eigenvalues - S1 and S2 are matrices", {
   X <- iris[,1:4]
   expect_equal(ics(X, S1 = cov(X), S2 = cov4(X), stdKurt = FALSE)@gKurt,
                ICS(X, S1 = ICS_cov(X)$scatter,
-                   S2 =  ICS_cov4(X)$scatter)$lambda)
+                   S2 =  ICS_cov4(X)$scatter)$gen_kurtosis)
 })
 
 
 test_that("ics - ICS_S3 eigenvalues - S1 and S2 are matrices/ICS_scatter", {
   X <- iris[,1:4]
   expect_equal(ics(X, S1 = cov(X), S2 = cov4(X), stdKurt = FALSE)@gKurt,
-               ICS(X, S1 = ICS_cov(X), S2 = ICS_cov4)$lambda)
+               ICS(X, S1 = ICS_cov(X), S2 = ICS_cov4)$gen_kurtosis)
 })
 
 test_that("ics - ICS_S3 eigenvalues -  S2 is ICS_scatter", {
   X <- iris[,1:4]
   expect_equal(ics(X, S1 = cov(X), S2 = cov4(X), stdKurt = FALSE)@gKurt,
-               ICS(X, S1 = ICS_cov(X), S2 = ICS_cov4(X))$lambda)
+               ICS(X, S1 = ICS_cov(X), S2 = ICS_cov4(X))$gen_kurtosis)
 })
 
 
@@ -111,7 +111,7 @@ test_that("ics2 - ICS_S3 gSkew - S1 and S2 are functions - centering", {
   X <- iris[,1:4]
   expect_equal(ics2(X, S1 = MeanCov, S2 = Mean3Cov4)@gSkew,
                ICS(X, S1 = ICS_cov, S2 = ICS_cov4, QR = FALSE, whiten = FALSE,
-                   center = TRUE, fix_signs = "scores")$gamma)
+                   center = TRUE, fix_signs = "scores")$gen_skewness)
 })
 
 ## QR ----------------------------------------------------------------------
@@ -120,14 +120,14 @@ test_that("ics - ICS_S3 eigenvalues - S1 and S2 are functions - QR", {
   expect_equal(ics2(X, S1 = MeanCov, S2 = Mean3Cov4)@gKurt,
                ICS(X, S1 = ICS_cov, S2 =  ICS_covW,
                    S2_args = list(alpha = 1, cf = 1/(ncol(X)+2)),
-                   QR = TRUE)$lambda)
+                   QR = TRUE)$gen_kurtosis)
 })
 
 
 test_that("ics - ICS_S3 eigenvalues - S1 and S2 are functions - QR", {
   X <- iris[,1:4]
   expect_equal(ics2(X, S1 = MeanCov, S2 = Mean3Cov4)@gKurt,
-               ICS(X, S1 = ICS_cov, S2 =  ICS_covW, S2_args = list(alpha = 1, cf = 1/(ncol(X)+2)), QR = FALSE)$lambda)
+               ICS(X, S1 = ICS_cov, S2 =  ICS_covW, S2_args = list(alpha = 1, cf = 1/(ncol(X)+2)), QR = FALSE)$gen_kurtosis)
 })
 
 test_that("ics - ICS_S3 scores - S1 and S2 are functions - QR ", {
@@ -145,14 +145,14 @@ test_that("ics2 - S1 and S2 are functions - QR", {
 test_that("ics2 - S1 and S2 are functions - QR", {
   X <- iris[,1:4]
   X_rank_deficient <- sweep(X, 2, c(10^(-12), 10^(-3), 1, 10^6), "*")
-  expect_error( ICS( X_rank_deficient, S1 = ICS_cov, S2 =  ICS_covW, S2_args = list(alpha = 1, cf = 1/(ncol(X)+2)), QR = FALSE)$lambda)
+  expect_error( ICS( X_rank_deficient, S1 = ICS_cov, S2 =  ICS_covW, S2_args = list(alpha = 1, cf = 1/(ncol(X)+2)), QR = FALSE)$gen_kurtosis)
 })
 
 test_that("ics2 - S1 and S2 are functions - QR", {
   X <- iris[,1:4]
   X_rank_deficient <- sweep(X, 2, c(10^(-12), 10^(-3), 1, 10^6), "*")
   expect_equal(ics(X, S1 = cov, S2 = cov4, stdB = "Z", stdKurt = FALSE)@gKurt,
-    ICS( X_rank_deficient, S1 = ICS_cov, S2 =  ICS_covW, S2_args = list(alpha = 1, cf = 1/(ncol(X)+2)), QR = TRUE)$lambda)
+    ICS( X_rank_deficient, S1 = ICS_cov, S2 =  ICS_covW, S2_args = list(alpha = 1, cf = 1/(ncol(X)+2)), QR = TRUE)$gen_kurtosis)
 })
 
 

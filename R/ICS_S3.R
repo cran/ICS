@@ -447,7 +447,7 @@ components.ICS <- function(object, select = NULL, drop = FALSE, index = NULL,
       stop("undefined components selected")
     }
     # select components
-    scores <- scores[, index, drop = drop]
+    scores <- scores[, select, drop = drop]
   }
   # return matrix of scores for selected components
   scores

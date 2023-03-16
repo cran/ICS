@@ -4,7 +4,7 @@
 \alias{ICS_covAxis}
 \title{Title}
 \usage{
-ICS_covAxis(x, location = c("mean", "none"))
+ICS_covAxis(x, location = TRUE)
 }
 \arguments{
 \item{x}{}

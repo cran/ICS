@@ -8,12 +8,12 @@
 #' @export
 #'
 #' @examples
-ICS_cov <- function(x, location = c("mean", "none")) {
+ICS_cov <- function(x, location = TRUE) {
   # initializations
   x <- as.matrix(x)
-  location <- match.arg(location)
+  location <- isTRUE(location)
   # compute location and scatter estimates
-  location <- if (location == "mean") colMeans(x)
+  location <- if (location) colMeans(x)
   out <- list(location = location, scatter = cov(x), label = "COV")
   # add class and return object
   class(out) <- "ICS_scatter"
@@ -37,7 +37,9 @@ ICS_cov <- function(x, location = c("mean", "none")) {
 ICS_cov4 <- function(x, location = c("mean3", "mean", "none")) {
   # initializations
   x <- as.matrix(x)
-  location <- match.arg(location)
+  if (is.character(location)) location <- match.arg(location)
+  else if (isTRUE(location)) location <- "mean3"
+  else location <- "none"
   # compute location and scatter estimates
   location <- switch(location, "mean3" = mean3(x), "mean" = colMeans(x))
   out <- list(location = location, scatter = cov4(x), label = get_cov4_label())
@@ -57,12 +59,12 @@ ICS_cov4 <- function(x, location = c("mean3", "mean", "none")) {
 #' @export
 #'
 #' @examples
-ICS_covW <- function(x, location = c("mean", "none"), alpha = 1, cf = 1) {
+ICS_covW <- function(x, location = TRUE, alpha = 1, cf = 1) {
   # initializations
   x <- as.matrix(x)
-  location <- match.arg(location)
+  location <- isTRUE(location)
   # compute location and scatter estimates
-  location <- if (location == "mean") colMeans(x)
+  location <- if (location) colMeans(x)
   scatter <- covW(x, alpha = alpha, cf = cf)
   out <- list(location = location, scatter = scatter, label = get_covW_label())
   # add class and return object
@@ -79,12 +81,12 @@ ICS_covW <- function(x, location = c("mean", "none"), alpha = 1, cf = 1) {
 #' @export
 #'
 #' @examples
-ICS_covAxis <- function(x, location = c("mean", "none")) {
+ICS_covAxis <- function(x, location = TRUE) {
   # initializations
   x <- as.matrix(x)
-  location <- match.arg(location)
+  location <- isTRUE(location)
   # compute location and scatter estimates
-  location <- if (location == "mean") colMeans(x)
+  location <- if (location) colMeans(x)
   out <- list(location = location, scatter = covAxis(x),
               label = get_covAxis_label())
   # add class and return object

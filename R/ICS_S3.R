@@ -381,18 +381,22 @@ summary.ICS <- function(object, ...) {
 #' @method coef ICS
 #' @importFrom stats coef
 #' @export
-coef.ICS <- function(object, index = NULL, ...) {
+coef.ICS <- function(object, select = NULL, drop = FALSE, index = NULL, ...) {
+  # back-compatibility check
+  if (missing(select) && !missing(index)) {
+    warning("argument 'index' is deprecated, use 'select' instead")
+    select <- index
+  }
   # extract coefficient matrix
   W <- object$W
-  # check if we have index of components to return
-  if (!is.null(index)) {
-    # check index of components
-    if (length(index) == 0L) stop("no components selected")
-    else if (min(index) < 1L || max(index) > nrow(W)) {
+  # check if we have argument of components to return
+  if (!is.null(select)) {
+    # check argument specifying components
+    if (check_undefined(select, max = nrow(W), names = rownames(W))) {
       stop("undefined components selected")
     }
     # select components
-    W <- W[index, , drop = FALSE]
+    W <- W[select, , drop = drop]
   }
   # return coefficient matrix for selected components
   W
@@ -400,37 +404,48 @@ coef.ICS <- function(object, index = NULL, ...) {
 
 #' @method fitted ICS
 #' @export
-fitted.ICS <- function(object, index = NULL, ...) {
+fitted.ICS <- function(object, select = NULL, index = NULL, ...) {
+  # back-compatibility check
+  if (missing(select) && !missing(index)) {
+    warning("argument 'index' is deprecated, use 'select' instead")
+    select <- index
+  }
   # initializations
-  p <- ncol(object$scores)
-  if (is.null(index)) index <- seq_len(p)
-  else if (length(index) == 0L) stop("no components selected")
-  else if (min(index) < 1L || max(index) > p) {
+  scores <- object$scores
+  p <- ncol(scores)
+  if (is.null(select)) select <- seq_len(p)
+  else if (check_insufficient(select, target = 1L)) {
+    stop("no components selected")
+  } else if (check_undefined(select, max = p, names = colnames(scores))) {
     stop("undefined components selected")
   }
   # compute reconstructions from selected components
   # ('drop = FALSE' preserves row and column names)
   W_inverse <- solve(object$W)
-  tcrossprod(object$scores[, index, drop = FALSE],
-             W_inverse[, index, drop = FALSE])
+  tcrossprod(scores[, select, drop = FALSE], W_inverse[, select, drop = FALSE])
 }
 
 #' @export
 components <- function(object, ...) UseMethod("components")
 
 #' @export
-components.ICS <- function(object, index = NULL, ...) {
+components.ICS <- function(object, select = NULL, drop = FALSE, index = NULL,
+                           ...) {
+  # back-compatibility check
+  if (missing(select) && !missing(index)) {
+    warning("argument 'index' is deprecated, use 'select' instead")
+    select <- index
+  }
   # extract scores
   scores <- object$scores
-  # check if we have index of components to return
-  if (!is.null(index)) {
-    # check index of components
-    if (length(index) == 0L) stop("no components selected")
-    else if (min(index) < 1L || max(index) > ncol(scores)) {
+  # check if we have argument of components to return
+  if (!is.null(select)) {
+    # check argument specifying components
+    if (check_undefined(select, max = ncol(scores), names = colnames(scores))) {
       stop("undefined components selected")
     }
     # select components
-    scores <- scores[, index, drop = FALSE]
+    scores <- scores[, index, drop = drop]
   }
   # return matrix of scores for selected components
   scores
@@ -440,18 +455,23 @@ components.ICS <- function(object, index = NULL, ...) {
 gen_kurtosis <- function(object, ...) UseMethod("gen_kurtosis")
 
 #' @export
-gen_kurtosis.ICS <- function(object, index = NULL, ...) {
+gen_kurtosis.ICS <- function(object, select = NULL, index = NULL, ...) {
+  # back-compatibility check
+  if (missing(select) && !missing(index)) {
+    warning("argument 'index' is deprecated, use 'select' instead")
+    select <- index
+  }
   # extract generalized kurtosis values
   gen_kurtosis <- object$gen_kurtosis
-  # check if we have index of components to return
-  if (!is.null(index)) {
-    # check index of components
-    if (length(index) == 0L) stop("no components selected")
-    else if (min(index) < 1L || max(index) > length(gen_kurtosis)) {
+  # check if we have argument of components to return
+  if (!is.null(select)) {
+    # check argument specifying components
+    if (check_undefined(select, max = length(gen_kurtosis),
+                        names = names(gen_kurtosis))) {
       stop("undefined components selected")
     }
     # select components
-    gen_kurtosis <- gen_kurtosis[index]
+    gen_kurtosis <- gen_kurtosis[select]
   }
   # return generalized kurtosis values for selected components
   gen_kurtosis
@@ -460,23 +480,29 @@ gen_kurtosis.ICS <- function(object, index = NULL, ...) {
 #' @method plot ICS
 #' @export
 #' @importFrom graphics pairs
-plot.ICS <- function(x, index = NULL, ...) {
+plot.ICS <- function(x, select = NULL, index = NULL, ...) {
+  # back-compatibility check
+  if (missing(select) && !missing(index)) {
+    warning("argument 'index' is deprecated, use 'select' instead")
+    select <- index
+  }
   # initializations
   scores <- x$scores
   p <- ncol(scores)
   # create scatterplot matrix
-  if (is.null(index)) {
-    # no components specified, use defaults
+  if (is.null(select)) {
+    # not specified which components to plot, use defaults
     if (p <= 6L) pairs(scores, ...)
     else pairs(scores[, c(1:3, p-2:0)], ...)
   } else {
-    # check index of components
-    if (length(index) < 2L) stop("'index' must specify at least two components")
-    else if (min(index) < 1L || max(index) > p) {
+    # check argument specifying components
+    if (check_insufficient(select, target = 2L)) {
+      stop("'select' must specify at least two components")
+    } else if (check_undefined(select, max = p, names = colnames(scores))) {
       stop("undefined components selected")
     }
     # create scatterplot matrix of selected components
-    pairs(scores[, index], ...)
+    pairs(scores[, select], ...)
   }
 }
 
@@ -525,6 +551,20 @@ print.summary_ICS <- function(x, info = TRUE, digits = 4L, ...) {
 
 
 # Internal functions -----
+
+
+# check if argument 'select' specifies undefined components
+check_undefined <- function(select, max, names) {
+  (is.numeric(select) && length(select) > 0L &&
+     (min(select) < 1L || max(select) > max)) ||
+    (is.character(select) && !all(select %in% names))
+}
+
+# check if argument 'select' specifies an insufficient number of components
+check_insufficient <- function(select, target = 2L) {
+  ((is.numeric(select) || is.character(select)) && length(select) < target) ||
+    (is.logical(select) && sum(select) < target)
+}
 
 
 ## apply a scatter function to the data matrix

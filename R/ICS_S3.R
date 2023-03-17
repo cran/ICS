@@ -109,7 +109,6 @@ ICS_covAxis <- function(x, location = TRUE) {
 #' @param center logical indicating whether to center the ICS coordinates (scores)
 #' @param fix_signs character string specifying how to fix_signs the ICS
 #                 coordinates, either "scores" or "W"
-#' @param scale_gen_kurtosis
 #' @param na.action
 #' @param ...
 #'
@@ -119,8 +118,7 @@ ICS_covAxis <- function(x, location = TRUE) {
 #' @examples
 ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
                 S2_args = list(), QR = NULL, whiten = NULL,
-                center = FALSE, scale_gen_kurtosis = FALSE,
-                fix_signs = c("scores", "W"),
+                center = FALSE, fix_signs = c("scores", "W"),
                 na.action = na.fail, ...) {
 
   # make sure we have a suitable data matrix
@@ -177,7 +175,6 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
 
   # check remaining arguments
   center <- isTRUE(center)
-  scale_gen_kurtosis <- isTRUE(scale_gen_kurtosis)
   fix_signs <- match.arg(fix_signs)
 
   # obtain first scatter matrix
@@ -296,11 +293,7 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
   # extract generalized kurtosis values
   gen_kurtosis <- S2_Y_eigen$values
   if (!all(is.finite(gen_kurtosis))) {
-    if (scale_gen_kurtosis) {
-      suffix <- "; proceeding without scaling them"
-      scale_gen_kurtosis <- FALSE
-    } else suffix <- ""
-    warning("some generalized kurtosis values are non-finite", suffix)
+    warning("some generalized kurtosis values are non-finite")
   }
   # obtain coefficient matrix of the linear transformation
   if (QR) {
@@ -309,9 +302,6 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
     # reorder columns of W to correspond to original order of columns in X
     W <- W[, order(qr_X$pivot)]
   } else W <- crossprod(S2_Y_eigen$vectors, W1)
-
-  # if requested, scale generalized kurtosis values
-  if (scale_gen_kurtosis) gen_kurtosis <- gen_kurtosis / prod(gen_kurtosis)^(1/p)
 
   # fix the signs in matrix W of coefficients
   if (fix_signs == "scores") {
@@ -362,8 +352,7 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
   res <- list(gen_kurtosis = gen_kurtosis, W = W_final, scores = Z_final,
               gen_skewness = gen_skewness, S1_label = S1_label,
               S2_label = S2_label, S1_args = S1_args, S2_args = S2_args,
-              QR = QR, whiten = whiten, center = center,
-              scale_gen_kurtosis = scale_gen_kurtosis, fix_signs = fix_signs)
+              QR = QR, whiten = whiten, center = center, fix_signs = fix_signs)
   class(res) <- "ICS"
   res
 
@@ -457,7 +446,8 @@ components.ICS <- function(object, select = NULL, drop = FALSE, index = NULL,
 gen_kurtosis <- function(object, ...) UseMethod("gen_kurtosis")
 
 #' @export
-gen_kurtosis.ICS <- function(object, select = NULL, index = NULL, ...) {
+gen_kurtosis.ICS <- function(object, select = NULL, scale = FALSE,
+                             index = NULL, ...) {
   # back-compatibility check
   if (missing(select) && !missing(index)) {
     warning("argument 'index' is deprecated, use 'select' instead")
@@ -465,11 +455,13 @@ gen_kurtosis.ICS <- function(object, select = NULL, index = NULL, ...) {
   }
   # extract generalized kurtosis values
   gen_kurtosis <- object$gen_kurtosis
+  p <- length(gen_kurtosis)
+  # if requested, scale generalized kurtosis values
+  if (isTRUE(scale)) gen_kurtosis <- gen_kurtosis / prod(gen_kurtosis)^(1/p)
   # check if we have argument of components to return
   if (!is.null(select)) {
     # check argument specifying components
-    if (check_undefined(select, max = length(gen_kurtosis),
-                        names = names(gen_kurtosis))) {
+    if (check_undefined(select, max = p, names = names(gen_kurtosis))) {
       stop("undefined components selected")
     }
     # select components
@@ -529,7 +521,6 @@ print.ICS <- function(x, info = FALSE, digits = 4L, ...){
     cat("\n\nInformation on the algorithm:")
     cat("\nQR:", x$QR)
     cat("\nwhiten:", x$whiten)
-    cat("\nscale_gen_kurtosis:", x$scale_gen_kurtosis)
     cat("\nfix_signs:", x$fix_signs)
     cat("\ncenter:", x$center)
   }

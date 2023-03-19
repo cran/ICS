@@ -97,29 +97,124 @@ ICS_covAxis <- function(x, location = TRUE) {
 
 # Main function to compute ICS -----
 
-#' Title
+#' Two Scatter Matrices ICS Transformation
 #'
-#' @param X
-#' @param S1
-#' @param S2
-#' @param S1_args
-#' @param S2_args
-#' @param QR
-#' @param whiten
-#' @param center logical indicating whether to center the ICS coordinates (scores)
-#' @param fix_signs character string specifying how to fix_signs the ICS
-#                 coordinates, either "scores" or "W"
-#' @param na.action
-#' @param ...
+#' Transform the data via two scatter matrices to an invariant coordinate
+#' system or independent components, depending on the underlying assumptions.
+#' Function \code{ICS()} is intended as a replacement for \code{\link{ics}()}
+#' and \code{\link{ics2}()}, and it combines their functionality into a single
+#' function. Importantly, the results are returned as an
+#' \code{\link[base:class]{S3}} object rather than an
+#' \code{\link[methods:Classes_Details]{S4}} object. Furthermore, \code{ICS()}
+#' implements recent improvements, such as a numerically stable algorithm based
+#' on the QR algorithm for a common family of scatter pairs.
 #'
-#' @return
+#' \bold{TO DO:} Describe details such as how \code{fix_signs} works
+#'
+#' @name ICS-S3
+#' @alias ICS
+#'
+#' @param X  a numeric matrix or data frame containing the data to be
+#' transformed.
+#' @param S1  a numeric matrix containing the first scatter matrix, an object
+#' of class \code{"ICS_scatter"} (that typically contains the location vector
+#' and scatter matrix as \code{location} and \code{scatter} components), or a
+#' function that returns either of those options. The default is function
+#' \code{\link{ICS_cov}()} for the sample covariance matrix.
+#' @param S2  a numeric matrix containing the second scatter matrix, an object
+#' of class \code{"ICS_scatter"} (that typically contains the location vector
+#' and scatter matrix as \code{location} and \code{scatter} components), or a
+#' function that returns either of those options. The default is function
+#' \code{\link{ICS_cov4}()} for the covariance matrix based on fourth order
+#' moments.
+#' @param S1_args  a list containing additional arguments for \code{S1} (only
+#' relevant if \code{S1} is a function).
+#' @param S2_args  a list containing additional arguments for \code{S2} (only
+#' relevant if \code{S2} is a function).
+#' @param QR  a logical indicating whether the numerically stable algorithm
+#' based on the QR decomposition should be applied The default is \code{TRUE}
+#' if \code{S1} is \code{\link{ICS_cov}()} or \code{\link[stats]{cov}()}, and
+#' if \code{S2} is one of \code{\link{ICS_cov4}()}, \code{\link{ICS_covW}()},
+#' \code{\link{ICS_covAxis}()}, \code{\link{cov4}()}, \code{\link{covW}()}, or
+#' \code{\link{covAxis}()}. For other scatter pairs, the QR algorithm is not
+#' applicable and this is set to \code{FALSE}.
+#' @param whiten  a logical indicating whether to whiten the data with respect
+#' to the first scatter matrix before computing the second scatter matrix. The
+#' default is \code{TRUE} if \code{S2} is a function and \code{QR} is
+#' \code{FALSE}. If \code{S2} is not a function or if the QR algorithm is
+#' applied, whitening is not applicable and this is set to \code{FALSE}.
+#' @param center  a logical indicating whether to center the data with respect
+#' to the first location vector before computing the invariant coordinates
+#' (defaults to \code{FALSE}).  Centering is only applicable if the first
+#' scatter object contains a location component, otherwise this is set to
+#' \code{FALSE}.
+#' @param fix_signs a character string specifying how to fix the signs of the
+#' invariant coordinates. Possible values are \code{"scores"} to fix the signs
+#' based on (generalized) skewness values of the coordinates, or \code{"W"} to
+#' fix the signs based on the coefficient matrix of the linear transformation.
+#' See \sQuote{Details} for more information.
+#' @param na.action  a function to handle missing values in the data (defaults
+#' to \code{\link[stats]{na.fail}}, see its help file for alternatives).
+#'
+#' @return An object of class \code{"ICS"} with the following components:
+#' \item{gen_kurtosis}{a numeric vector containing the generalized kurtosis
+#' values of the invariant components.}
+#' \item{W}{a numeric matrix in which each row contains the coefficients of the
+#' linear transformation to obtain the corresponding invariant component.}
+#' \item{scores}{a numeric matrix in which each column contains the scores of
+#' the corresponding invariant component.}
+#' \item{gen_skewness}{a numeric vector containing the (generalized) skewness
+#' values of the invariant components (only returned if
+#' \code{fix_signs = "scores"}).}
+#' \item{S1_label}{a character string providing a label for the first scatter
+#' matrix.}
+#' \item{S2_label}{a character string providing a label for the second scatter
+#' matrix.}
+#' \item{S1_args}{a list containing additional arguments used to compute
+#' \code{S1} (if a function was supplied).}
+#' \item{S2_args}{a list containing additional arguments used to compute
+#' \code{S2} (if a function was supplied).}
+#' \item{QR}{a logical indicating whether the numerically stable algorithm
+#' based on the QR decomposition was applied.}
+#' \item{whiten}{a logical indicating whether the data were whitened with
+#' respect to the first scatter matrix before computing the second scatter
+#' matrix.}
+#' \item{center}{a logical indicating whether the data were centered with
+#' respect to the first location vector before computing the invariant
+#' coordinates.}
+#' \item{fix_signs}{a character string specifying how the signs of the
+#' invariant coordinates were fixed.}
+#'
+#' @author Andreas Alfons and Aurore Archimbaud, based on code for
+#' \code{\link{ics}()} and \code{\link{ics2}()} by Klaus Nordhausen
+#'
+#' @references
+#' Archimbaud, A., Drmac, Z., Nordhausen, K., Radojcic, U. and Ruiz-Gazen, A.
+#' (2023) Numerical Considerations and a New Implementation for Invariant
+#' Coordinate Selection. \emph{SIAM Journal on Mathematics of Data Science},
+#' \bold{5}(1), 97--121. \doi{10.1137/22M1498759}.
+#'
+#' Oja, H., Sirkia, S. and Eriksson, J. (2006) Scatter Matrices and Independent
+#' Component Analysis. \emph{Austrian Journal of Statistics}, \bold{35}(2&3),
+#' 175-189. \doi{10.17713/ajs.v35i2&3.364}.
+#'
+#' Tyler, D.E., Critchley, F., Duembgen, L. and Oja, H. (2009) Invariant
+#' Co-ordinate Selection. \emph{Journal of the Royal Statistical Society,
+#' Series B}, \bold{71}(3), 549--592. \doi{10.1111/j.1467-9868.2009.00706.x}.
+#'
+#' @seealso \code{\link{gen_kurtosis}()}, \code{\link[=coef.ICS]{coef}()},
+#' \code{\link{components}()}, \code{\link[=fitted.ICS]{fitted}()} and
+#' \code{\link[=plot-methods]{plot}()} methods
+#'
+#' @importFrom stats cov na.fail
 #' @export
 #'
 #' @examples
+
 ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
                 S2_args = list(), QR = NULL, whiten = NULL,
                 center = FALSE, fix_signs = c("scores", "W"),
-                na.action = na.fail, ...) {
+                na.action = na.fail) {
 
   # make sure we have a suitable data matrix
   X <- na.action(X)
@@ -180,7 +275,13 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
   # obtain first scatter matrix
   if (is.function(S1)) {
     S1_X <- get_scatter(X, fun = S1, args = S1_args, label = S1_label)
-  } else S1_X <- to_ICS_scatter(S1, label = S1_label)
+  } else {
+    S1_X <- to_ICS_scatter(S1, label = S1_label)
+    if (length(S1_args) > 0L) {
+      warning("'S1' is not a function; ignoring additional arguments")
+      S1_args <- list()
+    }
+  }
   # update label for first scatter matrix
   S1_label <- S1_X$label
 
@@ -264,7 +365,13 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
       # obtain second scatter matrix on original data matrix
       if (is.function(S2)) {
         S2_X <- get_scatter(X, fun = S2, args = S2_args, label = S2_label)
-      } else S2_X <- to_ICS_scatter(S2, label = S2_label)
+      } else {
+        S2_X <- to_ICS_scatter(S2, label = S2_label)
+        if (length(S2_args) > 0L) {
+          warning("'S2' is not a function; ignoring additional arguments")
+          S2_args <- list()
+        }
+      }
       # update label for second scatter matrix
       S2_label <- S2_X$label
       # transform second scatter matrix

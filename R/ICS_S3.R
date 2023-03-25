@@ -1,29 +1,67 @@
 # Scatter functions returning class "ICS_scatter" -----
 
-#' Sample Covariance Matrix for ICS
+#' Location and Scatter Estimates for ICS
 #'
-#' Compute the sample covariance matrix, optionally including the sample mean
-#' as location estimate, to be used in transforming the data to an invariant
-#' coordinate system or independent components.
+#' Compute a scatter matrix and an optional location vector to be used in
+#' transforming the data to an invariant coordinate system or independent
+#' components.
+#'
+#' \code{ICS_cov()} is a wrapper for the sample covariance matrix as computed
+#' by \code{\link[stats]{cov}()}.
+#'
+#' \code{ICS_cov4()} is a wrapper for the scatter matrix based on fourth
+#' moments as computed by \code{\link{cov4}()}. Although the returned location
+#' estimate can be specified to be based on third moments as computed by
+#' \code{\link{mean3}()}, the scatter matrix of fourth moments is always
+#' computed with respect to the sample mean.
+#'
+#' \code{ICS_covW()} is a wrapper for the one-step M-estimator of scatter as
+#' computed by \code{\link{covW}()}.
+#'
+#' \code{ICS_covAxis()} is a wrapper for the one-step Tyler shape matrix as
+#' computed by \code{\link{covAxis}()}, which is can be used to perform
+#' Principal Axis Analysis.
+#'
+#' @name ICS_scatter
+#' @alias ICS_cov
 #'
 #' @param x  a numeric matrix or data frame.
-#' @param location  a logical indicating whether to include the sample mean as
-#' location estimate.
+#' @param location  for \code{ICS_cov()}, \code{ICS_covW()}, and
+#' \code{ICS_covAxis()}, a logical indicating whether to include the sample
+#' mean as location estimate (defaults to \code{TRUE}).  For \code{ICS_cov4()},
+#' alternatively a character string specifying the location estimate can be
+#' supplied.  Possible values are \code{"mean3"} for a location estimate based
+#' on third moments (the default), \code{"mean"} for the sample mean, or
+#' \code{"none"} to not include a location estimate.
 #'
 #' @return An object of class \code{"ICS_scatter"} with the following
 #' components:
-#' \item{location}{a numeric vector giving the sample means (only returned
-#' if argument \code{location} is \code{TRUE}).}
-#' \item{scatter}{a numeric matrix giving the sample covariance matrix.}
-#' \item{label}{a character string providing a labelfor the scatter matrix
-#' (here \code{"COV"}) to be used by other functions in package \pkg{ICS}.}
+#' \item{location}{if requested, a numeric vector giving the location
+#' estimates.}
+#' \item{scatter}{a numeric matrix giving the scatter matrix.}
+#' \item{label}{a character string providing a label for the scatter matrix.}
 #'
 #' @author Andreas Alfons and Aurore Archimbaud
+#'
+#' @references
+#' Critchley, F., Pires, A. and Amado, C. (2006) Principal Axis Analysis.
+#' Technical Report, \bold{06/14}. The Open University, Milton Keynes.
+#'
+#' Oja, H., Sirkia, S. and Eriksson, J. (2006) Scatter Matrices and Independent
+#' Component Analysis. \emph{Austrian Journal of Statistics}, \bold{35}(2&3),
+#' 175-189. \doi{10.17713/ajs.v35i2&3.364}.
+#'
+#' Tyler, D.E., Critchley, F., Duembgen, L. and Oja, H. (2009) Invariant
+#' Co-ordinate Selection. \emph{Journal of the Royal Statistical Society,
+#' Series B}, \bold{71}(3), 549--592. \doi{10.1111/j.1467-9868.2009.00706.x}.
 #'
 #' @seealso
 #' \code{\link{ICS}()}
 #'
-#' \code{\link[base:colSums]{colMeans}()}, \code{\link[stats]{cov}()}
+#' \code{\link[base:colSums]{colMeans}()}, \code{\link{mean3}()}
+#'
+#' \code{\link[stats]{cov}()}, \code{\link{cov4}()}, \code{\link{covW}()},
+#' \code{\link{covAxis}()}
 #'
 #' @importFrom stats cov
 #' @export
@@ -43,19 +81,15 @@ ICS_cov <- function(x, location = TRUE) {
 }
 
 
-#' Title
-#'
-#' @param x
-#'
-#' @return
+#' @name ICS_scatter
 #' @export
-#'
-#' @examples
-## TODO: Should the default location estimate be "mean3" or "mean"? I think
-##       that mean3 was only needed for fixing the signs in ics2? But it's
-##       more natural to use the mean as the default location estimate.
-## TODO: Do we need to allow passing other arguments to cov4? Then we also need
-##       to figure out what to do with the location argument of cov4().
+
+# TODO: Should the default location estimate be "mean3" or "mean"? I think
+#       that mean3 was only needed for fixing the signs in ics2? But it's
+#       more natural to use the mean as the default location estimate.
+# TODO: Do we need to allow passing other arguments to cov4? Then we also need
+#       to figure out what to do with the location argument of cov4().
+
 ICS_cov4 <- function(x, location = c("mean3", "mean", "none")) {
   # initializations
   x <- as.matrix(x)
@@ -71,16 +105,16 @@ ICS_cov4 <- function(x, location = c("mean3", "mean", "none")) {
 }
 
 
-#' Title
+#' @name ICS_scatter
 #'
-#' @param x
-#' @param alpha
-#' @param cf
+#' @param alpha  parameter of the one-step M-estimator (defaults to 1).
+#' @param cf  consistency factor of the one-step M-estimator (defaults to 1).
 #'
-#' @return
 #' @export
-#'
-#' @examples
+
+## TODO: can we have a more detailed description of those two parameters? The
+##      help file of covW() doesn't provide more information either.
+
 ICS_covW <- function(x, location = TRUE, alpha = 1, cf = 1) {
   # initializations
   x <- as.matrix(x)
@@ -95,14 +129,9 @@ ICS_covW <- function(x, location = TRUE, alpha = 1, cf = 1) {
 }
 
 
-#' Title
-#'
-#' @param x
-#'
-#' @return
+#' @name ICS_scatter
 #' @export
-#'
-#' @examples
+
 ICS_covAxis <- function(x, location = TRUE) {
   # initializations
   x <- as.matrix(x)

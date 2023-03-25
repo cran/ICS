@@ -1,13 +1,35 @@
 # Scatter functions returning class "ICS_scatter" -----
 
-#' Title
+#' Sample Covariance Matrix for ICS
 #'
-#' @param x
+#' Compute the sample covariance matrix, optionally including the sample mean
+#' as location estimate, to be used in transforming the data to an invariant
+#' coordinate system or independent components.
 #'
-#' @return
+#' @param x  a numeric matrix or data frame.
+#' @param location  a logical indicating whether to include the sample mean as
+#' location estimate.
+#'
+#' @return An object of class \code{"ICS_scatter"} with the following
+#' components:
+#' \item{location}{a numeric vector giving the sample means (only returned
+#' if argument \code{location} is \code{TRUE}).}
+#' \item{scatter}{a numeric matrix giving the sample covariance matrix.}
+#' \item{label}{a character string providing a labelfor the scatter matrix
+#' (here \code{"COV"}) to be used by other functions in package \pkg{ICS}.}
+#'
+#' @author Andreas Alfons and Aurore Archimbaud
+#'
+#' @seealso
+#' \code{\link{ICS}()}
+#'
+#' \code{\link[base:colSums]{colMeans}()}, \code{\link[stats]{cov}()}
+#'
+#' @importFrom stats cov
 #' @export
 #'
 #' @examples
+
 ICS_cov <- function(x, location = TRUE) {
   # initializations
   x <- as.matrix(x)
@@ -167,9 +189,9 @@ ICS_covAxis <- function(x, location = TRUE) {
 #' values of the invariant components (only returned if
 #' \code{fix_signs = "scores"}).}
 #' \item{S1_label}{a character string providing a label for the first scatter
-#' matrix.}
+#' matrix to be used by various methods.}
 #' \item{S2_label}{a character string providing a label for the second scatter
-#' matrix.}
+#' matrix to be used by various methods.}
 #' \item{S1_args}{a list containing additional arguments used to compute
 #' \code{S1} (if a function was supplied).}
 #' \item{S2_args}{a list containing additional arguments used to compute
@@ -204,7 +226,7 @@ ICS_covAxis <- function(x, location = TRUE) {
 #'
 #' @seealso \code{\link{gen_kurtosis}()}, \code{\link[=coef.ICS]{coef}()},
 #' \code{\link{components}()}, \code{\link[=fitted.ICS]{fitted}()} and
-#' \code{\link[=plot-methods]{plot}()} methods
+#' \code{\link[=plot.ICS]{plot}()} methods
 #'
 #' @importFrom stats cov na.fail
 #' @export

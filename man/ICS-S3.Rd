@@ -82,9 +82,9 @@ the corresponding invariant component.}
 values of the invariant components (only returned if
 \code{fix_signs = "scores"}).}
 \item{S1_label}{a character string providing a label for the first scatter
-matrix.}
+matrix to be used by various methods.}
 \item{S2_label}{a character string providing a label for the second scatter
-matrix.}
+matrix to be used by various methods.}
 \item{S1_args}{a list containing additional arguments used to compute
 \code{S1} (if a function was supplied).}
 \item{S2_args}{a list containing additional arguments used to compute
@@ -131,7 +131,7 @@ Series B}, \bold{71}(3), 549--592. \doi{10.1111/j.1467-9868.2009.00706.x}.
 \seealso{
 \code{\link{gen_kurtosis}()}, \code{\link[=coef.ICS]{coef}()},
 \code{\link{components}()}, \code{\link[=fitted.ICS]{fitted}()} and
-\code{\link[=plot-methods]{plot}()} methods
+\code{\link[=plot.ICS]{plot}()} methods
 }
 \author{
 Andreas Alfons and Aurore Archimbaud, based on code for

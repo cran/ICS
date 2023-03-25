@@ -2,13 +2,35 @@
 % Please edit documentation in R/ICS_S3.R
 \name{ICS_cov}
 \alias{ICS_cov}
-\title{Title}
+\title{Sample Covariance Matrix for ICS}
 \usage{
 ICS_cov(x, location = TRUE)
 }
 \arguments{
-\item{x}{}
+\item{x}{a numeric matrix or data frame.}
+
+\item{location}{a logical indicating whether to include the sample mean as
+location estimate.}
+}
+\value{
+An object of class \code{"ICS_scatter"} with the following
+components:
+\item{location}{a numeric vector giving the sample means (only returned
+if argument \code{location} is \code{TRUE}).}
+\item{scatter}{a numeric matrix giving the sample covariance matrix.}
+\item{label}{a character string providing a labelfor the scatter matrix
+(here \code{"COV"}) to be used by other functions in package \pkg{ICS}.}
 }
 \description{
-Title
+Compute the sample covariance matrix, optionally including the sample mean
+as location estimate, to be used in transforming the data to an invariant
+coordinate system or independent components.
+}
+\seealso{
+\code{\link{ICS}()}
+
+\code{\link[base:colSums]{colMeans}()}, \code{\link[stats]{cov}()}
+}
+\author{
+Andreas Alfons and Aurore Archimbaud
 }

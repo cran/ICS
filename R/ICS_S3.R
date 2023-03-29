@@ -722,19 +722,16 @@ check_insufficient <- function(select, target = 2L) {
 # convert ... logical indicating whether the scatter matrix should be converted
 #             to class "ICS_scatter"
 # label ..... typically constructed beforehand via deparse(substitute())
-# TODO: perhaps argument 'convert' is unnecessary?
-get_scatter <- function(X, fun = cov, args = list(), convert = TRUE, label) {
+get_scatter <- function(X, fun = cov, args = list(), label) {
   if (length(args) == 0) scatter <- fun(X)
   else {
-    # there should be a more efficient way of doing this, for example via call()
+    # TODO: there may be a more efficient way of doing this, perhaps via call()
     args <- c(list(X), args)
     scatter <- do.call(fun, args)
   }
-  # if requested, convert to class "ICS_scatter": use the function name as
-  # label if the function does not return an object of this class already
-  if (convert) scatter <- to_ICS_scatter(scatter, label = label)
-  # return scatter matrix
-  scatter
+  # convert to class "ICS_scatter": use the supplied label if the function does
+  # not return an object of this class already
+  to_ICS_scatter(scatter, label = label)
 }
 
 

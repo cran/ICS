@@ -6,6 +6,7 @@
 \alias{ICS_cov4}
 \alias{ICS_covW}
 \alias{ICS_covAxis}
+\alias{ICS_tM}
 \title{Location and Scatter Estimates for ICS}
 \usage{
 ICS_cov(x, location = TRUE)
@@ -15,28 +16,37 @@ ICS_cov4(x, location = c("mean", "mean3", "none"))
 ICS_covW(x, location = TRUE, alpha = 1, cf = 1)
 
 ICS_covAxis(x, location = TRUE)
+
+ICS_tM(x, location = TRUE, df = 1, ...)
 }
 \arguments{
 \item{x}{a numeric matrix or data frame.}
 
-\item{location}{for \code{ICS_cov()}, \code{ICS_covW()}, and
-\code{ICS_covAxis()}, a logical indicating whether to include the sample
+\item{location}{for \code{ICS_cov()}, \code{ICS_cov4()}, \code{ICS_covW()},
+and \code{ICS_covAxis()}, a logical indicating whether to include the sample
 mean as location estimate (defaults to \code{TRUE}).  For \code{ICS_cov4()},
 alternatively a character string specifying the location estimate can be
-supplied.  Possible values are \code{"mean3"} for a location estimate based
-on third moments (the default), \code{"mean"} for the sample mean, or
-\code{"none"} to not include a location estimate.}
+supplied.  Possible values are \code{"mean"} for the sample mean (the
+default), \code{"mean3"} for a location estimate based on third moments,
+or \code{"none"} to not include a location estimate.  For \code{ICS_tM()}
+a logical inficating whether to include the M-estimate of location
+(defaults to \code{TRUE}).}
 
 \item{alpha}{parameter of the one-step M-estimator (defaults to 1).}
 
 \item{cf}{consistency factor of the one-step M-estimator (defaults to 1).}
+
+\item{df}{assumed degrees of freedom of the t-distribution (defaults to 1,
+which corresponds to the Cauchy distribution).}
+
+\item{\dots}{additional arguments to be passed down to \code{\link{tM}()}.}
 }
 \value{
 An object of class \code{"ICS_scatter"} with the following
 components:
 \item{location}{if requested, a numeric vector giving the location
-estimates.}
-\item{scatter}{a numeric matrix giving the scatter matrix.}
+estimate.}
+\item{scatter}{a numeric matrix giving the estimate of the scatter matrix.}
 \item{label}{a character string providing a label for the scatter matrix.}
 }
 \description{
@@ -63,10 +73,23 @@ computed by \code{\link{covW}()}.
 \code{ICS_covAxis()} is a wrapper for the one-step Tyler shape matrix as
 computed by \code{\link{covAxis}()}, which is can be used to perform
 Principal Axis Analysis.
+
+\code{ICS_tM()} is a wrapper for the M-estimator of location and scatter
+for a multivariate t-distribution, as computed by \code{\link{tM}()}.
 }
 \references{
+Arslan, O., Constable, P.D.L. and Kent, J.T. (1995) Convergence behaviour of
+the EM algorithm for the multivariate t-distribution, \emph{Communications
+in Statistics, Theory and Methods}, \bold{24}(12), 2981--3000.
+\doi{10.1080/03610929508831664}.
+
 Critchley, F., Pires, A. and Amado, C. (2006) Principal Axis Analysis.
 Technical Report, \bold{06/14}. The Open University, Milton Keynes.
+
+Kent, J.T., Tyler, D.E. and Vardi, Y. (1994) A curious likelihood identity
+for the multivariate t-distribution, \emph{Communications in Statistics,
+Simulation and Computation}, \bold{23}(2), 441--453.
+\doi{10.1080/03610919408813180}.
 
 Oja, H., Sirkia, S. and Eriksson, J. (2006) Scatter Matrices and Independent
 Component Analysis. \emph{Austrian Journal of Statistics}, \bold{35}(2&3),
@@ -82,7 +105,7 @@ Series B}, \bold{71}(3), 549--592. \doi{10.1111/j.1467-9868.2009.00706.x}.
 \code{\link[base:colSums]{colMeans}()}, \code{\link{mean3}()}
 
 \code{\link[stats]{cov}()}, \code{\link{cov4}()}, \code{\link{covW}()},
-\code{\link{covAxis}()}
+\code{\link{covAxis}()}, \code{\link{tM}()}
 }
 \author{
 Andreas Alfons and Aurore Archimbaud

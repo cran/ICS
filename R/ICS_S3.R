@@ -25,30 +25,45 @@
 #' computed by \code{\link{covAxis}()}, which is can be used to perform
 #' Principal Axis Analysis.
 #'
+#' \code{ICS_tM()} is a wrapper for the M-estimator of location and scatter
+#' for a multivariate t-distribution, as computed by \code{\link{tM}()}.
+#'
 #' @name ICS_scatter
 #' @alias ICS_cov
 #'
 #' @param x  a numeric matrix or data frame.
-#' @param location  for \code{ICS_cov()}, \code{ICS_covW()}, and
-#' \code{ICS_covAxis()}, a logical indicating whether to include the sample
+#' @param location  for \code{ICS_cov()}, \code{ICS_cov4()}, \code{ICS_covW()},
+#' and \code{ICS_covAxis()}, a logical indicating whether to include the sample
 #' mean as location estimate (defaults to \code{TRUE}).  For \code{ICS_cov4()},
 #' alternatively a character string specifying the location estimate can be
-#' supplied.  Possible values are \code{"mean3"} for a location estimate based
-#' on third moments (the default), \code{"mean"} for the sample mean, or
-#' \code{"none"} to not include a location estimate.
+#' supplied.  Possible values are \code{"mean"} for the sample mean (the
+#' default), \code{"mean3"} for a location estimate based on third moments,
+#' or \code{"none"} to not include a location estimate.  For \code{ICS_tM()}
+#' a logical inficating whether to include the M-estimate of location
+#' (defaults to \code{TRUE}).
 #'
 #' @return An object of class \code{"ICS_scatter"} with the following
 #' components:
 #' \item{location}{if requested, a numeric vector giving the location
-#' estimates.}
-#' \item{scatter}{a numeric matrix giving the scatter matrix.}
+#' estimate.}
+#' \item{scatter}{a numeric matrix giving the estimate of the scatter matrix.}
 #' \item{label}{a character string providing a label for the scatter matrix.}
 #'
 #' @author Andreas Alfons and Aurore Archimbaud
 #'
 #' @references
+#' Arslan, O., Constable, P.D.L. and Kent, J.T. (1995) Convergence behaviour of
+#' the EM algorithm for the multivariate t-distribution, \emph{Communications
+#' in Statistics, Theory and Methods}, \bold{24}(12), 2981--3000.
+#' \doi{10.1080/03610929508831664}.
+#'
 #' Critchley, F., Pires, A. and Amado, C. (2006) Principal Axis Analysis.
 #' Technical Report, \bold{06/14}. The Open University, Milton Keynes.
+#'
+#' Kent, J.T., Tyler, D.E. and Vardi, Y. (1994) A curious likelihood identity
+#' for the multivariate t-distribution, \emph{Communications in Statistics,
+#' Simulation and Computation}, \bold{23}(2), 441--453.
+#' \doi{10.1080/03610919408813180}.
 #'
 #' Oja, H., Sirkia, S. and Eriksson, J. (2006) Scatter Matrices and Independent
 #' Component Analysis. \emph{Austrian Journal of Statistics}, \bold{35}(2&3),
@@ -64,7 +79,7 @@
 #' \code{\link[base:colSums]{colMeans}()}, \code{\link{mean3}()}
 #'
 #' \code{\link[stats]{cov}()}, \code{\link{cov4}()}, \code{\link{covW}()},
-#' \code{\link{covAxis}()}
+#' \code{\link{covAxis}()}, \code{\link{tM}()}
 #'
 #' @importFrom stats cov
 #' @export
@@ -138,6 +153,27 @@ ICS_covAxis <- function(x, location = TRUE) {
   out <- list(location = location, scatter = covAxis(x),
               label = get_covAxis_label())
   # add class and return object
+  class(out) <- "ICS_scatter"
+  out
+}
+
+
+#' @name ICS_scatter
+#'
+#' @param df  assumed degrees of freedom of the t-distribution (defaults to 1,
+#' which corresponds to the Cauchy distribution).
+#' @param \dots  additional arguments to be passed down to \code{\link{tM}()}.
+#'
+#' @export
+
+ICS_tM <- function(x, location = TRUE, df = 1, ...) {
+  # initializations
+  location <- isTRUE(location)
+  # compute location and scatter estimates
+  mlt <- tM(x, df = df, ...)
+  location <- if (location) mlt$mu
+  # construct object to be returned
+  out <- list(location = location, scatter = mlt$V, label = "MLT")
   class(out) <- "ICS_scatter"
   out
 }

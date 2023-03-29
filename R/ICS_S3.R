@@ -10,10 +10,13 @@
 #' by \code{\link[stats]{cov}()}.
 #'
 #' \code{ICS_cov4()} is a wrapper for the scatter matrix based on fourth
-#' moments as computed by \code{\link{cov4}()}. Although the returned location
-#' estimate can be specified to be based on third moments as computed by
-#' \code{\link{mean3}()}, the scatter matrix of fourth moments is always
-#' computed with respect to the sample mean.
+#' moments as computed by \code{\link{cov4}()}. Note that the scatter matrix
+#' is always computed with respect to the sample mean, even though the returned
+#' location component can be specified to be based on third moments as computed
+#' by \code{\link{mean3}()}.  Setting a location component other than the
+#' sample mean can be used to fix the signs of the invariant coordinates in
+#' \code{\link{ICS}()} based on generalized skewness values, for instance
+#' when using the scatter pair \code{ICS_cov()} and \code{ICS_cov4()}.
 #'
 #' \code{ICS_covW()} is a wrapper for the one-step M-estimator of scatter as
 #' computed by \code{\link{covW}()}.
@@ -84,20 +87,14 @@ ICS_cov <- function(x, location = TRUE) {
 #' @name ICS_scatter
 #' @export
 
-# TODO: Should the default location estimate be "mean3" or "mean"? I think
-#       that mean3 was only needed for fixing the signs in ics2? But it's
-#       more natural to use the mean as the default location estimate.
-# TODO: Do we need to allow passing other arguments to cov4? Then we also need
-#       to figure out what to do with the location argument of cov4().
-
-ICS_cov4 <- function(x, location = c("mean3", "mean", "none")) {
+ICS_cov4 <- function(x, location = c("mean", "mean3", "none")) {
   # initializations
   x <- as.matrix(x)
   if (is.character(location)) location <- match.arg(location)
-  else if (isTRUE(location)) location <- "mean3"
+  else if (isTRUE(location)) location <- "mean"
   else location <- "none"
   # compute location and scatter estimates
-  location <- switch(location, "mean3" = mean3(x), "mean" = colMeans(x))
+  location <- switch(location, "mean" = colMeans(x), "mean3" = mean3(x))
   out <- list(location = location, scatter = cov4(x), label = get_cov4_label())
   # add class and return object
   class(out) <- "ICS_scatter"
@@ -113,7 +110,7 @@ ICS_cov4 <- function(x, location = c("mean3", "mean", "none")) {
 #' @export
 
 ## TODO: can we have a more detailed description of those two parameters? The
-##      help file of covW() doesn't provide more information either.
+##       help file of covW() doesn't provide more information either.
 
 ICS_covW <- function(x, location = TRUE, alpha = 1, cf = 1) {
   # initializations

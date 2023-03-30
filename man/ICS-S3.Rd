@@ -73,13 +73,13 @@ to \code{\link[stats]{na.fail}}, see its help file for alternatives).}
 \value{
 An object of class \code{"ICS"} with the following components:
 \item{gen_kurtosis}{a numeric vector containing the generalized kurtosis
-values of the invariant components.}
+values of the invariant coordinates.}
 \item{W}{a numeric matrix in which each row contains the coefficients of the
-linear transformation to obtain the corresponding invariant component.}
+linear transformation to the corresponding invariant coordinate.}
 \item{scores}{a numeric matrix in which each column contains the scores of
-the corresponding invariant component.}
+the corresponding invariant coordinate.}
 \item{gen_skewness}{a numeric vector containing the (generalized) skewness
-values of the invariant components (only returned if
+values of the invariant coordinates (only returned if
 \code{fix_signs = "scores"}).}
 \item{S1_label}{a character string providing a label for the first scatter
 matrix to be used by various methods.}
@@ -130,7 +130,7 @@ Series B}, \bold{71}(3), 549--592. \doi{10.1111/j.1467-9868.2009.00706.x}.
 }
 \seealso{
 \code{\link{gen_kurtosis}()}, \code{\link[=coef.ICS]{coef}()},
-\code{\link{components}()}, \code{\link[=fitted.ICS]{fitted}()} and
+\code{\link{components}()}, \code{\link[=fitted.ICS]{fitted}()}, and
 \code{\link[=plot.ICS]{plot}()} methods
 }
 \author{

@@ -29,7 +29,6 @@
 #' for a multivariate t-distribution, as computed by \code{\link{tM}()}.
 #'
 #' @name ICS_scatter
-#' @alias ICS_cov
 #'
 #' @param x  a numeric matrix or data frame.
 #' @param location  for \code{ICS_cov()}, \code{ICS_cov4()}, \code{ICS_covW()},
@@ -81,10 +80,10 @@
 #' \code{\link[stats]{cov}()}, \code{\link{cov4}()}, \code{\link{covW}()},
 #' \code{\link{covAxis}()}, \code{\link{tM}()}
 #'
+#' @examples
+#'
 #' @importFrom stats cov
 #' @export
-#'
-#' @examples
 
 ICS_cov <- function(x, location = TRUE) {
   # initializations
@@ -196,7 +195,6 @@ ICS_tM <- function(x, location = TRUE, df = 1, ...) {
 #' \bold{TO DO:} Describe details such as how \code{fix_signs} works
 #'
 #' @name ICS-S3
-#' @alias ICS
 #'
 #' @param X  a numeric matrix or data frame containing the data to be
 #' transformed.
@@ -242,13 +240,13 @@ ICS_tM <- function(x, location = TRUE, df = 1, ...) {
 #'
 #' @return An object of class \code{"ICS"} with the following components:
 #' \item{gen_kurtosis}{a numeric vector containing the generalized kurtosis
-#' values of the invariant components.}
+#' values of the invariant coordinates.}
 #' \item{W}{a numeric matrix in which each row contains the coefficients of the
-#' linear transformation to obtain the corresponding invariant component.}
+#' linear transformation to the corresponding invariant coordinate.}
 #' \item{scores}{a numeric matrix in which each column contains the scores of
-#' the corresponding invariant component.}
+#' the corresponding invariant coordinate.}
 #' \item{gen_skewness}{a numeric vector containing the (generalized) skewness
-#' values of the invariant components (only returned if
+#' values of the invariant coordinates (only returned if
 #' \code{fix_signs = "scores"}).}
 #' \item{S1_label}{a character string providing a label for the first scatter
 #' matrix to be used by various methods.}
@@ -287,13 +285,13 @@ ICS_tM <- function(x, location = TRUE, df = 1, ...) {
 #' Series B}, \bold{71}(3), 549--592. \doi{10.1111/j.1467-9868.2009.00706.x}.
 #'
 #' @seealso \code{\link{gen_kurtosis}()}, \code{\link[=coef.ICS]{coef}()},
-#' \code{\link{components}()}, \code{\link[=fitted.ICS]{fitted}()} and
+#' \code{\link{components}()}, \code{\link[=fitted.ICS]{fitted}()}, and
 #' \code{\link[=plot.ICS]{plot}()} methods
+#'
+#' @examples
 #'
 #' @importFrom stats cov na.fail
 #' @export
-#'
-#' @examples
 
 ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
                 S2_args = list(), QR = NULL, whiten = NULL,
@@ -552,90 +550,44 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
 
 # Methods for class "ICS" -----
 
-#' @method summary ICS
-#' @export
-summary.ICS <- function(object, ...) {
-  # currently doesn't do anything but add a subclass
-  class(object) <- c("summary_ICS", class(object))
-  object
-}
 
-#' @method coef ICS
-#' @importFrom stats coef
+#' Extract the Generalized Kurtosis Values of the ICS Transformation
+#'
+#' Extract the generalized kurtosis values of the components obtained via an
+#' ICS transformation.
+#'
+#' @param object  an object inheriting from class \code{"ICS"} containing
+#' results from an ICS transformation.
+#' @param select  an integer, character, or logical vector specifying for which
+#' components to extract the generalized kurtosis values, or \code{NULL} to
+#' extract the generalized kurtosis values of all components.
+#' @param scale  a logical indicating whether to scale the generalized kurtosis
+#' values to have product 1 (defaults to \code{FALSE}).
+#' @param index  an integer vector specifying for which components to extract
+#' the generalized kurtosis values, or \code{NULL} to extract the generalized
+#' kurtosis values of all components.  Note that \code{index} is deprecated
+#' and may be removed in the future, use \code{select} instead.
+#' @param \dots  additional arguments to be passed down.
+#'
+#' @return A numeric vector containing the generalized kurtosis values of the
+#' requested components.
+#'
+#' @author Andreas Alfons and Aurore Archimbaud
+#'
+#' @seealso
+#' \code{\link{ICS}()}
+#'
+#' \code{\link[=coef.ICS]{coef}()}, \code{\link{components}()},
+#' \code{\link[=fitted.ICS]{fitted}()}, and \code{\link[=plot.ICS]{plot}()}
+#' methods
+#'
+#' @examples
+#'
 #' @export
-coef.ICS <- function(object, select = NULL, drop = FALSE, index = NULL, ...) {
-  # back-compatibility check
-  if (missing(select) && !missing(index)) {
-    warning("argument 'index' is deprecated, use 'select' instead")
-    select <- index
-  }
-  # extract coefficient matrix
-  W <- object$W
-  # check if we have argument of components to return
-  if (!is.null(select)) {
-    # check argument specifying components
-    if (check_undefined(select, max = nrow(W), names = rownames(W))) {
-      stop("undefined components selected")
-    }
-    # select components
-    W <- W[select, , drop = drop]
-  }
-  # return coefficient matrix for selected components
-  W
-}
 
-#' @method fitted ICS
-#' @export
-fitted.ICS <- function(object, select = NULL, index = NULL, ...) {
-  # back-compatibility check
-  if (missing(select) && !missing(index)) {
-    warning("argument 'index' is deprecated, use 'select' instead")
-    select <- index
-  }
-  # initializations
-  scores <- object$scores
-  p <- ncol(scores)
-  if (is.null(select)) select <- seq_len(p)
-  else if (check_insufficient(select, target = 1L)) {
-    stop("no components selected")
-  } else if (check_undefined(select, max = p, names = colnames(scores))) {
-    stop("undefined components selected")
-  }
-  # compute reconstructions from selected components
-  # ('drop = FALSE' preserves row and column names)
-  W_inverse <- solve(object$W)
-  tcrossprod(scores[, select, drop = FALSE], W_inverse[, select, drop = FALSE])
-}
-
-#' @export
-components <- function(object, ...) UseMethod("components")
-
-#' @export
-components.ICS <- function(object, select = NULL, drop = FALSE, index = NULL,
-                           ...) {
-  # back-compatibility check
-  if (missing(select) && !missing(index)) {
-    warning("argument 'index' is deprecated, use 'select' instead")
-    select <- index
-  }
-  # extract scores
-  scores <- object$scores
-  # check if we have argument of components to return
-  if (!is.null(select)) {
-    # check argument specifying components
-    if (check_undefined(select, max = ncol(scores), names = colnames(scores))) {
-      stop("undefined components selected")
-    }
-    # select components
-    scores <- scores[, select, drop = drop]
-  }
-  # return matrix of scores for selected components
-  scores
-}
-
-#' @export
 gen_kurtosis <- function(object, ...) UseMethod("gen_kurtosis")
 
+#' @name gen_kurtosis
 #' @export
 gen_kurtosis.ICS <- function(object, select = NULL, scale = FALSE,
                              index = NULL, ...) {
@@ -662,9 +614,217 @@ gen_kurtosis.ICS <- function(object, select = NULL, scale = FALSE,
   gen_kurtosis
 }
 
-#' @method plot ICS
+
+#' Extract the Coefficient Matrix of the ICS Transformation
+#'
+#' Extract the coefficient matrix of a linear transformation to an invariant
+#' coordinate system. Each row of the matrix contains the coefficients of the
+#' transformation to the corresponding component.
+#'
+#' @name coef.ICS-S3
+#'
+#' @param object  an object inheriting from class \code{"ICS"} containing
+#' results from an ICS transformation.
+#' @param select  an integer, character, or logical vector specifying for which
+#' components to extract the coefficients, or \code{NULL} to extract the
+#' coefficients for all components.
+#' @param drop  a logical indicating whether to return a vector rather than a
+#' matrix in case coefficients are extracted for a single component (defaults
+#' to \code{FALSE}).
+#' @param index  an integer vector specifying for which components to extract
+#' the coefficients, or \code{NULL} to extract coefficients for all components.
+#' Note that \code{index} is deprecated and may be removed in the future, use
+#' \code{select} instead.
+#'
+#' @return A numeric matrix or vector containing the coefficients for the
+#' requested components.
+#'
+#' @author Andreas Alfons and Aurore Archimbaud
+#'
+#' @seealso
+#' \code{\link{ICS}()}
+#'
+#' \code{\link{gen_kurtosis}()}, \code{\link{components}()},
+#' \code{\link[=fitted.ICS]{fitted}()}, and \code{\link[=plot.ICS]{plot}()}
+#' methods
+#'
+#' @examples
+#'
+#' @method coef ICS
+#' @importFrom stats coef
 #' @export
+
+coef.ICS <- function(object, select = NULL, drop = FALSE, index = NULL, ...) {
+  # back-compatibility check
+  if (missing(select) && !missing(index)) {
+    warning("argument 'index' is deprecated, use 'select' instead")
+    select <- index
+  }
+  # extract coefficient matrix
+  W <- object$W
+  # check if we have argument of components to return
+  if (!is.null(select)) {
+    # check argument specifying components
+    if (check_undefined(select, max = nrow(W), names = rownames(W))) {
+      stop("undefined components selected")
+    }
+    # select components
+    W <- W[select, , drop = drop]
+  }
+  # return coefficient matrix for selected components
+  W
+}
+
+
+#' Extract the Component Scores of the ICS Transformation
+#'
+#' Extract the components scores of an invariant coordinate system obtained
+#' via an ICS transformation.
+#'
+#' @param x  an object inheriting from class \code{"ICS"} containing results
+#' from an ICS transformation.
+#' @param select  an integer, character, or logical vector specifying which
+#' components to extract, or \code{NULL} to extract all components.
+#' @param drop  a logical indicating whether to return a vector rather than a
+#' matrix in case a single component is extracted (defaults to \code{FALSE}).
+#' @param index  an integer vector specifying which components to extract, or
+#' \code{NULL} to extract all components.  Note that \code{index} is deprecated
+#' and may be removed in the future, use \code{select} instead.
+#' @param \dots  additional arguments to be passed down.
+#'
+#' @return A numeric matrix or vector containing the requested components.
+#'
+#' @author Andreas Alfons and Aurore Archimbaud
+#'
+#' @seealso
+#' \code{\link{ICS}()}
+#'
+#' \code{\link{gen_kurtosis}()}, \code{\link[=coef.ICS]{coef}()},
+#' \code{\link[=fitted.ICS]{fitted}()}, and \code{\link[=plot.ICS]{plot}()}
+#' methods
+#'
+#' @examples
+#'
+#' @export
+
+components <- function(x, ...) UseMethod("components")
+
+#' @name components
+#' @export
+components.ICS <- function(x, select = NULL, drop = FALSE, index = NULL, ...) {
+  # back-compatibility check
+  if (missing(select) && !missing(index)) {
+    warning("argument 'index' is deprecated, use 'select' instead")
+    select <- index
+  }
+  # extract scores
+  scores <- x$scores
+  # check if we have argument of components to return
+  if (!is.null(select)) {
+    # check argument specifying components
+    if (check_undefined(select, max = ncol(scores), names = colnames(scores))) {
+      stop("undefined components selected")
+    }
+    # select components
+    scores <- scores[, select, drop = drop]
+  }
+  # return matrix of scores for selected components
+  scores
+}
+
+
+#' Compute the Fitted Values of the ICS Transformation
+#'
+#' Compute the fitted values based on an invariant coordinate system obtained
+#' via an ICS transformation.  When using all components, computing the fitted
+#' values constitutes a backtransformation to the observed data.  When using
+#' fewer components, the fitted values can often be viewed as reconstructions
+#' of the observed data with noise removed.
+#'
+#' @name fitted.ICS-S3
+#'
+#' @param object  an object inheriting from class \code{"ICS"} containing
+#' results from an ICS transformation.
+#' @param select  an integer, character, or logical vector specifying which
+#' components to use for computing the fitted values, or \code{NULL} to compute
+#' the fitted values from all components.
+#' @param index  an integer vector specifying which components to use for
+#' computing the fitted values, or \code{NULL} to compute the fitted values
+#' from all components.  Note that \code{index} is deprecated and may be
+#' removed in the future, use \code{select} instead.
+#'
+#' @return A numeric matrix containing the fitted values.
+#'
+#' @author Andreas Alfons and Aurore Archimbaud
+#'
+#' @seealso
+#' \code{\link{ICS}()}
+#'
+#' \code{\link{gen_kurtosis}()}, \code{\link[=coef.ICS]{coef}()},
+#' \code{\link{components}()}, and \code{\link[=plot.ICS]{plot}()}
+#' methods
+#'
+#' @examples
+#'
+#' @method fitted ICS
+#' @export
+
+fitted.ICS <- function(object, select = NULL, index = NULL, ...) {
+  # back-compatibility check
+  if (missing(select) && !missing(index)) {
+    warning("argument 'index' is deprecated, use 'select' instead")
+    select <- index
+  }
+  # initializations
+  scores <- object$scores
+  p <- ncol(scores)
+  if (is.null(select)) select <- seq_len(p)
+  else if (check_insufficient(select, target = 1L)) {
+    stop("no components selected")
+  } else if (check_undefined(select, max = p, names = colnames(scores))) {
+    stop("undefined components selected")
+  }
+  # compute reconstructions from selected components
+  # ('drop = FALSE' preserves row and column names)
+  W_inverse <- solve(object$W)
+  tcrossprod(scores[, select, drop = FALSE], W_inverse[, select, drop = FALSE])
+}
+
+
+#' Scatterplot Matrix of Component Scores from the ICS Transformation
+#'
+#' Produce a scatterplot matrix of the component scores of an invariant
+#' coordinate system obtained via an ICS transformation.
+#'
+#' @name plot.ICS-S3
+#'
+#' @param x  an object inheriting from class \code{"ICS"} containing results
+#' from an ICS transformation.
+#' @param select  an integer, character, or logical vector specifying which
+#' components to plot. If \code{NULL}, all components are plotted if there are
+#' at most six components, otherwise the first three and the last three
+#' components are plotted (as the components with extreme generalized kurtosis
+#' values are the most interesting ones).
+#' @param index  an integer vector specifying which components to plot, or
+#' \code{NULL} to plot all components.  Note that \code{index} is deprecated
+#' and may be removed in the future, use \code{select} instead.
+#' @param \dots  additional arguments to be passed down to
+#' \code{\link[graphics]{pairs}()}.
+#'
+#' @author Andreas Alfons and Aurore Archimbaud
+#'
+#' @seealso
+#' \code{\link{ICS}()}
+#'
+#' \code{\link{gen_kurtosis}()}, \code{\link[=coef.ICS]{coef}()},
+#' \code{\link{components}()}, and \code{\link[=fitted.ICS]{fitted}()} methods
+#'
+#' @examples
+#'
+#' @method plot ICS
 #' @importFrom graphics pairs
+#' @export
+
 plot.ICS <- function(x, select = NULL, index = NULL, ...) {
   # back-compatibility check
   if (missing(select) && !missing(index)) {
@@ -690,6 +850,7 @@ plot.ICS <- function(x, select = NULL, index = NULL, ...) {
     pairs(scores[, select], ...)
   }
 }
+
 
 #' @method print ICS
 #' @export
@@ -725,6 +886,16 @@ print.ICS <- function(x, info = FALSE, digits = 4L, ...){
   # return object invisibly
   invisible(x)
 }
+
+
+#' @method summary ICS
+#' @export
+summary.ICS <- function(object, ...) {
+  # currently doesn't do anything but add a subclass
+  class(object) <- c("summary_ICS", class(object))
+  object
+}
+
 
 #' @method print summary_ICS
 #' @export

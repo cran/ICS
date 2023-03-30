@@ -19,6 +19,8 @@ the fitted values from all components.}
 computing the fitted values, or \code{NULL} to compute the fitted values
 from all components.  Note that \code{index} is deprecated and may be
 removed in the future, use \code{select} instead.}
+
+\item{\dots}{additional arguments are ignored.}
 }
 \value{
 A numeric matrix containing the fitted values.

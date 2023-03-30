@@ -23,6 +23,8 @@ to \code{FALSE}).}
 the coefficients, or \code{NULL} to extract coefficients for all components.
 Note that \code{index} is deprecated and may be removed in the future, use
 \code{select} instead.}
+
+\item{\dots}{additional arguments are ignored.}
 }
 \value{
 A numeric matrix or vector containing the coefficients for the

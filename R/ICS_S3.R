@@ -635,6 +635,7 @@ gen_kurtosis.ICS <- function(object, select = NULL, scale = FALSE,
 #' the coefficients, or \code{NULL} to extract coefficients for all components.
 #' Note that \code{index} is deprecated and may be removed in the future, use
 #' \code{select} instead.
+#' @param \dots  additional arguments are ignored.
 #'
 #' @return A numeric matrix or vector containing the coefficients for the
 #' requested components.
@@ -752,6 +753,7 @@ components.ICS <- function(x, select = NULL, drop = FALSE, index = NULL, ...) {
 #' computing the fitted values, or \code{NULL} to compute the fitted values
 #' from all components.  Note that \code{index} is deprecated and may be
 #' removed in the future, use \code{select} instead.
+#' @param \dots  additional arguments are ignored.
 #'
 #' @return A numeric matrix containing the fitted values.
 #'

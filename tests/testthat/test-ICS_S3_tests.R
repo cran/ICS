@@ -1,7 +1,7 @@
 
 # S1 and S2 are functions  ---------------------------------------------------------------------
 ## COV-COV4 -----
-test_that("ics - ics2 - ICS_S3 - S1 and S2 are functions", {
+test_that("ics - ics2 - ICS - S1 and S2 are functions", {
   X <- iris[,1:4]
 
   # ICS with scores standardization
@@ -21,18 +21,18 @@ test_that("ics - ics2 - ICS_S3 - S1 and S2 are functions", {
 
 
   # Scores
-  # ics - - ICS_S3 scores - standardization by scores
+  # ics - ICS scores - standardization by scores
   expect_equal(out_ics@Scores, data.frame(out_ICS$scores))
 
 
-  # ics2 - ICS_S3 scores - centering
+  # ics2 - ICS scores - centering
   out_ICS <- ICS(X, S1 = ICS_cov, S2 = ICS_cov4, center = TRUE)
   expect_equal(out_ics2@Scores, data.frame(out_ICS$scores))
 
 
 })
 
-test_that("ics - ics2 - ICS_S3 - S1 and S2 are functions - eigenvalues standardization", {
+test_that("ics - ics2 - ICS - S1 and S2 are functions - eigenvalues standardization", {
   X <- iris[,1:4]
 
   # ICS with eigenvalues standardization
@@ -47,7 +47,7 @@ test_that("ics - ics2 - ICS_S3 - S1 and S2 are functions - eigenvalues standardi
 
 
 
-test_that("ics - ICS_S3 scores - S1 and S2 are functions - eigenvectors standardization", {
+test_that("ics - ICS scores - S1 and S2 are functions - eigenvectors standardization", {
   X <- iris[,1:4]
 
   # ICS - eigenvectors standardization
@@ -60,7 +60,7 @@ test_that("ics - ICS_S3 scores - S1 and S2 are functions - eigenvectors standard
 
 
 ## MCD-COV ----
-test_that("ics - ICS_S3 eigenvalues - S1 and S2 are functions", {
+test_that("ics - ICS eigenvalues - S1 and S2 are functions", {
   X <- iris[,1:4]
 
   # ICS with scores standardization
@@ -80,7 +80,7 @@ test_that("ics - ICS_S3 eigenvalues - S1 and S2 are functions", {
 
 # S1 and S2 are matrices/ICS_scatter --------------------------------------------------
 
-test_that("ics - ICS_S3 eigenvalues - S1 and S2 are matrices/ICS_scatter", {
+test_that("ics - ICS eigenvalues - S1 and S2 are matrices/ICS_scatter", {
   X <- iris[,1:4]
 
   # ICS
@@ -102,7 +102,7 @@ test_that("ics - ICS_S3 eigenvalues - S1 and S2 are matrices/ICS_scatter", {
 
 
 ## QR ----------------------------------------------------------------------
-test_that("ics - ICS_S3 eigenvalues - S1 and S2 are functions - QR", {
+test_that("ics - ICS eigenvalues - S1 and S2 are functions - QR", {
   X <- iris[,1:4]
 
   # ICS with QR
@@ -116,6 +116,9 @@ test_that("ics - ICS_S3 eigenvalues - S1 and S2 are functions - QR", {
                  S2_args = list(alpha = 1, cf = 1/(ncol(X)+2)),
                  QR = TRUE, center = TRUE, fix_signs = "scores")
 
+  # Order of columns in W matrix matches order in data matrix
+  # (since QR algorithm uses column pivoting)
+  expect_identical(colnames(out_ICS_QR$W), names(X))
 
   # Eigenvalues
   expect_equal(out_ics2@gKurt, as.vector(out_ICS$gen_kurtosis))

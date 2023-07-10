@@ -925,26 +925,22 @@ plot.ICS <- function(x, select = NULL, index = NULL, ...) {
 #' @method print ICS
 #' @export
 print.ICS <- function(x, info = FALSE, digits = 4L, ...){
+  # initializations
+  info <- isTRUE(info)
   # print information on scatter matrices
-  # Andreas: I uncommented the parameter values of the scatters because this
-  #          creates problems if the arguments are not single character,
-  #          numeric, or logical values
   cat("\nICS based on two scatter matrices")
   cat("\nS1:", x$S1_label)
-  # sapply(seq_along(x$S1_args), function(i) {
-  #   cat("\n", paste0(" ", names(x$S1_args)[i], ":"), x$S1_args[[i]])
-  # })
+  # if requested, print information on second scatter
+  if (info) print_scatter_info(x$S1_args)
   cat("\nS2:", x$S2_label)
-  # sapply(seq_along(x$S2_args), function(i) {
-  #   cat("\n", paste0(" ", names(x$S2_args)[i], ":"), x$S2_args[[i]])
-  # })
-  # if requested, print information on additional arguments
+  # if requested, print information on second scatter and additional arguments
   if (isTRUE(info)) {
+    print_scatter_info(x$S2_args)
     cat("\n\nInformation on the algorithm:")
     cat("\nQR:", x$QR)
     cat("\nwhiten:", x$whiten)
-    cat("\nfix_signs:", x$fix_signs)
     cat("\ncenter:", x$center)
+    cat("\nfix_signs:", x$fix_signs)
   }
   # print generalized kurtosis measures and coefficient matrix
   cat("\n\nThe generalized kurtosis measures of the components are:\n")
@@ -972,6 +968,28 @@ summary.ICS <- function(object, ...) {
 print.summary_ICS <- function(x, info = TRUE, digits = 4L, ...) {
   # call method for class "ICS" with default for printing additional information
   print.ICS(x, info = info, digits = digits, ...)
+}
+
+
+# internal function to print information on arguments used for a scatter matrix
+# (only named arguments that contain numeric, character, or logical scalars)
+print_scatter_info <- function(args) {
+  # initializations
+  arg_names <- names(args)
+  # keep only arguments that have a name (also works if there are no names)
+  keep <- which(arg_names != "")
+  args <- args[keep]
+  arg_names <- arg_names[keep]
+  # if we don't have arguments with names, there is nothing to do
+  if (length(args) > 0) {
+    # loop over arguments and print simple ones
+    mapply(function(name, value) {
+      if ((is.numeric(value) || is.character(value) || is.logical(value)) &&
+          length(value == 1L)) {
+        cat("\n  ", name, ": ", value, sep = "")
+      }
+    }, name = arg_names, value = args, SIMPLIFY = FALSE, USE.NAMES = FALSE)
+  }
 }
 
 

@@ -20,7 +20,8 @@ components to extract the generalized kurtosis values, or \code{NULL} to
 extract the generalized kurtosis values of all components.}
 
 \item{scale}{a logical indicating whether to scale the generalized kurtosis
-values to have product 1 (defaults to \code{FALSE}).}
+values to have product 1 (defaults to \code{FALSE}). See \sQuote{Details}
+for more information.}
 
 \item{index}{an integer vector specifying for which components to extract
 the generalized kurtosis values, or \code{NULL} to extract the generalized
@@ -34,6 +35,24 @@ requested components.
 \description{
 Extract the generalized kurtosis values of the components obtained via an
 ICS transformation.
+}
+\details{
+The argument \code{scale} is useful when ICS is performed with shape
+matrices rather than true scatter matrices. Let \eqn{S_{1}}{S1} and
+\eqn{S_{2}}{S2} denote the scatter or shape matrices used in ICS.
+
+If both \eqn{S_{1}}{S1} and \eqn{S_{2}}{S2} are true scatter matrices, their
+order in principal does not matter. Changing their order will just reverse
+the order of the components and invert the corresponding generalized
+kurtosis values.
+
+The same does not hold when at least one of them is a shape matrix rather
+than a true scatter matrix. In that case, changing their order will also
+reverse the order of the components, but the ratio of the generalized
+kurtosis values is no longer 1 but only a constant. This is due to the fact
+that when shape matrices are uses, the generalized kurtosis values are only
+relative ones. It is then useful to scale the generalized kurtosis values
+such that their product is 1.
 }
 \seealso{
 \code{\link{ICS}()}

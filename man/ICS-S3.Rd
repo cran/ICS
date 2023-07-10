@@ -151,6 +151,18 @@ argument \code{fix_signs} provides two ways to ensure uniqueness of \eqn{W}:
   the usual way of fixing the signs in an independent component analysis
   framework.
 }
+
+In principal, the order of \eqn{S_{1}}{S1} and \eqn{S_{2}}{S2} does not
+matter if both are true scatter matrices. Changing their order will just
+reverse the order of the components and invert the corresponding
+generalized kurtosis values.
+
+The same does not hold when at least one of them is a shape matrix rather
+than a true scatter matrix. In that case, changing their order will also
+reverse the order of the components, but the ratio of the generalized
+kurtosis values is no longer 1 but only a constant. This is due to the fact
+that when shape matrices are uses, the generalized kurtosis values are only
+relative ones.
 }
 \references{
 Archimbaud, A., Drmac, Z., Nordhausen, K., Radojcic, U. and Ruiz-Gazen, A.

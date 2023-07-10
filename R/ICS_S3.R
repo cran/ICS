@@ -213,23 +213,27 @@ ICS_tM <- function(x, location = TRUE, df = 1, ...) {
 #' relevant if \code{S1} is a function).
 #' @param S2_args  a list containing additional arguments for \code{S2} (only
 #' relevant if \code{S2} is a function).
-#' @param QR  a logical indicating whether the numerically stable algorithm
-#' based on the QR decomposition should be applied The default is \code{TRUE}
+#' @param QR  a logical indicating whether or not the numerically stable
+#' algorithm based on the QR decomposition should be applied, or \code{NULL}
+#' for the default behavior. The default behavior is to use the QR algorithm
 #' if \code{S1} is \code{\link{ICS_cov}()} or \code{\link[stats]{cov}()}, and
 #' if \code{S2} is one of \code{\link{ICS_cov4}()}, \code{\link{ICS_covW}()},
 #' \code{\link{ICS_covAxis}()}, \code{\link{cov4}()}, \code{\link{covW}()}, or
 #' \code{\link{covAxis}()}. For other scatter pairs, the QR algorithm is not
 #' applicable and this is set to \code{FALSE}.
-#' @param whiten  a logical indicating whether to whiten the data with respect
-#' to the first scatter matrix before computing the second scatter matrix. The
-#' default is \code{TRUE} if \code{S2} is a function and \code{QR} is
-#' \code{FALSE}. If \code{S2} is not a function or if the QR algorithm is
-#' applied, whitening is not applicable and this is set to \code{FALSE}.
-#' @param center  a logical indicating whether to center the data with respect
-#' to the first location vector before computing the invariant coordinates
-#' (defaults to \code{FALSE}).  Centering is only applicable if the first
-#' scatter object contains a location component, otherwise this is set to
-#' \code{FALSE}.
+#' @param whiten  a logical indicating whether or not to whiten the data with
+#' respect to the first scatter matrix before computing the second scatter
+#' matrix, or \code{NULL} for the default behavior. The default behavior is to
+#' whiten if \code{S2} is a function and \code{QR} is \code{FALSE}. If
+#' \code{S2} is not a function or if the QR algorithm is applied, whitening
+#' is not applicable and this is set to \code{FALSE}.
+#' @param center  a logical indicating whether or not to center the data with
+#' respect to the first location vector before computing the invariant
+#' coordinates (defaults to \code{FALSE}).  Centering is only applicable if the
+#' first scatter object contains a location component, otherwise this is set to
+#' \code{FALSE}. Note that this only affects the scores of the invariant
+#' components (output component \code{scores}), but not the generalized
+#' kurtosis values (output component \code{gen_kurtosis}).
 #' @param fix_signs a character string specifying how to fix the signs of the
 #' invariant coordinates. Possible values are \code{"scores"} to fix the signs
 #' based on (generalized) skewness values of the coordinates, or \code{"W"} to
@@ -256,13 +260,13 @@ ICS_tM <- function(x, location = TRUE, df = 1, ...) {
 #' \code{S1} (if a function was supplied).}
 #' \item{S2_args}{a list containing additional arguments used to compute
 #' \code{S2} (if a function was supplied).}
-#' \item{QR}{a logical indicating whether the numerically stable algorithm
-#' based on the QR decomposition was applied.}
-#' \item{whiten}{a logical indicating whether the data were whitened with
-#' respect to the first scatter matrix before computing the second scatter
+#' \item{QR}{a logical indicating whether or not the numerically stable
+#' algorithm based on the QR decomposition was applied.}
+#' \item{whiten}{a logical indicating whether or not the data were whitened
+#' with respect to the first scatter matrix before computing the second scatter
 #' matrix.}
-#' \item{center}{a logical indicating whether the data were centered with
-#' respect to the first location vector before computing the invariant
+#' \item{center}{a logical indicating whether or not the data were centered
+#' with respect to the first location vector before computing the invariant
 #' coordinates.}
 #' \item{fix_signs}{a character string specifying how the signs of the
 #' invariant coordinates were fixed.}

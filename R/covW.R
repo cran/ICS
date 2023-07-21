@@ -28,23 +28,24 @@
 #'
 #' @author Aurore Archimbaud and Klaus Nordhausen
 #'
+#' @seealso [cov()], [cov4()], [covAxis()]
 #'
 #' @export
 #'
 #' @examples
 #' data(iris)
-#' df <- iris[,1:4]
+#' X <- iris[,1:4]
 #'
 #' # Equivalence with covAxis
-#' covW(df, alpha = -1, cf = ncol(df))
-#' covAxis(df)
+#' covW(X, alpha = -1, cf = ncol(X))
+#' covAxis(X)
 #'
 #' # Equivalence with cov4
-#' covW(df, alpha = 1, cf = 1/(ncol(df)+2))
-#' cov4(df)
+#' covW(X, alpha = 1, cf = 1/(ncol(X)+2))
+#' cov4(X)
 #'
 #' # covW with alpha = 0.5
-#' covW(df, alpha = 0.5)
+#' covW(X, alpha = 0.5)
 #'
 covW <- function (X, na.action = na.fail, alpha = 1, cf = 1 )
 {

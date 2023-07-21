@@ -339,6 +339,32 @@ ICS_tM <- function(x, location = TRUE, df = 1, ...) {
 #' \code{\link[=plot.ICS]{plot}()} methods
 #'
 #' @examples
+#' # import data
+#' X <- iris[,-5]
+#' # run ICS
+#' out_ICS <- ICS(X)
+#' out_ICS
+#' summary(out_ICS)
+#'
+#' # Extract generalized eigenvalues
+#' gen_kurtosis(out_ICS)
+#' # Plot
+#' screeplot(out_ICS)
+#'
+#' # Extract the components
+#' components(out_ICS)
+#' components(out_ICS, select = 1:2)
+#'
+#' # Plot
+#' plot(out_ICS)
+#'
+#' # Equivalence with previous functions
+#' out_ics <- ics(X, S1 = cov, S2 = cov4, stdKurt = FALSE)
+#' out_ics
+#' out_ics2 <- ics2(X, S1 = MeanCov, S2 = Mean3Cov4)
+#' out_ics2
+#' out_ICS
+#'
 #'
 #' @importFrom stats cov na.fail
 #' @export

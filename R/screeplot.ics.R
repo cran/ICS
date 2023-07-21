@@ -31,14 +31,14 @@ screeplot.ICS <- function(x, index = NULL, type = "barplot",
                           xlab = "component", names.arg = index, labels = TRUE,...)  {
   #if(class(x)!="ics") stop("'x' must be of class ics")
   type<-match.arg(type,c("barplot","lines"))
-  if (is.null(index)) index=1:length(x$lambda)
+  if (is.null(index)) index=1:length(x$gen_kurtosis)
   if (type=="barplot")
   {
-    barplot(x$lambda[index],names.arg=names.arg,ylab=ylab,xlab=xlab,main=main,...)
+    barplot(x$gen_kurtosis[index],names.arg=names.arg,ylab=ylab,xlab=xlab,main=main,...)
   }
   else
   {
-    plot(index,x$lambda[index],type="b",ylab=ylab,xlab=xlab,axes=FALSE,main=main,...)
+    plot(index,x$gen_kurtosis[index],type="b",ylab=ylab,xlab=xlab,axes=FALSE,main=main,...)
     axis(2)
     axis(1, at = seq_along(index), labels = labels)
   }

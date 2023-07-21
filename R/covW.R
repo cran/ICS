@@ -1,14 +1,51 @@
-#'  One-step M-estimator covW
+#'  One-step M-estimator
 #'
-#' @param X numeric nxp data matrix or dataframe.
+#'  Estimates the scatter matrix based on one-step M-estimator.
+#'
+#' @param X numeric \eqn{n \times p} data matrix or dataframe.
 #' @param na.action a function which indicates what should happen when the data contain 'NA's. Default is to fail.
 #' @param alpha parameter of the one-step M-estimator. By default equals to 1.
-#' @param cf consistency factor of the one-step M-estimator. By default equals to 1
+#' @param cf consistency factor of the one-step M-estimator. By default equals to 1.
 #'
-#' @return
+#' @details
+#' It is given for \eqn{n \times p} matrix \eqn{X} by
+#' \deqn{COV_{w}(X)=\frac{1}{n} \text{cf} \sum_{i=1}^n w(D^2(x_i))
+#' (x_i - \bar{ x})^\top(x_i - \bar{ x}),}
+#' where \eqn{\bar{x}} is the mean vector, \eqn{D^2(x_i)} is the squared
+#'  Mahalanobis distance, \eqn{w(d)=d^\alpha} is a
+#' non-negative and continuous weight function and \eqn{\text{cf}} is a consistency factor.
+#'
+#' - If \eqn{w(d)=1}, we get the covariance matrix [cov()] (up to the factor
+#' \eqn{1/(n-1)} instead of \eqn{1/n}).
+#' - If \eqn{\alpha=-1}, we get the [covAxis()].
+#' - If \eqn{\alpha=1}, we get the [cov4()] with \eqn{\text{cf} = \frac{1}{p+2}}.
+#'
+#' @references Archimbaud, A., Drmac, Z., Nordhausen, K., Radojicic, U. and
+#'   Ruiz-Gazen, A. (2023). SIAM Journal on Mathematics of Data Science (SIMODS),
+#'    Vol.5(1):97–121. \url{https://doi.org/10.1137/22M1498759}
+#'
+#' @return Matrix of the estimated scatter.
+#'
+#' @author Aurore Archimbaud and Klaus Nordhausen
+#'
+#'
 #' @export
 #'
 #' @examples
+#' data(iris)
+#' df <- iris[,1:4]
+#'
+#' # Equivalence with covAxis
+#' covW(df, alpha = -1, cf = ncol(df))
+#' covAxis(df)
+#'
+#' # Equivalence with cov4
+#' covW(df, alpha = 1, cf = 1/(ncol(df)+2))
+#' cov4(df)
+#'
+#' # covW with alpha = 0.5
+#' covW(df, alpha = 0.5)
+#'
 covW <- function (X, na.action = na.fail, alpha = 1, cf = 1 )
 {
   X <- na.action(X)

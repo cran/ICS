@@ -2,19 +2,60 @@
 % Please edit documentation in R/covW.R
 \name{covW}
 \alias{covW}
-\title{One-step M-estimator covW}
+\title{One-step M-estimator}
 \usage{
 covW(X, na.action = na.fail, alpha = 1, cf = 1)
 }
 \arguments{
-\item{X}{numeric nxp data matrix or dataframe.}
+\item{X}{numeric \eqn{n \times p} data matrix or dataframe.}
 
 \item{na.action}{a function which indicates what should happen when the data contain 'NA's. Default is to fail.}
 
 \item{alpha}{parameter of the one-step M-estimator. By default equals to 1.}
 
-\item{cf}{consistency factor of the one-step M-estimator. By default equals to 1}
+\item{cf}{consistency factor of the one-step M-estimator. By default equals to 1.}
+}
+\value{
+Matrix of the estimated scatter.
 }
 \description{
-One-step M-estimator covW
+Estimates the scatter matrix based on one-step M-estimator.
+}
+\details{
+It is given for \eqn{n \times p} matrix \eqn{X} by
+\deqn{COV_{w}(X)=\frac{1}{n} \text{cf} \sum_{i=1}^n w(D^2(x_i))
+(x_i - \bar{ x})^\top(x_i - \bar{ x}),}
+where \eqn{\bar{x}} is the mean vector, \eqn{D^2(x_i)} is the squared
+Mahalanobis distance, \eqn{w(d)=d^\alpha} is a
+non-negative and continuous weight function and \eqn{\text{cf}} is a consistency factor.
+\itemize{
+\item If \eqn{w(d)=1}, we get the covariance matrix \code{\link[=cov]{cov()}} (up to the factor
+\eqn{1/(n-1)} instead of \eqn{1/n}).
+\item If \eqn{\alpha=-1}, we get the \code{\link[=covAxis]{covAxis()}}.
+\item If \eqn{\alpha=1}, we get the \code{\link[=cov4]{cov4()}} with \eqn{\text{cf} = \frac{1}{p+2}}.
+}
+}
+\examples{
+data(iris)
+df <- iris[,1:4]
+
+# Equivalence with covAxis
+covW(df, alpha = -1, cf = ncol(df))
+covAxis(df)
+
+# Equivalence with cov4
+covW(df, alpha = 1, cf = 1/(ncol(df)+2))
+cov4(df)
+
+# covW with alpha = 0.5
+covW(df, alpha = 0.5)
+
+}
+\references{
+Archimbaud, A., Drmac, Z., Nordhausen, K., Radojicic, U. and
+Ruiz-Gazen, A. (2023). SIAM Journal on Mathematics of Data Science (SIMODS),
+Vol.5(1):97–121. \url{https://doi.org/10.1137/22M1498759}
+}
+\author{
+Aurore Archimbaud and Klaus Nordhausen
 }

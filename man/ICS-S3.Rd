@@ -122,34 +122,34 @@ coordinates) and a matrix \eqn{W} (in which the rows contain the
 coefficients of the linear transformation to the respective invariant
 coordinates) are found such that:
 \itemize{
-  \item The columns of \eqn{Z} are standardized with respect to
-  \eqn{S_{1}}{S1}. That is, \eqn{S_{1}(Z) = I}{S1(Z) = I}, where \eqn{I}
-  denotes the identity matrix.
-  \item The columns of \eqn{Z} are uncorrelated with respect to
-  \eqn{S_{2}}{S2}. That is, \eqn{S_{2}(Z) = D}{S2(Z) = D}, where \eqn{D}
-  is a diagonal matrix.
-  \item The columns of \eqn{Z} are ordered according to their generalized
-  kurtosis.
+\item The columns of \eqn{Z} are standardized with respect to
+\eqn{S_{1}}{S1}. That is, \eqn{S_{1}(Z) = I}{S1(Z) = I}, where \eqn{I}
+denotes the identity matrix.
+\item The columns of \eqn{Z} are uncorrelated with respect to
+\eqn{S_{2}}{S2}. That is, \eqn{S_{2}(Z) = D}{S2(Z) = D}, where \eqn{D}
+is a diagonal matrix.
+\item The columns of \eqn{Z} are ordered according to their generalized
+kurtosis.
 }
 
 Given those criteria, \eqn{W} is unique up to sign changes in its rows. The
 argument \code{fix_signs} provides two ways to ensure uniqueness of \eqn{W}:
 \itemize{
-  \item If argument \code{fix_signs} is set to \code{"scores"}, the signs
-  in \eqn{W} are fixed such that the generalized skewness values of all
-  components are positive. If \code{S1} and \code{S2} provide location
-  components, which are denoted by \eqn{T_{1}}{T1} and \eqn{T_{2}}{T2},
-  the generalized skewness values are computed as
-  \eqn{T_{1}(Z) - T_{2}(Z)}{T1(Z) - T2(Z)}.
-  Otherwise, the skewness is computed by subtracting the column medians of
-  \eqn{Z} from the corresponding column means so that all components are
-  right-skewed. This way of fixing the signs is preferred in an invariant
-  coordinate selection framework.
-  \item If argument \code{fix_signs} is set to \code{"W"}, the signs in
-  \eqn{W} are fixed independently of \eqn{Z} such that the maximum element
-  in each row of \eqn{W} is positive and that each row has norm 1. This is
-  the usual way of fixing the signs in an independent component analysis
-  framework.
+\item If argument \code{fix_signs} is set to \code{"scores"}, the signs
+in \eqn{W} are fixed such that the generalized skewness values of all
+components are positive. If \code{S1} and \code{S2} provide location
+components, which are denoted by \eqn{T_{1}}{T1} and \eqn{T_{2}}{T2},
+the generalized skewness values are computed as
+\eqn{T_{1}(Z) - T_{2}(Z)}{T1(Z) - T2(Z)}.
+Otherwise, the skewness is computed by subtracting the column medians of
+\eqn{Z} from the corresponding column means so that all components are
+right-skewed. This way of fixing the signs is preferred in an invariant
+coordinate selection framework.
+\item If argument \code{fix_signs} is set to \code{"W"}, the signs in
+\eqn{W} are fixed independently of \eqn{Z} such that the maximum element
+in each row of \eqn{W} is positive and that each row has norm 1. This is
+the usual way of fixing the signs in an independent component analysis
+framework.
 }
 
 In principal, the order of \eqn{S_{1}}{S1} and \eqn{S_{2}}{S2} does not

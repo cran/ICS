@@ -54,7 +54,7 @@ covW(X, alpha = 0.5)
 \references{
 Archimbaud, A., Drmac, Z., Nordhausen, K., Radojicic, U. and
 Ruiz-Gazen, A. (2023). SIAM Journal on Mathematics of Data Science (SIMODS),
-Vol.5(1):97–121. \url{https://doi.org/10.1137/22M1498759}
+Vol.5(1):97–121. \doi{10.1137/22M1498759}.
 }
 \seealso{
 \code{\link[=cov]{cov()}}, \code{\link[=cov4]{cov4()}}, \code{\link[=covAxis]{covAxis()}}

@@ -3,7 +3,36 @@ Type: Package
 Title: Tools for Exploring Multivariate Data via ICS/ICA
 Version: 1.3-1
 Date: 2018-03-02
-Author: Klaus Nordhausen, Hannu Oja, David E. Tyler 
+Authors@R:
+    c(person("Klaus", "Nordhausen", 
+             email = "klaus.k.nordhausen@jyu.fi",
+             role = "aut", 
+             comment = c(ORCID = "0000-0002-3758-8501")),
+      person("Andreas", "Alfons", 
+             email = "alfons@ese.eur.nl", 
+             role = "aut",
+             comment = c(ORCID = "0000-0002-2513-3788")),
+      person("Aurore", "Archimbaud", 
+             email = "aurore.archimbaud@live.fr", 
+             role = c("aut", "cre"),
+             comment = c(ORCID = "0000-0002-6511-9091")),
+      person("Hannu", "Oja", 
+             email = "", 
+             role = c("aut")),
+      person("David E.", "Tyler", 
+             email = "", 
+             role = c("aut")),
+      person("Anne", "Ruiz-Gazen", 
+             email = "anne.ruiz-gazen@tse-fr.eu",
+             role = "aut", 
+             comment = c(ORCID = "0000-0001-8970-8061")))
+Author: 
+    Klaus Nordhausen [aut] (<https://orcid.org/0000-0002-3758-8501>),
+    Andreas Alfons [aut] (<https://orcid.org/0000-0002-2513-3788>), 
+    Aurore Archimbaud [aut, cre] (<https://orcid.org/0000-0002-6511-9091>), 
+    David E. Tyler [aut] (<https://orcid.org/>),
+    Hannu Oja [aut] (<https://orcid.org/>),
+    Anne Ruiz-Gazen [aut] (<https://orcid.org/0000-0001-8970-8061>)
 Maintainer: Klaus Nordhausen <klaus.nordhausen@tuwien.ac.at>
 Depends: R (>= 2.5.0), methods, mvtnorm
 Imports: survey, graphics

@@ -22,7 +22,7 @@
 #'
 #' @references Archimbaud, A., Drmac, Z., Nordhausen, K., Radojicic, U. and
 #'   Ruiz-Gazen, A. (2023). SIAM Journal on Mathematics of Data Science (SIMODS),
-#'    Vol.5(1):97–121. \url{https://doi.org/10.1137/22M1498759}
+#'    Vol.5(1):97–121. \doi{10.1137/22M1498759}.
 #'
 #' @return Matrix of the estimated scatter.
 #'

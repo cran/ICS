@@ -194,18 +194,14 @@ out_ICS
 
 }
 \references{
+Tyler, D.E., Critchley, F., Duembgen, L. and Oja, H. (2009) Invariant
+Co-ordinate Selection. \emph{Journal of the Royal Statistical Society,
+Series B}, \bold{71}(3), 549--592. \doi{10.1111/j.1467-9868.2009.00706.x}.
+
 Archimbaud, A., Drmac, Z., Nordhausen, K., Radojcic, U. and Ruiz-Gazen, A.
 (2023) Numerical Considerations and a New Implementation for Invariant
 Coordinate Selection. \emph{SIAM Journal on Mathematics of Data Science},
 \bold{5}(1), 97--121. \doi{10.1137/22M1498759}.
-
-Oja, H., Sirkia, S. and Eriksson, J. (2006) Scatter Matrices and Independent
-Component Analysis. \emph{Austrian Journal of Statistics}, \bold{35}(2&3),
-175-189. \doi{10.17713/ajs.v35i2&3.364}.
-
-Tyler, D.E., Critchley, F., Duembgen, L. and Oja, H. (2009) Invariant
-Co-ordinate Selection. \emph{Journal of the Royal Statistical Society,
-Series B}, \bold{71}(3), 549--592. \doi{10.1111/j.1467-9868.2009.00706.x}.
 }
 \seealso{
 \code{\link{gen_kurtosis}()}, \code{\link[=coef.ICS]{coef}()},

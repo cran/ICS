@@ -321,18 +321,15 @@ ICS_tM <- function(x, location = TRUE, df = 1, ...) {
 #' \code{\link{ics}()} and \code{\link{ics2}()} by Klaus Nordhausen
 #'
 #' @references
-#' Archimbaud, A., Drmac, Z., Nordhausen, K., Radojcic, U. and Ruiz-Gazen, A.
-#' (2023) Numerical Considerations and a New Implementation for Invariant
-#' Coordinate Selection. \emph{SIAM Journal on Mathematics of Data Science},
-#' \bold{5}(1), 97--121. \doi{10.1137/22M1498759}.
-#'
-#' Oja, H., Sirkia, S. and Eriksson, J. (2006) Scatter Matrices and Independent
-#' Component Analysis. \emph{Austrian Journal of Statistics}, \bold{35}(2&3),
-#' 175-189. \doi{10.17713/ajs.v35i2&3.364}.
 #'
 #' Tyler, D.E., Critchley, F., Duembgen, L. and Oja, H. (2009) Invariant
 #' Co-ordinate Selection. \emph{Journal of the Royal Statistical Society,
 #' Series B}, \bold{71}(3), 549--592. \doi{10.1111/j.1467-9868.2009.00706.x}.
+#'
+#' Archimbaud, A., Drmac, Z., Nordhausen, K., Radojcic, U. and Ruiz-Gazen, A.
+#' (2023) Numerical Considerations and a New Implementation for Invariant
+#' Coordinate Selection. \emph{SIAM Journal on Mathematics of Data Science},
+#' \bold{5}(1), 97--121. \doi{10.1137/22M1498759}.
 #'
 #' @seealso \code{\link{gen_kurtosis}()}, \code{\link[=coef.ICS]{coef}()},
 #' \code{\link{components}()}, \code{\link[=fitted.ICS]{fitted}()}, and
@@ -948,44 +945,77 @@ plot.ICS <- function(x, select = NULL, index = NULL, ...) {
 }
 
 
+#' Basic information of ICS Object
+#'
+#' Prints information of an `ICS` object.
+#'
+#' @param object object of class `ICS`.
+#' @param info Logical, either TRUE or FALSE. If TRUE, print additional
+#' information on arguments used for computing scatter matrices
+#' (only named arguments that contain numeric, character, or logical scalars)
+#' and information on the parameters of the algorithm.
+#' Default is FALSE.
+#' @param digits number of digits for the numeric output.
+#' @param ... additional arguments passed to `print()`
+#'
+#' @name print.ICS-S3
+#' @author Andreas Alfons and Aurore Archimbaud
+#'
+#' @seealso
+#' \code{\link{ICS}()}
 #' @method print ICS
 #' @export
-print.ICS <- function(x, info = FALSE, digits = 4L, ...){
+print.ICS <- function(object, info = FALSE, digits = 4L, ...){
   # initializations
   info <- isTRUE(info)
   # print information on scatter matrices
   cat("\nICS based on two scatter matrices")
-  cat("\nS1:", x$S1_label)
-  # if requested, print information on second scatter
-  if (info) print_scatter_info(x$S1_args)
-  cat("\nS2:", x$S2_label)
+  cat("\nS1:", object$S1_label)
+  # if requested, print information on first scatter
+  if (info) print_scatter_info(object$S1_args)
+  cat("\nS2:", object$S2_label)
   # if requested, print information on second scatter and additional arguments
   if (isTRUE(info)) {
-    print_scatter_info(x$S2_args)
+    print_scatter_info(object$S2_args)
     cat("\n\nInformation on the algorithm:")
-    cat("\nQR:", x$QR)
-    cat("\nwhiten:", x$whiten)
-    cat("\ncenter:", x$center)
-    cat("\nfix_signs:", x$fix_signs)
+    cat("\nQR:", object$QR)
+    cat("\nwhiten:", object$whiten)
+    cat("\ncenter:", object$center)
+    cat("\nfix_signs:", object$fix_signs)
   }
   # print generalized kurtosis measures and coefficient matrix
   cat("\n\nThe generalized kurtosis measures of the components are:\n")
-  # print(formatC(x$gen_kurtosis, digits = digits, format = "f"), quote = FALSE)
-  print(x$gen_kurtosis, digits = digits, ...)
+  # print(formatC(object$gen_kurtosis, digits = digits, format = "f"), quote = FALSE)
+  print(object$gen_kurtosis, digits = digits, ...)
   cat("\nThe coefficient matrix of the linear transformation is:\n")
-  # print(formatC(x$W, digits = digits, format = "f", flag = " "), quote = FALSE)
-  print(x$W, digits = digits, ...)
+  # print(formatC(object$W, digits = digits, format = "f", flag = " "), quote = FALSE)
+  print(object$W, digits = digits, ...)
   # return object invisibly
-  invisible(x)
+  invisible(object)
 }
 
 
+#' Summarize a `ICS` object
+#'
+#' Summarizes and prints an `ICS` object in an informative way.
+#'
+#' @param object object of class `ICS`.
+#' @param ... additional arguments passed to [print.ICS()].
+#'
+#' @name summary.ICS-S3
+#'
+#' @author Andreas Alfons and Aurore Archimbaud
+#'
+#' @seealso
+#' \code{\link{ICS}()}
+#'
 #' @method summary ICS
+#' @seealso [print.ICS()]
 #' @export
 summary.ICS <- function(object, ...) {
   # currently doesn't do anything but add a subclass
   class(object) <- c("summary_ICS", class(object))
-  object
+  print(object, ...)
 }
 
 

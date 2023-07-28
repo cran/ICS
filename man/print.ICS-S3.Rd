@@ -5,10 +5,10 @@
 \alias{print.ICS}
 \title{Basic information of ICS Object}
 \usage{
-\method{print}{ICS}(object, info = FALSE, digits = 4L, ...)
+\method{print}{ICS}(x, info = FALSE, digits = 4L, ...)
 }
 \arguments{
-\item{object}{object of class \code{ICS}.}
+\item{x}{object of class \code{ICS}.}
 
 \item{info}{Logical, either TRUE or FALSE. If TRUE, print additional
 information on arguments used for computing scatter matrices

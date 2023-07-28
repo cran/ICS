@@ -7,10 +7,10 @@ test_that("ics - ics2 - ICS - S1 and S2 are functions", {
   # ICS with scores standardization
   out_ics <- ics(X, S1 = cov, S2 = cov4, stdKurt = FALSE,  stdB = "Z")
   out_ics2 <- ics2(X, S1 = MeanCov, S2 = Mean3Cov4)
-  out_ICS <- ICS(X, S1 = ICS_cov, S2 = ICS_cov4, QR = FALSE,
-                 whiten = FALSE, fix_signs = "scores")
+  out_ICS <- ICS(X, S1 = ICS_cov, S2 = ICS_cov4, algorithm = "standard",
+                 fix_signs = "scores")
   out_ICS_whiten <- ICS(X, S1 = ICS_cov, S2 = ICS_cov4,
-                        QR = FALSE, whiten = TRUE)
+                        algorithm = "whiten")
 
 
   # Eigenvalues
@@ -86,10 +86,11 @@ test_that("ics - ICS eigenvalues - S1 and S2 are matrices/ICS_scatter", {
   # ICS
   out_ics <- ics(X,  S1 = cov(X), S2 = cov4(X), stdKurt = FALSE,
                  stdB = "Z")
-  out_ICS <- ICS(X, S1 = cov(X), S2 = cov4(X), fix_signs = "scores")
+  out_ICS <- ICS(X, S1 = cov(X), S2 = cov4(X), fix_signs = "scores",
+                 algorithm = "standard")
   out_ICS2 <- ICS(X, S1 = ICS_cov(X), S2 = ICS_cov4, fix_signs = "scores")
   out_ICS3 <-  ICS(X, S1 = ICS_cov(X), S2 = ICS_cov4(X),
-                   fix_signs = "scores")
+                   fix_signs = "scores", algorithm = "standard")
 
   # Eigenvalues
   expect_equal(as.vector(out_ICS$gen_kurtosis), out_ics@gKurt)
@@ -110,11 +111,10 @@ test_that("ics - ICS eigenvalues - S1 and S2 are functions - QR", {
                  S1 = cov, S2 = cov4, stdB = "Z", stdKurt = FALSE)
   out_ics2 <- ics2(X, S1 = MeanCov, S2 = Mean3Cov4)
   out_ICS <- ICS(X, S1 = ICS_cov, S2 =  ICS_covW,
-                 S2_args = list(alpha = 1, cf = 1/(ncol(X)+2)),
-                 QR = FALSE)
+                 S2_args = list(alpha = 1, cf = 1/(ncol(X)+2)))
   out_ICS_QR <- ICS(X, S1 = ICS_cov, S2 =  ICS_covW,
                  S2_args = list(alpha = 1, cf = 1/(ncol(X)+2)),
-                 QR = TRUE, center = TRUE, fix_signs = "scores")
+                 algorithm = "QR", center = TRUE, fix_signs = "scores")
 
   # Order of columns in W matrix matches order in data matrix
   # (since QR algorithm uses column pivoting)
@@ -137,8 +137,7 @@ test_that("ics2 - S1 and S2 are functions - QR", {
                     S2 = Mean3Cov4)@gKurt)
 
   expect_error(ICS( X_rank_deficient, S1 = ICS_cov, S2 =  ICS_covW,
-                    S2_args = list(alpha = 1, cf = 1/(ncol(X)+2)),
-                    QR = FALSE)$gen_kurtosis)
+                    S2_args = list(alpha = 1, cf = 1/(ncol(X)+2)))$gen_kurtosis)
 
   expect_equal(ics(X, S1 = cov, S2 = cov4, stdB = "Z",
                    stdKurt = FALSE)@gKurt,
@@ -146,7 +145,7 @@ test_that("ics2 - S1 and S2 are functions - QR", {
                              S2 =  ICS_covW,
                              S2_args = list(alpha = 1,
                                             cf = 1/(ncol(X)+2)),
-                             QR = TRUE)$gen_kurtosis))
+                             algorithm = "QR")$gen_kurtosis))
 
 })
 

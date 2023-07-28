@@ -240,6 +240,36 @@ ICS_tM <- function(x, location = TRUE, df = 1, ...) {
 #' that when shape matrices are uses, the generalized kurtosis values are only
 #' relative ones.
 #'
+#' Different algorithms are available to compute the invariant coordinate
+#' system of a data frame \eqn{X_n} with \eqn{n} observations:
+#' - **"whiten"**: whitens the data \eqn{X_n} with respect to the first
+#' scatter matrix before computing the second scatter matrix. If \code{S2} is not a function, whitening is not applicable.
+#'    -  whiten the data \eqn{X_n} with respect to the first
+#' scatter matrix: \eqn{Y_n =  X_n S_1(X_n)^{-1/2}}
+#'    - compute \eqn{S_2} for the uncorrelated data: \eqn{S_2(Y_n)}
+#'    - perform the eigendecomposition of \eqn{S_2(Y_n)}: \eqn{S_2(Y_n) = UDU'}
+#'    - compute \eqn{W}: \eqn{W = U' S_1(X_n)^{-1/2}}
+#'
+#'
+#' - **"standard"**: performs the spectral decomposition of the
+#' symmetric matrix  \eqn{M(X_n)}
+#'    - compute \eqn{M(X_n) = S_1(X_n)^{-1/2} S_2(X_n) S_1(X_n)^{-1/2}}
+#'    - perform the eigendecomposition of \eqn{M(X_n)}: \eqn{M(X_n) = UDU'}
+#'    - compute \eqn{W}: \eqn{W = U' S_1(X_n)^{-1/2}}
+#'
+#' - **"QR"**: numerically stable algorithm based on the QR algorithm for a
+#'  common family of scatter pairs: if \code{S1} is \code{\link{ICS_cov}()}
+#'   or \code{\link[stats]{cov}()}, and if \code{S2} is one of
+#'    \code{\link{ICS_cov4}()}, \code{\link{ICS_covW}()}
+#'    , \code{\link{ICS_covAxis}()}, \code{\link{cov4}()},
+#'    \code{\link{covW}()}, or \code{\link{covAxis}()}.
+#'    For other scatter pairs, the QR algorithm is not
+#'    applicable.   See Archimbaud et al. (2023)
+#'   for details.
+#'
+#' The default behavior is to use the "whiten" algorithm if S2 is a
+#'  function except if "QR" is selected.
+#'
 #' @name ICS-S3
 #'
 #' @param X  a numeric matrix or data frame containing the data to be
@@ -259,20 +289,10 @@ ICS_tM <- function(x, location = TRUE, df = 1, ...) {
 #' relevant if \code{S1} is a function).
 #' @param S2_args  a list containing additional arguments for \code{S2} (only
 #' relevant if \code{S2} is a function).
-#' @param QR  a logical indicating whether or not the numerically stable
-#' algorithm based on the QR decomposition should be applied, or \code{NULL}
-#' for the default behavior. The default behavior is to use the QR algorithm
-#' if \code{S1} is \code{\link{ICS_cov}()} or \code{\link[stats]{cov}()}, and
-#' if \code{S2} is one of \code{\link{ICS_cov4}()}, \code{\link{ICS_covW}()},
-#' \code{\link{ICS_covAxis}()}, \code{\link{cov4}()}, \code{\link{covW}()}, or
-#' \code{\link{covAxis}()}. For other scatter pairs, the QR algorithm is not
-#' applicable and this is set to \code{FALSE}.
-#' @param whiten  a logical indicating whether or not to whiten the data with
-#' respect to the first scatter matrix before computing the second scatter
-#' matrix, or \code{NULL} for the default behavior. The default behavior is to
-#' whiten if \code{S2} is a function and \code{QR} is \code{FALSE}. If
-#' \code{S2} is not a function or if the QR algorithm is applied, whitening
-#' is not applicable and this is set to \code{FALSE}.
+#' @param algorithm a character string specifying with which algorithm
+#' the invariant coordinate system is computed. Possible values are
+#'  \code{"whiten"}, \code{"standard"} or \code{"QR"}.
+#' See \sQuote{Details} for more information.
 #' @param center  a logical indicating whether or not to center the data with
 #' respect to the first location vector before computing the invariant
 #' coordinates (defaults to \code{FALSE}).  Centering is only applicable if the
@@ -306,11 +326,8 @@ ICS_tM <- function(x, location = TRUE, df = 1, ...) {
 #' \code{S1} (if a function was supplied).}
 #' \item{S2_args}{a list containing additional arguments used to compute
 #' \code{S2} (if a function was supplied).}
-#' \item{QR}{a logical indicating whether or not the numerically stable
-#' algorithm based on the QR decomposition was applied.}
-#' \item{whiten}{a logical indicating whether or not the data were whitened
-#' with respect to the first scatter matrix before computing the second scatter
-#' matrix.}
+#' \item{algorithm}{a character string specifying how the invariant
+#'  coordinate is computed.}
 #' \item{center}{a logical indicating whether or not the data were centered
 #' with respect to the first location vector before computing the invariant
 #' coordinates.}
@@ -367,7 +384,8 @@ ICS_tM <- function(x, location = TRUE, df = 1, ...) {
 #' @export
 
 ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
-                S2_args = list(), QR = NULL, whiten = NULL,
+                S2_args = list(),
+                algorithm = c("whiten", "standard", "QR"),
                 center = FALSE, fix_signs = c("scores", "W"),
                 na.action = na.fail) {
 
@@ -377,50 +395,36 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
   p <- ncol(X)
   if (p < 2L) stop("'X' must be at least bivariate")
 
+  # match algorithm
+  algorithm <- match.arg(algorithm)
+  QR <- ifelse(algorithm == "QR", TRUE, FALSE)
+  whiten <- ifelse(algorithm == "whiten", TRUE, FALSE)
+
   # obtain default labels for scatter matrices
   S1_label <- deparse(substitute(S1))
   S2_label <- deparse(substitute(S2))
 
   # check argument for QR algorithm
-  have_QR <- !is.null(QR)
-  if (have_QR) QR <- isTRUE(QR)
   # QR algorithm requires a certain class of scatter pairs supplied as functions
-  have_cov <- identical(S1, cov) || identical(S1, ICS_cov)
-  have_cov4 <- identical(S2, cov4) || identical(S2, ICS_cov4)
-  have_covW <- identical(S2, covW) || identical(S2, ICS_covW)
-  have_covAxis <- identical(S2, covAxis) || identical(S2, ICS_covAxis)
-  if (have_cov && (have_cov4 || have_covW || have_covAxis)) {
-    # use QR algorithm by default
-    if (!have_QR) QR <- TRUE
-  } else {
-    # QR algorithm not applicable for other scatter pairs
-    if (have_QR && QR) {
+  if (isTRUE(QR)){
+    have_cov <- identical(S1, cov) || identical(S1, ICS_cov)
+    have_cov4 <- identical(S2, cov4) || identical(S2, ICS_cov4)
+    have_covW <- identical(S2, covW) || identical(S2, ICS_covW)
+    have_covAxis <- identical(S2, covAxis) || identical(S2, ICS_covAxis)
+    if (!(have_cov && (have_cov4 || have_covW || have_covAxis))) {
       warning("QR algorithm is not applicable; proceeding without it")
+      QR <- FALSE
     }
-    QR <- FALSE
   }
-
   # check argument for whitening
-  have_whiten <- !is.null(whiten)
-  if (have_whiten) whiten <- isTRUE(whiten)
   # whitening requires S2 to be a function
-  if (QR) {
-    # whitening is not applicable when we have the QR algorithm
-    if (have_whiten && whiten) {
-      warning("whitening is not applicable for QR algorithm; ",
-              "proceeding without whitening")
-    }
-    whiten <- FALSE
-  } else if (is.function(S2)) {
-    # use whitening by default
-    if (!have_whiten) whiten <- TRUE
-  } else {
-    # whitening not applicable
-    if (have_whiten && whiten) {
+  if (isTRUE(whiten)) {
+    if (!is.function(S2)) {
       warning("whitening requires 'S2' to be a function; ",
               "proceeding without whitening")
+      whiten <- FALSE
+      algorithm <- "standard"
     }
-    whiten <- FALSE
   }
 
   # check remaining arguments
@@ -610,11 +614,12 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
   if (!is.null(gen_skewness)) names(gen_skewness) <- IC_names
 
 
+
   # construct object to be returned
   res <- list(gen_kurtosis = gen_kurtosis, W = W_final, scores = Z_final,
               gen_skewness = gen_skewness, S1_label = S1_label,
               S2_label = S2_label, S1_args = S1_args, S2_args = S2_args,
-              QR = QR, whiten = whiten, center = center, fix_signs = fix_signs)
+              algorithm = algorithm, center = center, fix_signs = fix_signs)
   class(res) <- "ICS"
   res
 
@@ -949,7 +954,7 @@ plot.ICS <- function(x, select = NULL, index = NULL, ...) {
 #'
 #' Prints information of an `ICS` object.
 #'
-#' @param object object of class `ICS`.
+#' @param x object of class `ICS`.
 #' @param info Logical, either TRUE or FALSE. If TRUE, print additional
 #' information on arguments used for computing scatter matrices
 #' (only named arguments that contain numeric, character, or logical scalars)
@@ -965,33 +970,32 @@ plot.ICS <- function(x, select = NULL, index = NULL, ...) {
 #' \code{\link{ICS}()}
 #' @method print ICS
 #' @export
-print.ICS <- function(object, info = FALSE, digits = 4L, ...){
+print.ICS <- function(x, info = FALSE, digits = 4L, ...){
   # initializations
   info <- isTRUE(info)
   # print information on scatter matrices
   cat("\nICS based on two scatter matrices")
-  cat("\nS1:", object$S1_label)
+  cat("\nS1:", x$S1_label)
   # if requested, print information on first scatter
-  if (info) print_scatter_info(object$S1_args)
-  cat("\nS2:", object$S2_label)
+  if (info) print_scatter_info(x$S1_args)
+  cat("\nS2:", x$S2_label)
   # if requested, print information on second scatter and additional arguments
   if (isTRUE(info)) {
-    print_scatter_info(object$S2_args)
+    print_scatter_info(x$S2_args)
     cat("\n\nInformation on the algorithm:")
-    cat("\nQR:", object$QR)
-    cat("\nwhiten:", object$whiten)
-    cat("\ncenter:", object$center)
-    cat("\nfix_signs:", object$fix_signs)
+    cat("\nalgorithm:", x$algorithm)
+    cat("\ncenter:", x$center)
+    cat("\nfix_signs:", x$fix_signs)
   }
   # print generalized kurtosis measures and coefficient matrix
   cat("\n\nThe generalized kurtosis measures of the components are:\n")
-  # print(formatC(object$gen_kurtosis, digits = digits, format = "f"), quote = FALSE)
-  print(object$gen_kurtosis, digits = digits, ...)
+  # print(formatC(x$gen_kurtosis, digits = digits, format = "f"), quote = FALSE)
+  print(x$gen_kurtosis, digits = digits, ...)
   cat("\nThe coefficient matrix of the linear transformation is:\n")
-  # print(formatC(object$W, digits = digits, format = "f", flag = " "), quote = FALSE)
-  print(object$W, digits = digits, ...)
-  # return object invisibly
-  invisible(object)
+  # print(formatC(x$W, digits = digits, format = "f", flag = " "), quote = FALSE)
+  print(x$W, digits = digits, ...)
+  # return x invisibly
+  invisible(x)
 }
 
 

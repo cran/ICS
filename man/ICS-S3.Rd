@@ -11,8 +11,7 @@ ICS(
   S2 = ICS_cov4,
   S1_args = list(),
   S2_args = list(),
-  QR = NULL,
-  whiten = NULL,
+  algorithm = c("whiten", "standard", "QR"),
   center = FALSE,
   fix_signs = c("scores", "W"),
   na.action = na.fail
@@ -41,21 +40,10 @@ relevant if \code{S1} is a function).}
 \item{S2_args}{a list containing additional arguments for \code{S2} (only
 relevant if \code{S2} is a function).}
 
-\item{QR}{a logical indicating whether or not the numerically stable
-algorithm based on the QR decomposition should be applied, or \code{NULL}
-for the default behavior. The default behavior is to use the QR algorithm
-if \code{S1} is \code{\link{ICS_cov}()} or \code{\link[stats]{cov}()}, and
-if \code{S2} is one of \code{\link{ICS_cov4}()}, \code{\link{ICS_covW}()},
-\code{\link{ICS_covAxis}()}, \code{\link{cov4}()}, \code{\link{covW}()}, or
-\code{\link{covAxis}()}. For other scatter pairs, the QR algorithm is not
-applicable and this is set to \code{FALSE}.}
-
-\item{whiten}{a logical indicating whether or not to whiten the data with
-respect to the first scatter matrix before computing the second scatter
-matrix, or \code{NULL} for the default behavior. The default behavior is to
-whiten if \code{S2} is a function and \code{QR} is \code{FALSE}. If
-\code{S2} is not a function or if the QR algorithm is applied, whitening
-is not applicable and this is set to \code{FALSE}.}
+\item{algorithm}{a character string specifying with which algorithm
+the invariant coordinate system is computed. Possible values are
+\code{"whiten"}, \code{"standard"} or \code{"QR"}.
+See \sQuote{Details} for more information.}
 
 \item{center}{a logical indicating whether or not to center the data with
 respect to the first location vector before computing the invariant
@@ -93,11 +81,8 @@ matrix to be used by various methods.}
 \code{S1} (if a function was supplied).}
 \item{S2_args}{a list containing additional arguments used to compute
 \code{S2} (if a function was supplied).}
-\item{QR}{a logical indicating whether or not the numerically stable
-algorithm based on the QR decomposition was applied.}
-\item{whiten}{a logical indicating whether or not the data were whitened
-with respect to the first scatter matrix before computing the second scatter
-matrix.}
+\item{algorithm}{a character string specifying how the invariant
+coordinate is computed.}
 \item{center}{a logical indicating whether or not the data were centered
 with respect to the first location vector before computing the invariant
 coordinates.}
@@ -163,6 +148,39 @@ reverse the order of the components, but the ratio of the generalized
 kurtosis values is no longer 1 but only a constant. This is due to the fact
 that when shape matrices are uses, the generalized kurtosis values are only
 relative ones.
+
+Different algorithms are available to compute the invariant coordinate
+system of a data frame \eqn{X_n} with \eqn{n} observations:
+\itemize{
+\item \strong{"whiten"}: whitens the data \eqn{X_n} with respect to the first
+scatter matrix before computing the second scatter matrix. If \code{S2} is not a function, whitening is not applicable.
+\itemize{
+\item whiten the data \eqn{X_n} with respect to the first
+scatter matrix: \eqn{Y_n =  X_n S_1(X_n)^{-1/2}}
+\item compute \eqn{S_2} for the uncorrelated data: \eqn{S_2(Y_n)}
+\item perform the eigendecomposition of \eqn{S_2(Y_n)}: \eqn{S_2(Y_n) = UDU'}
+\item compute \eqn{W}: \eqn{W = U' S_1(X_n)^{-1/2}}
+}
+\item \strong{"standard"}: performs the spectral decomposition of the
+symmetric matrix  \eqn{M(X_n)}
+\itemize{
+\item compute \eqn{M(X_n) = S_1(X_n)^{-1/2} S_2(X_n) S_1(X_n)^{-1/2}}
+\item perform the eigendecomposition of \eqn{M(X_n)}: \eqn{M(X_n) = UDU'}
+\item compute \eqn{W}: \eqn{W = U' S_1(X_n)^{-1/2}}
+}
+\item \strong{"QR"}: numerically stable algorithm based on the QR algorithm for a
+common family of scatter pairs: if \code{S1} is \code{\link{ICS_cov}()}
+or \code{\link[stats]{cov}()}, and if \code{S2} is one of
+\code{\link{ICS_cov4}()}, \code{\link{ICS_covW}()}
+, \code{\link{ICS_covAxis}()}, \code{\link{cov4}()},
+\code{\link{covW}()}, or \code{\link{covAxis}()}.
+For other scatter pairs, the QR algorithm is not
+applicable.   See Archimbaud et al. (2023)
+for details.
+}
+
+The default behavior is to use the "whiten" algorithm if S2 is a
+function except if "QR" is selected.
 }
 \examples{
 # import data

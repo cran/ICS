@@ -3,7 +3,7 @@ LOG of the CHANGES in the package ICS
 Version 1.4-0
 
 * changing the maintainer email address and welcoming new contributors to the package
-* complete new implementation of ICS together with all methods. From now on function ICS should be used and functions ics and ics2 are depreceated.
+* complete new implementation of ICS together with all methods. From now on function ICS should be used and functions ics and ics2 are deprecated.
 
 Version 1.3-2
 

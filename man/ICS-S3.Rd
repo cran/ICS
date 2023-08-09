@@ -188,7 +188,7 @@ X <- iris[,-5]
 # run ICS
 out_ICS <- ICS(X)
 out_ICS
-summary(out_ICS)
+print(out_ICS, info = TRUE)
 
 # Extract generalized eigenvalues
 gen_kurtosis(out_ICS)

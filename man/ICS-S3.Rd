@@ -237,9 +237,12 @@ library(ICSNP)
  plot(ics.X.2)
  # example using three pictures
  library(pixmap)
- fig1 <- read.pnm(system.file("pictures/cat.pgm", package = "ICS")[1])
- fig2 <- read.pnm(system.file("pictures/road.pgm", package = "ICS")[1])
- fig3 <- read.pnm(system.file("pictures/sheep.pgm", package = "ICS")[1])
+ fig1 <- read.pnm(system.file("pictures/cat.pgm", package = "ICS")[1],
+ cellres=1)
+ fig2 <- read.pnm(system.file("pictures/road.pgm", package = "ICS")[1],
+ cellres=1)
+ fig3 <- read.pnm(system.file("pictures/sheep.pgm", package = "ICS")[1],
+ cellres=1)
  p <- dim(fig1@grey)[2]
  fig1.v <- as.vector(fig1@grey)
  fig2.v <- as.vector(fig2@grey)
@@ -253,12 +256,12 @@ library(ICSNP)
  plot(fig1)
  plot(fig2)
  plot(fig3)
- plot(pixmapGrey(X.mixed[,1],ncol=p))
- plot(pixmapGrey(X.mixed[,2],ncol=p))
- plot(pixmapGrey(X.mixed[,3],ncol=p))
- plot(pixmapGrey(components(ICA.fig)[,1],ncol=p))
- plot(pixmapGrey(components(ICA.fig)[,2],ncol=p))
- plot(pixmapGrey(components(ICA.fig)[,3],ncol=p))
+ plot(pixmapGrey(X.mixed[,1],ncol=p, cellres=1))
+ plot(pixmapGrey(X.mixed[,2],ncol=p, cellres=1))
+ plot(pixmapGrey(X.mixed[,3],ncol=p, cellres=1))
+ plot(pixmapGrey(components(ICA.fig)[,1],ncol=p, cellres=1))
+ plot(pixmapGrey(components(ICA.fig)[,2],ncol=p, cellres=1))
+ plot(pixmapGrey(components(ICA.fig)[,3],ncol=p, cellres=1))
 }
 \references{
 Tyler, D.E., Critchley, F., Duembgen, L. and Oja, H. (2009) Invariant

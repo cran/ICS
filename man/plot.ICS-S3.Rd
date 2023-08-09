@@ -28,6 +28,13 @@ and may be removed in the future, use \code{select} instead.}
 Produce a scatterplot matrix of the component scores of an invariant
 coordinate system obtained via an ICS transformation.
 }
+\examples{
+X <- iris[,-5]
+out <- ICS(X)
+plot(out)
+plot(out, select = c(1,4))
+
+}
 \seealso{
 \code{\link{ICS}()}
 

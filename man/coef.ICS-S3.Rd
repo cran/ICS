@@ -35,6 +35,14 @@ Extract the coefficient matrix of a linear transformation to an invariant
 coordinate system. Each row of the matrix contains the coefficients of the
 transformation to the corresponding component.
 }
+\examples{
+X <- iris[,-5]
+out <- ICS(X)
+coef(out)
+coef(out, select = c(1,4))
+coef(out, select = 1, drop = FALSE)
+
+}
 \seealso{
 \code{\link{ICS}()}
 

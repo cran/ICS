@@ -32,6 +32,13 @@ values constitutes a backtransformation to the observed data.  When using
 fewer components, the fitted values can often be viewed as reconstructions
 of the observed data with noise removed.
 }
+\examples{
+X <- iris[,-5]
+out <- ICS(X)
+fitted(out)
+fitted(out, select = 4)
+
+}
 \seealso{
 \code{\link{ICS}()}
 

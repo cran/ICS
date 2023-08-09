@@ -15,6 +15,11 @@
 \description{
 Summarizes and prints an \code{ICS} object in an informative way.
 }
+\examples{
+X <- iris[,-5]
+out <- ICS(X)
+summary(out)
+}
 \seealso{
 \code{\link{ICS}()}
 

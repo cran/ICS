@@ -81,6 +81,33 @@ Principal Axis Analysis.
 
 \code{ICS_tM()} is a wrapper for the M-estimator of location and scatter
 for a multivariate t-distribution, as computed by \code{\link{tM}()}.
+
+\code{ICS_scovq()} is a wrapper for the supervised scatter matrix based
+on quantiles scatter, as computed by \code{\link{scovq}()}.
+}
+\examples{
+X <- iris[,-5]
+ICS_cov(X)
+ICS_cov4(X)
+ICS_covW(X, alpha = 1, cf = 1/(ncol(X)+2))
+ICS_covAxis(X)
+ICS_tM(X)
+
+
+# The number of explaining variables
+p <- 10
+# The number of observations
+n <- 400
+# The error variance
+sigma <- 0.5
+# The explaining variables
+X <- matrix(rnorm(p*n),n,p)
+# The error term
+epsilon <- rnorm(n, sd = sigma)
+# The response
+y <- X[,1]^2 + X[,2]^2*epsilon
+ICS_scovq(X, y = y)
+
 }
 \references{
 Arslan, O., Constable, P.D.L. and Kent, J.T. (1995) Convergence behaviour of
@@ -110,7 +137,7 @@ Series B}, \bold{71}(3), 549--592. \doi{10.1111/j.1467-9868.2009.00706.x}.
 \code{\link[base:colSums]{colMeans}()}, \code{\link{mean3}()}
 
 \code{\link[stats]{cov}()}, \code{\link{cov4}()}, \code{\link{covW}()},
-\code{\link{covAxis}()}, \code{\link{tM}()}
+\code{\link{covAxis}()}, \code{\link{tM}()}, \code{\link{scovq}()}
 }
 \author{
 Andreas Alfons and Aurore Archimbaud

@@ -32,6 +32,14 @@ A numeric matrix or vector containing the requested components.
 Extract the components scores of an invariant coordinate system obtained
 via an ICS transformation.
 }
+\examples{
+X <- iris[,-5]
+out <- ICS(X)
+components(out)
+components(out, select = c(1,4))
+components(out, select = 1, drop = FALSE)
+
+}
 \seealso{
 \code{\link{ICS}()}
 

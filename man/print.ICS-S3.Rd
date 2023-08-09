@@ -23,6 +23,11 @@ Default is FALSE.}
 \description{
 Prints information of an \code{ICS} object.
 }
+\examples{
+X <- iris[,-5]
+out <- ICS(X)
+print(out)
+}
 \seealso{
 \code{\link{ICS}()}
 }

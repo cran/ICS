@@ -54,6 +54,14 @@ that when shape matrices are uses, the generalized kurtosis values are only
 relative ones. It is then useful to scale the generalized kurtosis values
 such that their product is 1.
 }
+\examples{
+X <- iris[,-5]
+out <- ICS(X)
+gen_kurtosis(out)
+gen_kurtosis(out, scale = TRUE)
+gen_kurtosis(out, select = c(1,4))
+
+}
 \seealso{
 \code{\link{ICS}()}
 

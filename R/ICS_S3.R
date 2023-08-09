@@ -28,6 +28,9 @@
 #' \code{ICS_tM()} is a wrapper for the M-estimator of location and scatter
 #' for a multivariate t-distribution, as computed by \code{\link{tM}()}.
 #'
+#' \code{ICS_scovq()} is a wrapper for the supervised scatter matrix based
+#'  on quantiles scatter, as computed by \code{\link{scovq}()}.
+#'
 #' @name ICS_scatter
 #'
 #' @param x  a numeric matrix or data frame.
@@ -78,9 +81,30 @@
 #' \code{\link[base:colSums]{colMeans}()}, \code{\link{mean3}()}
 #'
 #' \code{\link[stats]{cov}()}, \code{\link{cov4}()}, \code{\link{covW}()},
-#' \code{\link{covAxis}()}, \code{\link{tM}()}
+#' \code{\link{covAxis}()}, \code{\link{tM}()}, \code{\link{scovq}()}
 #'
 #' @examples
+#' X <- iris[,-5]
+#' ICS_cov(X)
+#' ICS_cov4(X)
+#' ICS_covW(X, alpha = 1, cf = 1/(ncol(X)+2))
+#' ICS_covAxis(X)
+#' ICS_tM(X)
+#'
+#'
+#' # The number of explaining variables
+#' p <- 10
+#' # The number of observations
+#' n <- 400
+#' # The error variance
+#' sigma <- 0.5
+#' # The explaining variables
+#' X <- matrix(rnorm(p*n),n,p)
+#' # The error term
+#' epsilon <- rnorm(n, sd = sigma)
+#' # The response
+#' y <- X[,1]^2 + X[,2]^2*epsilon
+#' ICS_scovq(X, y = y)
 #'
 #' @importFrom stats cov
 #' @export
@@ -423,9 +447,12 @@ ICS_scovq <- function(x, y, ...) {
 #'  plot(ics.X.2)
 #'  # example using three pictures
 #'  library(pixmap)
-#'  fig1 <- read.pnm(system.file("pictures/cat.pgm", package = "ICS")[1])
-#'  fig2 <- read.pnm(system.file("pictures/road.pgm", package = "ICS")[1])
-#'  fig3 <- read.pnm(system.file("pictures/sheep.pgm", package = "ICS")[1])
+#'  fig1 <- read.pnm(system.file("pictures/cat.pgm", package = "ICS")[1],
+#'  cellres=1)
+#'  fig2 <- read.pnm(system.file("pictures/road.pgm", package = "ICS")[1],
+#'  cellres=1)
+#'  fig3 <- read.pnm(system.file("pictures/sheep.pgm", package = "ICS")[1],
+#'  cellres=1)
 #'  p <- dim(fig1@grey)[2]
 #'  fig1.v <- as.vector(fig1@grey)
 #'  fig2.v <- as.vector(fig2@grey)
@@ -439,12 +466,12 @@ ICS_scovq <- function(x, y, ...) {
 #'  plot(fig1)
 #'  plot(fig2)
 #'  plot(fig3)
-#'  plot(pixmapGrey(X.mixed[,1],ncol=p))
-#'  plot(pixmapGrey(X.mixed[,2],ncol=p))
-#'  plot(pixmapGrey(X.mixed[,3],ncol=p))
-#'  plot(pixmapGrey(components(ICA.fig)[,1],ncol=p))
-#'  plot(pixmapGrey(components(ICA.fig)[,2],ncol=p))
-#'  plot(pixmapGrey(components(ICA.fig)[,3],ncol=p))
+#'  plot(pixmapGrey(X.mixed[,1],ncol=p, cellres=1))
+#'  plot(pixmapGrey(X.mixed[,2],ncol=p, cellres=1))
+#'  plot(pixmapGrey(X.mixed[,3],ncol=p, cellres=1))
+#'  plot(pixmapGrey(components(ICA.fig)[,1],ncol=p, cellres=1))
+#'  plot(pixmapGrey(components(ICA.fig)[,2],ncol=p, cellres=1))
+#'  plot(pixmapGrey(components(ICA.fig)[,3],ncol=p, cellres=1))
 #' @importFrom stats cov na.fail
 #' @export
 
@@ -743,6 +770,11 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
 #' methods
 #'
 #' @examples
+#' X <- iris[,-5]
+#' out <- ICS(X)
+#' gen_kurtosis(out)
+#' gen_kurtosis(out, scale = TRUE)
+#' gen_kurtosis(out, select = c(1,4))
 #'
 #' @export
 
@@ -811,6 +843,11 @@ gen_kurtosis.ICS <- function(object, select = NULL, scale = FALSE,
 #' methods
 #'
 #' @examples
+#' X <- iris[,-5]
+#' out <- ICS(X)
+#' coef(out)
+#' coef(out, select = c(1,4))
+#' coef(out, select = 1, drop = FALSE)
 #'
 #' @method coef ICS
 #' @importFrom stats coef
@@ -866,6 +903,11 @@ coef.ICS <- function(object, select = NULL, drop = FALSE, index = NULL, ...) {
 #' methods
 #'
 #' @examples
+#' X <- iris[,-5]
+#' out <- ICS(X)
+#' components(out)
+#' components(out, select = c(1,4))
+#' components(out, select = 1, drop = FALSE)
 #'
 #' @export
 
@@ -928,6 +970,10 @@ components.ICS <- function(x, select = NULL, drop = FALSE, index = NULL, ...) {
 #' methods
 #'
 #' @examples
+#' X <- iris[,-5]
+#' out <- ICS(X)
+#' fitted(out)
+#' fitted(out, select = 4)
 #'
 #' @method fitted ICS
 #' @export
@@ -983,6 +1029,10 @@ fitted.ICS <- function(object, select = NULL, index = NULL, ...) {
 #' \code{\link{components}()}, and \code{\link[=fitted.ICS]{fitted}()} methods
 #'
 #' @examples
+#' X <- iris[,-5]
+#' out <- ICS(X)
+#' plot(out)
+#' plot(out, select = c(1,4))
 #'
 #' @method plot ICS
 #' @importFrom graphics pairs
@@ -1034,6 +1084,11 @@ plot.ICS <- function(x, select = NULL, index = NULL, ...) {
 #' @seealso
 #' \code{\link{ICS}()}
 #' @method print ICS
+#'
+#' @examples
+#' X <- iris[,-5]
+#' out <- ICS(X)
+#' print(out)
 #' @export
 print.ICS <- function(x, info = FALSE, digits = 4L, ...){
   # initializations
@@ -1080,6 +1135,11 @@ print.ICS <- function(x, info = FALSE, digits = 4L, ...){
 #'
 #' @method summary ICS
 #' @seealso [print.ICS()]
+#'
+#' @examples
+#' X <- iris[,-5]
+#' out <- ICS(X)
+#' summary(out)
 #' @export
 summary.ICS <- function(object, ...) {
   # currently doesn't do anything but add a subclass

@@ -51,6 +51,12 @@
 #' @export
 #' @method screeplot ICS
 #' @importFrom graphics plot barplot axis
+#'
+#' @examples
+#' X <- iris[,-5]
+#' out <- ICS(X)
+#' screeplot(out)
+#' screeplot(out, type = "lines")
 screeplot.ICS <- function(x, index = NULL, type = "barplot",
                           main = deparse(substitute(x)), ylab = "generalized kurtosis",
                           xlab = "component", names.arg = index, labels = TRUE,...)  {

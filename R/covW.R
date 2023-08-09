@@ -1,6 +1,6 @@
 #'  One-step M-estimator
 #'
-#'  Estimates the scatter matrix based on one-step M-estimator.
+#'  Estimates the scatter matrix based on one-step M-estimator using mean and covariance matrix as starting point.
 #'
 #' @param X numeric \eqn{n \times p} data matrix or dataframe.
 #' @param na.action a function which indicates what should happen when the data contain 'NA's. Default is to fail.
@@ -13,7 +13,9 @@
 #' (x_i - \bar{ x})^\top(x_i - \bar{ x}),}
 #' where \eqn{\bar{x}} is the mean vector, \eqn{D^2(x_i)} is the squared
 #'  Mahalanobis distance, \eqn{w(d)=d^\alpha} is a
-#' non-negative and continuous weight function and \eqn{\text{cf}} is a consistency factor.
+#' non-negative and continuous weight function and \eqn{\text{cf}} is a consistency factor. 
+#' Note that the consistency factor to make it consistent at the multivariate normal distribution 
+#' is in most case unknown and therefore the default is to use simply \code{cf = 1}.
 #'
 #' - If \eqn{w(d)=1}, we get the covariance matrix [cov()] (up to the factor
 #' \eqn{1/(n-1)} instead of \eqn{1/n}).
@@ -58,7 +60,7 @@ covW <- function (X, na.action = na.fail, alpha = 1, cf = 1 )
   Xmeans <- colMeans(X)
   di <- mahalanobis(X, Xmeans, cov(X))
   X.centered <- sweep(X, 2, Xmeans)
-  v.tilde <- 1/n*cf * t( X.centered) %*% diag(di^alpha) %*%  X.centered
+  v.tilde <- cf/n * t( X.centered) %*% diag(di^alpha) %*%  X.centered
 
   return(v.tilde)
 }

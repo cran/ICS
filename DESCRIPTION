@@ -6,7 +6,7 @@ Date: 2023-08-09
 Authors@R:
     c(person("Klaus", "Nordhausen", 
              email = "klausnordhausenR@gmail.com",
-             role = "aut", 
+             role = c("aut", "cre"),
              comment = c(ORCID = "0000-0002-3758-8501")),
       person("Andreas", "Alfons", 
              email = "alfons@ese.eur.nl", 
@@ -14,7 +14,7 @@ Authors@R:
              comment = c(ORCID = "0000-0002-2513-3788")),
       person("Aurore", "Archimbaud", 
              email = "aurore.archimbaud@live.fr", 
-             role = c("aut", "cre"),
+             role = "aut",
              comment = c(ORCID = "0000-0002-6511-9091")),
       person("Hannu", "Oja", 
              email = "", 
@@ -28,9 +28,9 @@ Authors@R:
              role = "aut", 
              comment = c(ORCID = "0000-0001-8970-8061")))
 Author: 
-    Klaus Nordhausen [aut] (<https://orcid.org/0000-0002-3758-8501>),
+    Klaus Nordhausen [aut, cre] (<https://orcid.org/0000-0002-3758-8501>),
     Andreas Alfons [aut] (<https://orcid.org/0000-0002-2513-3788>), 
-    Aurore Archimbaud [aut, cre] (<https://orcid.org/0000-0002-6511-9091>),
+    Aurore Archimbaud [aut] (<https://orcid.org/0000-0002-6511-9091>),
     Hannu Oja [aut] (<https://orcid.org/0000-0002-4945-5976>),
     David E. Tyler [aut] (<https://orcid.org/>),
     Anne Ruiz-Gazen [aut] (<https://orcid.org/0000-0001-8970-8061>)

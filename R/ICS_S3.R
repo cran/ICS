@@ -267,8 +267,14 @@ ICS_tM <- function(x, location = TRUE, df = 1, ...) {
 #'    applicable.   See Archimbaud et al. (2023)
 #'   for details.
 #'
-#' The default behavior is to use the "whiten" algorithm if S2 is a
-#'  function except if "QR" is selected.
+#' The "whiten" algorithm is the most natural version and therefore the default. The option "standard"
+#' should be only used if the scatters provided are not functions but precomputed matrices. 
+#' The option "QR" is mainly of interest when there are numerical issues when "whiten" is used and the
+#' scatter combination allows its usage.
+#'
+#' Note that when the purpose of ICS is outlier detection the package \link[ICSOutlier]{ICSOutlier} 
+#' provides additional functionality as does the package \link[ICSClust]{ICSClust} iin case the 
+#' goal of ICS is dimension reduction prior clustering.
 #'
 #' @name ICS-S3
 #'

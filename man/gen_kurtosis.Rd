@@ -33,7 +33,7 @@ A numeric vector containing the generalized kurtosis values of the
 requested components.
 }
 \description{
-Extract the generalized kurtosis values of the components obtained via an
+Extracts the generalized kurtosis values of the components obtained via an
 ICS transformation.
 }
 \details{

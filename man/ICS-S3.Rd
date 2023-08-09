@@ -45,9 +45,9 @@ the invariant coordinate system is computed. Possible values are
 \code{"whiten"}, \code{"standard"} or \code{"QR"}.
 See \sQuote{Details} for more information.}
 
-\item{center}{a logical indicating whether or not to center the data with
-respect to the first location vector before computing the invariant
-coordinates (defaults to \code{FALSE}).  Centering is only applicable if the
+\item{center}{a logical indicating whether the invariant coordinates should
+be centered with respect to first locattion or not (defaults to \code{FALSE}).
+Centering is only applicable if the
 first scatter object contains a location component, otherwise this is set to
 \code{FALSE}. Note that this only affects the scores of the invariant
 components (output component \code{scores}), but not the generalized
@@ -107,7 +107,7 @@ coordinates) and a matrix \eqn{W} (in which the rows contain the
 coefficients of the linear transformation to the respective invariant
 coordinates) are found such that:
 \itemize{
-\item The columns of \eqn{Z} are standardized with respect to
+\item The columns of \eqn{Z} are whitened with respect to
 \eqn{S_{1}}{S1}. That is, \eqn{S_{1}(Z) = I}{S1(Z) = I}, where \eqn{I}
 denotes the identity matrix.
 \item The columns of \eqn{Z} are uncorrelated with respect to
@@ -179,8 +179,14 @@ applicable.   See Archimbaud et al. (2023)
 for details.
 }
 
-The default behavior is to use the "whiten" algorithm if S2 is a
-function except if "QR" is selected.
+The "whiten" algorithm is the most natural version and therefore the default. The option "standard"
+should be only used if the scatters provided are not functions but precomputed matrices.
+The option "QR" is mainly of interest when there are numerical issues when "whiten" is used and the
+scatter combination allows its usage.
+
+Note that when the purpose of ICS is outlier detection the package \link[ICSOutlier]{ICSOutlier}
+provides additional functionality as does the package \link[ICSClust]{ICSClust} iin case the
+goal of ICS is dimension reduction prior clustering.
 }
 \examples{
 # import data

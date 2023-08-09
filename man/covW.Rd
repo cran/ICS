@@ -19,7 +19,7 @@ covW(X, na.action = na.fail, alpha = 1, cf = 1)
 Matrix of the estimated scatter.
 }
 \description{
-Estimates the scatter matrix based on one-step M-estimator.
+Estimates the scatter matrix based on one-step M-estimator using mean and covariance matrix as starting point.
 }
 \details{
 It is given for \eqn{n \times p} matrix \eqn{X} by
@@ -28,6 +28,8 @@ It is given for \eqn{n \times p} matrix \eqn{X} by
 where \eqn{\bar{x}} is the mean vector, \eqn{D^2(x_i)} is the squared
 Mahalanobis distance, \eqn{w(d)=d^\alpha} is a
 non-negative and continuous weight function and \eqn{\text{cf}} is a consistency factor.
+Note that the consistency factor to make it consistent at the multivariate normal distribution
+is in most case unknown and therefore the default is to use simply \code{cf = 1}.
 \itemize{
 \item If \eqn{w(d)=1}, we get the covariance matrix \code{\link[=cov]{cov()}} (up to the factor
 \eqn{1/(n-1)} instead of \eqn{1/n}).

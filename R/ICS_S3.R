@@ -178,6 +178,22 @@ ICS_tM <- function(x, location = TRUE, df = 1, ...) {
 }
 
 
+#' @name ICS_scatter
+#'
+#' @param y  numerical vector specifying the dependent variable.
+#' @param \dots  additional arguments to be passed down to \code{\link{scovq}()}.
+#'
+#' @export
+
+ICS_scovq <- function(x, y, ...) {
+  # compute location and scatter estimates
+  scov <- scovq(x = x, y = y, ...)
+  # construct object to be returned
+  out <- list(location = NULL, scatter =  scov, label = "SCOVQ")
+  class(out) <- "ICS_scatter"
+  out
+}
+
 # Main function to compute ICS -----
 
 #' Two Scatter Matrices ICS Transformation
@@ -268,12 +284,12 @@ ICS_tM <- function(x, location = TRUE, df = 1, ...) {
 #'   for details.
 #'
 #' The "whiten" algorithm is the most natural version and therefore the default. The option "standard"
-#' should be only used if the scatters provided are not functions but precomputed matrices. 
+#' should be only used if the scatters provided are not functions but precomputed matrices.
 #' The option "QR" is mainly of interest when there are numerical issues when "whiten" is used and the
 #' scatter combination allows its usage.
 #'
-#' Note that when the purpose of ICS is outlier detection the package \link[ICSOutlier]{ICSOutlier} 
-#' provides additional functionality as does the package \link[ICSClust]{ICSClust} iin case the 
+#' Note that when the purpose of ICS is outlier detection the package \link[ICSOutlier]{ICSOutlier}
+#' provides additional functionality as does the package \link[ICSClust]{ICSClust} iin case the
 #' goal of ICS is dimension reduction prior clustering.
 #'
 #' @name ICS-S3
@@ -305,7 +321,7 @@ ICS_tM <- function(x, location = TRUE, df = 1, ...) {
 #' first scatter object contains a location component, otherwise this is set to
 #' \code{FALSE}. Note that this only affects the scores of the invariant
 #' components (output component \code{scores}), but not the generalized
-#' kurtosis values (output component \code{urtosis}).
+#' kurtosis values (output component \code{gen_kurtosis}).
 #' @param fix_signs a character string specifying how to fix the signs of the
 #' invariant coordinates. Possible values are \code{"scores"} to fix the signs
 #' based on (generalized) skewness values of the coordinates, or \code{"W"} to
@@ -315,7 +331,7 @@ ICS_tM <- function(x, location = TRUE, df = 1, ...) {
 #' to \code{\link[stats]{na.fail}}, see its help file for alternatives).
 #'
 #' @return An object of class \code{"ICS"} with the following components:
-#' \item{urtosis}{a numeric vector containing the generalized kurtosis
+#' \item{gen_kurtosis}{a numeric vector containing the generalized kurtosis
 #' values of the invariant coordinates.}
 #' \item{W}{a numeric matrix in which each row contains the coefficients of the
 #' linear transformation to the corresponding invariant coordinate.}
@@ -354,7 +370,7 @@ ICS_tM <- function(x, location = TRUE, df = 1, ...) {
 #' Coordinate Selection. \emph{SIAM Journal on Mathematics of Data Science},
 #' \bold{5}(1), 97--121. \doi{10.1137/22M1498759}.
 #'
-#' @seealso \code{\link{urtosis}()}, \code{\link[=coef.ICS]{coef}()},
+#' @seealso \code{\link{gen_kurtosis}()}, \code{\link[=coef.ICS]{coef}()},
 #' \code{\link{components}()}, \code{\link[=fitted.ICS]{fitted}()}, and
 #' \code{\link[=plot.ICS]{plot}()} methods
 #'
@@ -367,7 +383,7 @@ ICS_tM <- function(x, location = TRUE, df = 1, ...) {
 #' print(out_ICS, info = TRUE)
 #'
 #' # Extract generalized eigenvalues
-#' urtosis(out_ICS)
+#' gen_kurtosis(out_ICS)
 #' # Plot
 #' screeplot(out_ICS)
 #'
@@ -563,8 +579,8 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
   # compute eigendecomposition of second scatter matrix
   S2_Y_eigen <- eigen(S2_Y$scatter, symmetric = TRUE)
   # extract generalized kurtosis values
-  urtosis <- S2_Y_eigen$values
-  if (!all(is.finite(urtosis))) {
+  gen_kurtosis <- S2_Y_eigen$values
+  if (!all(is.finite(gen_kurtosis))) {
     warning("some generalized kurtosis values are non-finite")
   }
   # obtain coefficient matrix of the linear transformation
@@ -614,7 +630,7 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
 
   # set names for different parts of the output
   IC_names <- paste("IC", seq_len(p), sep = ".")
-  names(urtosis) <- IC_names
+  names(gen_kurtosis) <- IC_names
   dimnames(W_final) <- list(IC_names, colnames(X))
   dimnames(Z_final) <- list(rownames(X), IC_names)
   if (!is.null(gen_skewness)) names(gen_skewness) <- IC_names
@@ -622,7 +638,7 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
 
 
   # construct object to be returned
-  res <- list(urtosis = urtosis, W = W_final, scores = Z_final,
+  res <- list(gen_kurtosis = gen_kurtosis, W = W_final, scores = Z_final,
               gen_skewness = gen_skewness, S1_label = S1_label,
               S2_label = S2_label, S1_args = S1_args, S2_args = S2_args,
               algorithm = algorithm, center = center, fix_signs = fix_signs)

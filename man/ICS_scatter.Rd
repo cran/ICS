@@ -7,6 +7,7 @@
 \alias{ICS_covW}
 \alias{ICS_covAxis}
 \alias{ICS_tM}
+\alias{ICS_scovq}
 \title{Location and Scatter Estimates for ICS}
 \usage{
 ICS_cov(x, location = TRUE)
@@ -18,6 +19,8 @@ ICS_covW(x, location = TRUE, alpha = 1, cf = 1)
 ICS_covAxis(x, location = TRUE)
 
 ICS_tM(x, location = TRUE, df = 1, ...)
+
+ICS_scovq(x, y, ...)
 }
 \arguments{
 \item{x}{a numeric matrix or data frame.}
@@ -39,7 +42,9 @@ a logical inficating whether to include the M-estimate of location
 \item{df}{assumed degrees of freedom of the t-distribution (defaults to 1,
 which corresponds to the Cauchy distribution).}
 
-\item{\dots}{additional arguments to be passed down to \code{\link{tM}()}.}
+\item{\dots}{additional arguments to be passed down to \code{\link{scovq}()}.}
+
+\item{y}{numerical vector specifying the dependent variable.}
 }
 \value{
 An object of class \code{"ICS_scatter"} with the following

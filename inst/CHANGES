@@ -3,7 +3,7 @@ LOG of the CHANGES in the package ICS
 Version 1.4-0
 
 * changing the maintainer email address and welcoming new contributors to the package
-* complete new implementation of ICS together with all methods. From now on function ICS should be used and functions ics and ics2 are deprecated.
+* complete new implementation of ICS using S3 classes and methods. From now on function ICS should be used and functions ics and ics2 are deprecated.
 
 Version 1.3-2
 
@@ -55,7 +55,7 @@ Version 1.2-1
 Version 1.2-0
 
 * added a vignette to the package
-* changed to the citation. Now the correct citation of the package is a reference to the corresponding JSS paper. 
+* changed to the citation. Now the correct citation of the package is a reference to the corresponding JSS paper.
 
 Version 1.1-3:
 
@@ -63,11 +63,11 @@ Version 1.1-3:
 
 Version 1.1-2:
 
-* Fixing a bug in cov4 (reported by Sara Taskinen). 
+* Fixing a bug in cov4 (reported by Sara Taskinen).
 
 Version 1.1-1:
 
-* Minor changes in documentation. 
+* Minor changes in documentation.
 
 Version 1.1-0:
 

@@ -42,6 +42,12 @@ If NULL all components are used.}
 Plots the kurtosis measures of an \code{ICS} object against its index number.
 Two versions of this screeplot are available.
 }
+\examples{
+X <- iris[,-5]
+out <- ICS(X)
+screeplot(out)
+screeplot(out, type = "lines")
+}
 \seealso{
 \code{\link{ICS}()}
 

@@ -185,7 +185,7 @@ The option "QR" is mainly of interest when there are numerical issues when "whit
 scatter combination allows its usage.
 
 Note that when the purpose of ICS is outlier detection the package \link[ICSOutlier]{ICSOutlier}
-provides additional functionality as does the package \link[ICSClust]{ICSClust} iin case the
+provides additional functionality as does the package \code{ICSClust} in case the
 goal of ICS is dimension reduction prior clustering.
 }
 \examples{
@@ -229,6 +229,9 @@ plot(ics.X.1)
 # compare to
 pairs(X)
 pairs(princomp(X,cor=TRUE)$scores)
+
+
+
 # slow:
 library(ICSNP)
  ics.X.2 <- ICS(X, S1 = tyler.shape, S2 = duembgen.shape,

@@ -136,8 +136,17 @@ test_that("ics2 - S1 and S2 are functions - QR", {
   expect_error(ics2(X_rank_deficient, S1 = MeanCov,
                     S2 = Mean3Cov4)@gKurt)
 
-  expect_error(ICS( X_rank_deficient, S1 = ICS_cov, S2 =  ICS_covW,
-                    S2_args = list(alpha = 1, cf = 1/(ncol(X)+2)))$gen_kurtosis)
+  expect_error(ICS(X_rank_deficient, S1 = ICS_cov, S2 =  ICS_covW,
+                    S2_args = list(alpha = 1, cf = 1/(ncol(X)+2)), algorithm = "standard")$gen_kurtosis)
+
+
+  expect_true(sum(ICS(X_rank_deficient, S1 = ICS_cov, S2 =  ICS_covW,
+                    S2_args = list(alpha = 1, cf = 1/(ncol(X)+2)), algorithm = "whiten")$gen_kurtosis !=
+                   ICS(X_rank_deficient, S1 = ICS_cov,
+                       S2 =  ICS_covW,
+                       S2_args = list(alpha = 1,
+                                      cf = 1/(ncol(X)+2)),
+                       algorithm = "QR")$gen_kurtosis) >= 1)
 
   expect_equal(ics(X, S1 = cov, S2 = cov4, stdB = "Z",
                    stdKurt = FALSE)@gKurt,

@@ -132,7 +132,7 @@ test_that("ics - ICS eigenvalues - S1 and S2 are functions - QR", {
 
 test_that("ics2 - S1 and S2 are functions - QR", {
   X <- iris[,1:4]
-  X_rank_deficient <- sweep(X, 2, c(10^(-12), 10^(-3), 1, 10^6), "*")
+  X_rank_deficient <- sweep(X, 2, c(10^(-12), 10^(-3), 1, 10^12), "*")
   expect_error(ics2(X_rank_deficient, S1 = MeanCov,
                     S2 = Mean3Cov4)@gKurt)
 

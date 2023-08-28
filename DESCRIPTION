@@ -32,8 +32,8 @@ Author:
     Andreas Alfons [aut] (<https://orcid.org/0000-0002-2513-3788>), 
     Aurore Archimbaud [aut] (<https://orcid.org/0000-0002-6511-9091>),
     Hannu Oja [aut] (<https://orcid.org/0000-0002-4945-5976>),
-    David E. Tyler [aut] (<https://orcid.org/>),
-    Anne Ruiz-Gazen [aut] (<https://orcid.org/0000-0001-8970-8061>)
+    Anne Ruiz-Gazen [aut] (<https://orcid.org/0000-0001-8970-8061>),
+    David E. Tyler [aut]
 Maintainer: Klaus Nordhausen <klausnordhausenR@gmail.com>
 Depends: R (>= 2.5.0), methods, mvtnorm
 Imports: survey, graphics
@@ -46,7 +46,7 @@ Suggests:
     ICSOutlier
 Description: Implementation of Tyler, Critchley, Duembgen and Oja's (JRSS B, 2009,
             <doi:10.1111/j.1467-9868.2009.00706.x>) and Oja, Sirkia and Eriksson's
-            (AJS, 2006, <http://www.ajs.or.at/index.php/ajs/article/view/vol35,%20no2%263%20-%207>) method of two different
+            (AJS, 2006, <https://www.ajs.or.at/index.php/ajs/article/view/vol35,%20no2%263%20-%207>) method of two different
             scatter matrices to obtain an invariant coordinate system or independent
             components, depending on the underlying assumptions. 
 License: GPL (>= 2)

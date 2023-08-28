@@ -18,9 +18,9 @@ assumptions are made about the data or the scatter matrices and it can be seen a
 the \code{ICS} function can recover the independent components and estimate the mixing matrix under general assumptions.
 Besides the function \code{ICS} provides this package tools to work with objects of this class and some
 scatter matrices which can be used in the \code{ICS} function. Furthermore, there are also two tests for multinormality.
-Note that starting with version 1.4-0 the functions \code{ics} and \code{ics2} are deprecated and everything can be done in a more efficient way using the function \code{ICS} which combines
+Note that starting with version 1.4-0 the functions \code{ics} and \code{ics2} are not recommended anymore and everything can be done in a more efficient way using the function \code{ICS} which combines
 the functionality of the original two functions and also provides for certain scatter combination an improved algorithm. Furthermore does \code{ICS} return
-an S3 object and not anymore S4 objects as \code{ics} and \code{ics2} did.
+an S3 object and not anymore S4 objects as \code{ics} and \code{ics2} did. In the long run functions \code{ics} and \code{ics2} will be removed from the package.
 
 \packageIndices{ICS}
 }

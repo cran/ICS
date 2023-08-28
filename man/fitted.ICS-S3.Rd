@@ -33,6 +33,7 @@ fewer components, the fitted values can often be viewed as reconstructions
 of the observed data with noise removed.
 }
 \examples{
+data("iris")
 X <- iris[,-5]
 out <- ICS(X)
 fitted(out)

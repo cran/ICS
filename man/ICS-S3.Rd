@@ -146,7 +146,7 @@ The same does not hold when at least one of them is a shape matrix rather
 than a true scatter matrix. In that case, changing their order will also
 reverse the order of the components, but the ratio of the generalized
 kurtosis values is no longer 1 but only a constant. This is due to the fact
-that when shape matrices are uses, the generalized kurtosis values are only
+that when shape matrices are used, the generalized kurtosis values are only
 relative ones.
 
 Different algorithms are available to compute the invariant coordinate
@@ -190,25 +190,27 @@ goal of ICS is dimension reduction prior clustering.
 }
 \examples{
 # import data
+data("iris")
 X <- iris[,-5]
+
 # run ICS
 out_ICS <- ICS(X)
 out_ICS
-print(out_ICS, info = TRUE)
+summary(out_ICS)
 
-# Extract generalized eigenvalues
+# extract generalized eigenvalues
 gen_kurtosis(out_ICS)
 # Plot
 screeplot(out_ICS)
 
-# Extract the components
+# extract the components
 components(out_ICS)
 components(out_ICS, select = 1:2)
 
 # Plot
 plot(out_ICS)
 
-# Equivalence with previous functions
+# equivalence with previous functions
 out_ics <- ics(X, S1 = cov, S2 = cov4, stdKurt = FALSE)
 out_ics
 out_ics2 <- ics2(X, S1 = MeanCov, S2 = Mean3Cov4)
@@ -231,40 +233,40 @@ pairs(X)
 pairs(princomp(X,cor=TRUE)$scores)
 
 
-
 # slow:
-library(ICSNP)
- ics.X.2 <- ICS(X, S1 = tyler.shape, S2 = duembgen.shape,
- S1_args = list(location=0))
- summary(ics.X.2)
- plot(ics.X.2)
- # example using three pictures
- library(pixmap)
- fig1 <- read.pnm(system.file("pictures/cat.pgm", package = "ICS")[1],
- cellres=1)
- fig2 <- read.pnm(system.file("pictures/road.pgm", package = "ICS")[1],
- cellres=1)
- fig3 <- read.pnm(system.file("pictures/sheep.pgm", package = "ICS")[1],
- cellres=1)
- p <- dim(fig1@grey)[2]
- fig1.v <- as.vector(fig1@grey)
- fig2.v <- as.vector(fig2@grey)
- fig3.v <- as.vector(fig3@grey)
- X <- cbind(fig1.v,fig2.v,fig3.v)
- A <- matrix(rnorm(9), ncol = 3)
- X.mixed <- X \%*\% t(A)
- ICA.fig <- ICS(X.mixed)
- par.old <- par()
- par(mfrow=c(3,3), omi = c(0.1,0.1,0.1,0.1), mai = c(0.1,0.1,0.1,0.1))
- plot(fig1)
- plot(fig2)
- plot(fig3)
- plot(pixmapGrey(X.mixed[,1],ncol=p, cellres=1))
- plot(pixmapGrey(X.mixed[,2],ncol=p, cellres=1))
- plot(pixmapGrey(X.mixed[,3],ncol=p, cellres=1))
- plot(pixmapGrey(components(ICA.fig)[,1],ncol=p, cellres=1))
- plot(pixmapGrey(components(ICA.fig)[,2],ncol=p, cellres=1))
- plot(pixmapGrey(components(ICA.fig)[,3],ncol=p, cellres=1))
+if (require("ICSNP")) {
+  ics.X.2 <- ICS(X, S1 = tyler.shape, S2 = duembgen.shape,
+  S1_args = list(location=0))
+  summary(ics.X.2)
+  plot(ics.X.2)
+  # example using three pictures
+  library(pixmap)
+  fig1 <- read.pnm(system.file("pictures/cat.pgm", package = "ICS")[1],
+                   cellres = 1)
+  fig2 <- read.pnm(system.file("pictures/road.pgm", package = "ICS")[1],
+                   cellres = 1)
+  fig3 <- read.pnm(system.file("pictures/sheep.pgm", package = "ICS")[1],
+                   cellres = 1)
+  p <- dim(fig1@grey)[2]
+  fig1.v <- as.vector(fig1@grey)
+  fig2.v <- as.vector(fig2@grey)
+  fig3.v <- as.vector(fig3@grey)
+  X <- cbind(fig1.v, fig2.v, fig3.v)
+  A <- matrix(rnorm(9), ncol = 3)
+  X.mixed <- X \%*\% t(A)
+  ICA.fig <- ICS(X.mixed)
+  par.old <- par()
+  par(mfrow=c(3,3), omi = c(0.1,0.1,0.1,0.1), mai = c(0.1,0.1,0.1,0.1))
+  plot(fig1)
+  plot(fig2)
+  plot(fig3)
+  plot(pixmapGrey(X.mixed[,1], ncol = p, cellres = 1))
+  plot(pixmapGrey(X.mixed[,2], ncol = p, cellres = 1))
+  plot(pixmapGrey(X.mixed[,3], ncol = p, cellres = 1))
+  plot(pixmapGrey(components(ICA.fig)[,1], ncol = p, cellres = 1))
+  plot(pixmapGrey(components(ICA.fig)[,2], ncol = p, cellres = 1))
+  plot(pixmapGrey(components(ICA.fig)[,3], ncol = p, cellres = 1))
+}
 }
 \references{
 Tyler, D.E., Critchley, F., Duembgen, L. and Oja, H. (2009) Invariant

@@ -24,9 +24,11 @@ Default is FALSE.}
 Prints information of an \code{ICS} object.
 }
 \examples{
+data("iris")
 X <- iris[,-5]
 out <- ICS(X)
 print(out)
+print(out, info = TRUE)
 }
 \seealso{
 \code{\link{ICS}()}

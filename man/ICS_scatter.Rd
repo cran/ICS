@@ -86,6 +86,7 @@ for a multivariate t-distribution, as computed by \code{\link{tM}()}.
 on quantiles scatter, as computed by \code{\link{scovq}()}.
 }
 \examples{
+data("iris")
 X <- iris[,-5]
 ICS_cov(X)
 ICS_cov4(X)

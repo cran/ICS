@@ -29,6 +29,7 @@ Produce a scatterplot matrix of the component scores of an invariant
 coordinate system obtained via an ICS transformation.
 }
 \examples{
+data("iris")
 X <- iris[,-5]
 out <- ICS(X)
 plot(out)

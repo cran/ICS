@@ -36,6 +36,7 @@ coordinate system. Each row of the matrix contains the coefficients of the
 transformation to the corresponding component.
 }
 \examples{
+data("iris")
 X <- iris[,-5]
 out <- ICS(X)
 coef(out)

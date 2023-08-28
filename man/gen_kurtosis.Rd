@@ -50,11 +50,12 @@ The same does not hold when at least one of them is a shape matrix rather
 than a true scatter matrix. In that case, changing their order will also
 reverse the order of the components, but the ratio of the generalized
 kurtosis values is no longer 1 but only a constant. This is due to the fact
-that when shape matrices are uses, the generalized kurtosis values are only
+that when shape matrices are used, the generalized kurtosis values are only
 relative ones. It is then useful to scale the generalized kurtosis values
 such that their product is 1.
 }
 \examples{
+data("iris")
 X <- iris[,-5]
 out <- ICS(X)
 gen_kurtosis(out)

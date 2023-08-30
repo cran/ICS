@@ -3,7 +3,7 @@
 \name{summary.ICS-S3}
 \alias{summary.ICS-S3}
 \alias{summary.ICS}
-\title{Summarize a \code{ICS} object}
+\title{To summarize an \code{ICS} object}
 \usage{
 \method{summary}{ICS}(object, ...)
 }

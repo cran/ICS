@@ -2,7 +2,7 @@
 
 #' Location and Scatter Estimates for ICS
 #'
-#' Compute a scatter matrix and an optional location vector to be used in
+#' Computes a scatter matrix and an optional location vector to be used in
 #' transforming the data to an invariant coordinate system or independent
 #' components.
 #'
@@ -36,13 +36,13 @@
 #' @param x  a numeric matrix or data frame.
 #' @param location  for \code{ICS_cov()}, \code{ICS_cov4()}, \code{ICS_covW()},
 #' and \code{ICS_covAxis()}, a logical indicating whether to include the sample
-#' mean as location estimate (defaults to \code{TRUE}).  For \code{ICS_cov4()},
+#' mean as location estimate (default to \code{TRUE}).  For \code{ICS_cov4()},
 #' alternatively a character string specifying the location estimate can be
 #' supplied.  Possible values are \code{"mean"} for the sample mean (the
 #' default), \code{"mean3"} for a location estimate based on third moments,
 #' or \code{"none"} to not include a location estimate.  For \code{ICS_tM()}
 #' a logical inficating whether to include the M-estimate of location
-#' (defaults to \code{TRUE}).
+#' (default to \code{TRUE}).
 #'
 #' @return An object of class \code{"ICS_scatter"} with the following
 #' components:
@@ -143,13 +143,10 @@ ICS_cov4 <- function(x, location = c("mean", "mean3", "none")) {
 
 #' @name ICS_scatter
 #'
-#' @param alpha  parameter of the one-step M-estimator (defaults to 1).
-#' @param cf  consistency factor of the one-step M-estimator (defaults to 1).
+#' @param alpha  parameter of the one-step M-estimator (default to 1).
+#' @param cf  consistency factor of the one-step M-estimator (default to 1).
 #'
 #' @export
-
-## TODO: can we have a more detailed description of those two parameters? The
-##       help file of covW() doesn't provide more information either.
 
 ICS_covW <- function(x, location = TRUE, alpha = 1, cf = 1) {
   # initializations
@@ -184,7 +181,7 @@ ICS_covAxis <- function(x, location = TRUE) {
 
 #' @name ICS_scatter
 #'
-#' @param df  assumed degrees of freedom of the t-distribution (defaults to 1,
+#' @param df  assumed degrees of freedom of the t-distribution (default to 1,
 #' which corresponds to the Cauchy distribution).
 #' @param \dots  additional arguments to be passed down to \code{\link{tM}()}.
 #'
@@ -223,7 +220,7 @@ ICS_scovq <- function(x, y, ...) {
 
 #' Two Scatter Matrices ICS Transformation
 #'
-#' Transform the data via two scatter matrices to an invariant coordinate
+#' Transforms the data via two scatter matrices to an invariant coordinate
 #' system or independent components, depending on the underlying assumptions.
 #' Function \code{ICS()} is intended as a replacement for \code{\link{ics}()}
 #' and \code{\link{ics2}()}, and it combines their functionality into a single
@@ -314,7 +311,7 @@ ICS_scovq <- function(x, y, ...) {
 #' scatter combination allows its usage.
 #'
 #' Note that when the purpose of ICS is outlier detection the package \link[ICSOutlier]{ICSOutlier}
-#' provides additional functionality as does the package `ICSClust` in case the
+#' provides additional functionalities as does the package `ICSClust` in case the
 #' goal of ICS is dimension reduction prior clustering.
 #'
 #' @name ICS-S3
@@ -341,7 +338,7 @@ ICS_scovq <- function(x, y, ...) {
 #'  \code{"whiten"}, \code{"standard"} or \code{"QR"}.
 #' See \sQuote{Details} for more information.
 #' @param center  a logical indicating whether the invariant coordinates should
-#' be centered with respect to first locattion or not (defaults to \code{FALSE}).
+#' be centered with respect to first locattion or not (default to \code{FALSE}).
 #' Centering is only applicable if the
 #' first scatter object contains a location component, otherwise this is set to
 #' \code{FALSE}. Note that this only affects the scores of the invariant
@@ -352,7 +349,7 @@ ICS_scovq <- function(x, y, ...) {
 #' based on (generalized) skewness values of the coordinates, or \code{"W"} to
 #' fix the signs based on the coefficient matrix of the linear transformation.
 #' See \sQuote{Details} for more information.
-#' @param na.action  a function to handle missing values in the data (defaults
+#' @param na.action  a function to handle missing values in the data (default
 #' to \code{\link[stats]{na.fail}}, see its help file for alternatives).
 #'
 #' @return An object of class \code{"ICS"} with the following components:
@@ -727,7 +724,7 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
 # Methods for class "ICS" -----
 
 
-#' Extract the Generalized Kurtosis Values of the ICS Transformation
+#' To extract the Generalized Kurtosis Values of the ICS Transformation
 #'
 #' Extracts the generalized kurtosis values of the components obtained via an
 #' ICS transformation.
@@ -755,7 +752,7 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
 #' components to extract the generalized kurtosis values, or \code{NULL} to
 #' extract the generalized kurtosis values of all components.
 #' @param scale  a logical indicating whether to scale the generalized kurtosis
-#' values to have product 1 (defaults to \code{FALSE}). See \sQuote{Details}
+#' values to have product 1 (default to \code{FALSE}). See \sQuote{Details}
 #' for more information.
 #' @param index  an integer vector specifying for which components to extract
 #' the generalized kurtosis values, or \code{NULL} to extract the generalized
@@ -815,9 +812,9 @@ gen_kurtosis.ICS <- function(object, select = NULL, scale = FALSE,
 }
 
 
-#' Extract the Coefficient Matrix of the ICS Transformation
+#' To extract the Coefficient Matrix of the ICS Transformation
 #'
-#' Extract the coefficient matrix of a linear transformation to an invariant
+#' Extracts the coefficient matrix of a linear transformation to an invariant
 #' coordinate system. Each row of the matrix contains the coefficients of the
 #' transformation to the corresponding component.
 #'
@@ -829,7 +826,7 @@ gen_kurtosis.ICS <- function(object, select = NULL, scale = FALSE,
 #' components to extract the coefficients, or \code{NULL} to extract the
 #' coefficients for all components.
 #' @param drop  a logical indicating whether to return a vector rather than a
-#' matrix in case coefficients are extracted for a single component (defaults
+#' matrix in case coefficients are extracted for a single component (default
 #' to \code{FALSE}).
 #' @param index  an integer vector specifying for which components to extract
 #' the coefficients, or \code{NULL} to extract coefficients for all components.
@@ -883,9 +880,9 @@ coef.ICS <- function(object, select = NULL, drop = FALSE, index = NULL, ...) {
 }
 
 
-#' Extract the Component Scores of the ICS Transformation
+#' To extract the Component Scores of the ICS Transformation
 #'
-#' Extract the components scores of an invariant coordinate system obtained
+#' Extracts the components scores of an invariant coordinate system obtained
 #' via an ICS transformation.
 #'
 #' @param x  an object inheriting from class \code{"ICS"} containing results
@@ -893,7 +890,7 @@ coef.ICS <- function(object, select = NULL, drop = FALSE, index = NULL, ...) {
 #' @param select  an integer, character, or logical vector specifying which
 #' components to extract, or \code{NULL} to extract all components.
 #' @param drop  a logical indicating whether to return a vector rather than a
-#' matrix in case a single component is extracted (defaults to \code{FALSE}).
+#' matrix in case a single component is extracted (default to \code{FALSE}).
 #' @param index  an integer vector specifying which components to extract, or
 #' \code{NULL} to extract all components.  Note that \code{index} is deprecated
 #' and may be removed in the future, use \code{select} instead.
@@ -946,9 +943,9 @@ components.ICS <- function(x, select = NULL, drop = FALSE, index = NULL, ...) {
 }
 
 
-#' Compute the Fitted Values of the ICS Transformation
+#' Fitted Values of the ICS Transformation
 #'
-#' Compute the fitted values based on an invariant coordinate system obtained
+#' Computes the fitted values based on an invariant coordinate system obtained
 #' via an ICS transformation.  When using all components, computing the fitted
 #' values constitutes a backtransformation to the observed data.  When using
 #' fewer components, the fitted values can often be viewed as reconstructions
@@ -1012,7 +1009,7 @@ fitted.ICS <- function(object, select = NULL, index = NULL, ...) {
 
 #' Scatterplot Matrix of Component Scores from the ICS Transformation
 #'
-#' Produce a scatterplot matrix of the component scores of an invariant
+#' Produces a scatterplot matrix of the component scores of an invariant
 #' coordinate system obtained via an ICS transformation.
 #'
 #' @name plot.ICS-S3
@@ -1060,7 +1057,7 @@ plot.ICS <- function(x, select = NULL, index = NULL, ...) {
   p <- ncol(scores)
   # create scatterplot matrix
   if (is.null(select)) {
-    # not specified which components to plot, use defaults
+    # not specified which components to plot, use default
     if (p <= 6L) pairs(scores, ...)
     else pairs(scores[, c(1:3, p-2:0)], ...)
   } else {
@@ -1132,7 +1129,7 @@ print.ICS <- function(x, info = FALSE, digits = 4L, ...){
 }
 
 
-#' Summarize a `ICS` object
+#' To summarize an `ICS` object
 #'
 #' Summarizes and prints an `ICS` object in an informative way.
 #'

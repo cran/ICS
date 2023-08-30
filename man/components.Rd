@@ -3,7 +3,7 @@
 \name{components}
 \alias{components}
 \alias{components.ICS}
-\title{Extract the Component Scores of the ICS Transformation}
+\title{To extract the Component Scores of the ICS Transformation}
 \usage{
 components(x, ...)
 
@@ -19,7 +19,7 @@ from an ICS transformation.}
 components to extract, or \code{NULL} to extract all components.}
 
 \item{drop}{a logical indicating whether to return a vector rather than a
-matrix in case a single component is extracted (defaults to \code{FALSE}).}
+matrix in case a single component is extracted (default to \code{FALSE}).}
 
 \item{index}{an integer vector specifying which components to extract, or
 \code{NULL} to extract all components.  Note that \code{index} is deprecated
@@ -29,7 +29,7 @@ and may be removed in the future, use \code{select} instead.}
 A numeric matrix or vector containing the requested components.
 }
 \description{
-Extract the components scores of an invariant coordinate system obtained
+Extracts the components scores of an invariant coordinate system obtained
 via an ICS transformation.
 }
 \examples{

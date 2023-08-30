@@ -3,7 +3,7 @@
 \name{coef.ICS-S3}
 \alias{coef.ICS-S3}
 \alias{coef.ICS}
-\title{Extract the Coefficient Matrix of the ICS Transformation}
+\title{To extract the Coefficient Matrix of the ICS Transformation}
 \usage{
 \method{coef}{ICS}(object, select = NULL, drop = FALSE, index = NULL, ...)
 }
@@ -16,7 +16,7 @@ components to extract the coefficients, or \code{NULL} to extract the
 coefficients for all components.}
 
 \item{drop}{a logical indicating whether to return a vector rather than a
-matrix in case coefficients are extracted for a single component (defaults
+matrix in case coefficients are extracted for a single component (default
 to \code{FALSE}).}
 
 \item{index}{an integer vector specifying for which components to extract
@@ -31,7 +31,7 @@ A numeric matrix or vector containing the coefficients for the
 requested components.
 }
 \description{
-Extract the coefficient matrix of a linear transformation to an invariant
+Extracts the coefficient matrix of a linear transformation to an invariant
 coordinate system. Each row of the matrix contains the coefficients of the
 transformation to the corresponding component.
 }

@@ -27,19 +27,19 @@ ICS_scovq(x, y, ...)
 
 \item{location}{for \code{ICS_cov()}, \code{ICS_cov4()}, \code{ICS_covW()},
 and \code{ICS_covAxis()}, a logical indicating whether to include the sample
-mean as location estimate (defaults to \code{TRUE}).  For \code{ICS_cov4()},
+mean as location estimate (default to \code{TRUE}).  For \code{ICS_cov4()},
 alternatively a character string specifying the location estimate can be
 supplied.  Possible values are \code{"mean"} for the sample mean (the
 default), \code{"mean3"} for a location estimate based on third moments,
 or \code{"none"} to not include a location estimate.  For \code{ICS_tM()}
 a logical inficating whether to include the M-estimate of location
-(defaults to \code{TRUE}).}
+(default to \code{TRUE}).}
 
-\item{alpha}{parameter of the one-step M-estimator (defaults to 1).}
+\item{alpha}{parameter of the one-step M-estimator (default to 1).}
 
-\item{cf}{consistency factor of the one-step M-estimator (defaults to 1).}
+\item{cf}{consistency factor of the one-step M-estimator (default to 1).}
 
-\item{df}{assumed degrees of freedom of the t-distribution (defaults to 1,
+\item{df}{assumed degrees of freedom of the t-distribution (default to 1,
 which corresponds to the Cauchy distribution).}
 
 \item{\dots}{additional arguments to be passed down to \code{\link{scovq}()}.}
@@ -55,7 +55,7 @@ estimate.}
 \item{label}{a character string providing a label for the scatter matrix.}
 }
 \description{
-Compute a scatter matrix and an optional location vector to be used in
+Computes a scatter matrix and an optional location vector to be used in
 transforming the data to an invariant coordinate system or independent
 components.
 }

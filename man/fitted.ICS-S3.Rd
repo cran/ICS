@@ -3,7 +3,7 @@
 \name{fitted.ICS-S3}
 \alias{fitted.ICS-S3}
 \alias{fitted.ICS}
-\title{Compute the Fitted Values of the ICS Transformation}
+\title{Fitted Values of the ICS Transformation}
 \usage{
 \method{fitted}{ICS}(object, select = NULL, index = NULL, ...)
 }
@@ -26,7 +26,7 @@ removed in the future, use \code{select} instead.}
 A numeric matrix containing the fitted values.
 }
 \description{
-Compute the fitted values based on an invariant coordinate system obtained
+Computes the fitted values based on an invariant coordinate system obtained
 via an ICS transformation.  When using all components, computing the fitted
 values constitutes a backtransformation to the observed data.  When using
 fewer components, the fitted values can often be viewed as reconstructions

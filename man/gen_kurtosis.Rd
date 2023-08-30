@@ -3,7 +3,7 @@
 \name{gen_kurtosis}
 \alias{gen_kurtosis}
 \alias{gen_kurtosis.ICS}
-\title{Extract the Generalized Kurtosis Values of the ICS Transformation}
+\title{To extract the Generalized Kurtosis Values of the ICS Transformation}
 \usage{
 gen_kurtosis(object, ...)
 
@@ -20,7 +20,7 @@ components to extract the generalized kurtosis values, or \code{NULL} to
 extract the generalized kurtosis values of all components.}
 
 \item{scale}{a logical indicating whether to scale the generalized kurtosis
-values to have product 1 (defaults to \code{FALSE}). See \sQuote{Details}
+values to have product 1 (default to \code{FALSE}). See \sQuote{Details}
 for more information.}
 
 \item{index}{an integer vector specifying for which components to extract

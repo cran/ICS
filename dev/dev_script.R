@@ -1,6 +1,10 @@
 
 # Package development
 devtools::load_all()
+devtools::check(manual = FALSE,
+                cran = TRUE,
+                remote = TRUE)
+devtools::build_manual()
 
 ## Edit DESCRIPTION
 usethis::use_readme_rmd()

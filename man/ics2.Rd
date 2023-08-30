@@ -8,7 +8,7 @@ Two Scatter Matrices ICS Transformation Augmented by Two Location Estimates
 }
 \description{
 This function implements the two scatter matrices transformation to obtain an invariant coordinate sytem or independent
-  components, depending on the underlying assumptions. Differently to \code{\link{ics}} here are also two location functionals used
+  components, depending on the underlying assumptions. Differently to \code{\link{ics}} here, there are also two location functionals used
   to fix the signs of the components and to get a measure of skewness.
 }
 \usage{
@@ -36,7 +36,7 @@ the second element. This means most multivariate location - scatter functions ca
 The invariant coordinates Z are then computed such that
 (i)   T1(Z) = 0, the origin.
 (ii)  S1(Z) = I_p, the identity matrix.
-(iii) T2(Z) = S, where S is a vector having positive elements and can be seen as a generalized skewness measure (gSkew).
+(iii) T2(Z) = S, where S is a vector having positive elements which can be seen as a generalized skewness measure (gSkew).
 (iv)  S2(Z) = D, a diagonal matrix with descending elements which can be seen as a generalized kurtosis measure (gKurt).
 
 Hence in this function there are no options to standardize Z or the transformation matrix B as everything is

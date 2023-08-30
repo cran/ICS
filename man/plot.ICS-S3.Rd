@@ -25,7 +25,7 @@ and may be removed in the future, use \code{select} instead.}
 \code{\link[graphics]{pairs}()}.}
 }
 \description{
-Produce a scatterplot matrix of the component scores of an invariant
+Produces a scatterplot matrix of the component scores of an invariant
 coordinate system obtained via an ICS transformation.
 }
 \examples{

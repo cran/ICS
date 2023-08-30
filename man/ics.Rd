@@ -5,7 +5,7 @@
 
 \title{ Two Scatter Matrices ICS Transformation }
 \description{
-  This function implements the two scatter matrices transformation to obtain an invariant coordinate sytem or independent
+  Implements the two scatter matrices transformation to obtain an invariant coordinate sytem or independent
   components, depending on the underlying assumptions.
 }
 \usage{
@@ -26,42 +26,40 @@ ics(X, S1 = cov, S2 = cov4, S1args = list(), S2args = list(),
           contain 'NA's.  Default is to fail.}
 }
 \details{
-  Seeing this function as a tool for data transformation the result is an invariant coordinate selection which can be used for testing and estimation. And
-  if needed the results can be easily retransformed to the original scale. It is possible to use it also for dimension reduction, finding outliers or when
-  searching for clusters in the data.
-  The function can, however, also be used in a modelling framework. In this case it is assumed that the data were created by mixing independent components which
-  have different kurtosis values. If the two scatter matrices used have then the so-called independence property the function can recover the independent components
+  Seeing this function as a tool for data transformation the result is an invariant coordinate selection which can be used for test and estimation. And
+  if needed the results can be easily retransformed to the original scale. It is possible to use it also for dimension reduction, in order to find outliers or clusters in the data.
+  The function can, also be used in a modelling framework. In this case it is assumed that the data were created by mixing independent components which
+  have different kurtosis values. If the two scatter matrices used have the so-called independence property the function can recover the independent components
   by estimating the unmixing matrix.
 
   By default S1 is the regular covariance matrix \code{\link{cov}} and S2 the matrix of fourth moments \code{\link{cov4}}. However those can be replaced with any other
-  scatter matrix the user prefers. The package \pkg{ICS} offers for example also \code{\link{cov4.wt}}, \code{\link{covAxis}}, \code{\link{covOrigin}} or \code{\link{tM}} and in the \pkg{ICSNP}
-  are for example further scatters as \code{\link[ICSNP]{duembgen.shape}}, \code{\link[ICSNP]{tyler.shape}}, \code{\link[ICSNP]{HR.Mest}} or \code{\link[ICSNP]{HP1.shape}}.
+  scatter matrix the user prefers. The package \pkg{ICS} offers for example also \code{\link{cov4.wt}}, \code{\link{covAxis}}, \code{\link{covOrigin}}, \code{\link{covW}} or \code{\link{tM}} and the \pkg{ICSNP} offers further scatters as \code{\link[ICSNP]{duembgen.shape}}, \code{\link[ICSNP]{tyler.shape}}, \code{\link[ICSNP]{HR.Mest}} or \code{\link[ICSNP]{HP1.shape}}.
   But of course also scatters from any other package can be used.
 
   Note that when function names are submitted, the function should return only a scatter matrix. If the function returns more, the scatter should be computed in advance or
   a wrapper written that yields the required output. For example \code{\link{tM}} returns a list with four elements where the scatter estimate is called V. A simple wrapper would then be
   \code{my.tm <- function(x, ...) tM(x, ...)$V}.
 
-  For a given choice of S1 and S2 the general idea of the \code{ics} function is to find the unmixing matrix B and the invariant coordinates (independent coordinates)
+  For a given choice of S1 and S2, the general idea of the \code{ics} function is to find the unmixing matrix B and the invariant coordinates (independent coordinates)
   Z in such a way, that:
 
   \describe{
   \item{(i)}{The elements of Z are standardized with respect to S1 (S1(Z)=I).}
   \item{(ii)}{The elements of Z are uncorrelated with respect to S2. (S2(Z)=D, where D is a diagonal matrix).}
-  \item{(iii)}{The elements of Z are ordered according to their kurtosis.}
+  \item{(iii)}{The elements of Z are ordered according to their generalized kurtosis.}
   }
 
   Given those criteria, B is unique up to sign changes of its rows. The function provides two options to decide the exact form of B.
 
   \describe{
-  \item{(i)}{Method 'Z' standardizes B such, that all components are right skewed. The criterion used, is the sign of each componentwise difference of mean vector and
+  \item{(i)}{Method 'Z' standardizes B such, that all components are right skewed. The criterion used is the sign of each componentwise difference of mean vector and
   transformation retransformation median. This standardization is prefered in an invariant coordinate framework.}
   \item{(ii)}{Method 'B' standardizes B independent of Z such that the maximum element per row is positive and each row has norm 1. Usual way in an independent
   component analysis framework.}
   }
 
-  In principal if S1 and S2 are true scatter matrices the order does not matter. It will just reverse and invert the kurtosis value vector.
-  This is however not true when not both of them are scatter matrices but one or both are shape matrices. In this case the order of the kurtosis values is also reversed,
+  In principal, if S1 and S2 are true scatter matrices the order does not matter. It will just reverse and invert the kurtosis value vector.
+  This is however not true when one or both are shape matrices (and not both of them are scatter matrices). In this case the order of the kurtosis values is also reversed,
   the ratio however then is not 1 but only constant. This is due to the fact that when shape matrices are used, the kurtosis values are only relative ones.
   Therefore by the default the kurtosis values are standardized such that their product is 1. If no standardization is wanted, the 'stdKurt' argument should be used.
 

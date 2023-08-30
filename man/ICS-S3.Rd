@@ -46,7 +46,7 @@ the invariant coordinate system is computed. Possible values are
 See \sQuote{Details} for more information.}
 
 \item{center}{a logical indicating whether the invariant coordinates should
-be centered with respect to first locattion or not (defaults to \code{FALSE}).
+be centered with respect to first locattion or not (default to \code{FALSE}).
 Centering is only applicable if the
 first scatter object contains a location component, otherwise this is set to
 \code{FALSE}. Note that this only affects the scores of the invariant
@@ -59,7 +59,7 @@ based on (generalized) skewness values of the coordinates, or \code{"W"} to
 fix the signs based on the coefficient matrix of the linear transformation.
 See \sQuote{Details} for more information.}
 
-\item{na.action}{a function to handle missing values in the data (defaults
+\item{na.action}{a function to handle missing values in the data (default
 to \code{\link[stats]{na.fail}}, see its help file for alternatives).}
 }
 \value{
@@ -90,7 +90,7 @@ coordinates.}
 invariant coordinates were fixed.}
 }
 \description{
-Transform the data via two scatter matrices to an invariant coordinate
+Transforms the data via two scatter matrices to an invariant coordinate
 system or independent components, depending on the underlying assumptions.
 Function \code{ICS()} is intended as a replacement for \code{\link{ics}()}
 and \code{\link{ics2}()}, and it combines their functionality into a single
@@ -185,7 +185,7 @@ The option "QR" is mainly of interest when there are numerical issues when "whit
 scatter combination allows its usage.
 
 Note that when the purpose of ICS is outlier detection the package \link[ICSOutlier]{ICSOutlier}
-provides additional functionality as does the package \code{ICSClust} in case the
+provides additional functionalities as does the package \code{ICSClust} in case the
 goal of ICS is dimension reduction prior clustering.
 }
 \examples{

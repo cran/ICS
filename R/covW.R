@@ -13,9 +13,8 @@
 #' (x_i - \bar{ x})^\top(x_i - \bar{ x}),}
 #' where \eqn{\bar{x}} is the mean vector, \eqn{D^2(x_i)} is the squared
 #'  Mahalanobis distance, \eqn{w(d)=d^\alpha} is a
-#' non-negative and continuous weight function and \eqn{\text{cf}} is a consistency factor. 
-#' Note that the consistency factor to make it consistent at the multivariate normal distribution 
-#' is in most case unknown and therefore the default is to use simply \code{cf = 1}.
+#' non-negative and continuous weight function and \eqn{\text{cf}} is a consistency factor.
+#' Note that the consistency factor, which makes the estimator consistent at the multivariate normal distribution, is in most case unknown and therefore the default is to use simply \code{cf = 1}.
 #'
 #' - If \eqn{w(d)=1}, we get the covariance matrix [cov()] (up to the factor
 #' \eqn{1/(n-1)} instead of \eqn{1/n}).
@@ -26,7 +25,7 @@
 #'   Ruiz-Gazen, A. (2023). SIAM Journal on Mathematics of Data Science (SIMODS),
 #'    Vol.5(1):97–121. \doi{10.1137/22M1498759}.
 #'
-#' @return Matrix of the estimated scatter.
+#' @return A matrix containing the one-step M-scatter.
 #'
 #' @author Aurore Archimbaud and Klaus Nordhausen
 #'

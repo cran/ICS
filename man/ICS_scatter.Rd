@@ -61,7 +61,6 @@ components.
 }
 \details{
 \code{ICS_cov()} is a wrapper for the sample covariance matrix as computed
-\code{ICS_cov()} is a wrapper for the sample covariance matrix as computed
 by \code{\link[stats]{cov}()}.
 
 \code{ICS_cov4()} is a wrapper for the scatter matrix based on fourth

@@ -7,7 +7,6 @@
 #' components.
 #'
 #' \code{ICS_cov()} is a wrapper for the sample covariance matrix as computed
-#' \code{ICS_cov()} is a wrapper for the sample covariance matrix as computed
 #' by \code{\link[stats]{cov}()}.
 #'
 #' \code{ICS_cov4()} is a wrapper for the scatter matrix based on fourth
@@ -70,7 +69,7 @@
 #'
 #' Oja, H., Sirkia, S. and Eriksson, J. (2006) Scatter Matrices and Independent
 #' Component Analysis. \emph{Austrian Journal of Statistics}, \bold{35}(2&3),
-#' 175-189. 
+#' 175-189.
 #'
 #' Tyler, D.E., Critchley, F., Duembgen, L. and Oja, H. (2009) Invariant
 #' Co-ordinate Selection. \emph{Journal of the Royal Statistical Society,
@@ -1156,7 +1155,7 @@ print.ICS <- function(x, info = FALSE, digits = 4L, ...){
 summary.ICS <- function(object, ...) {
   # currently doesn't do anything but add a subclass
   class(object) <- c("summary_ICS", class(object))
-  print(object, ...)
+  object
 }
 
 

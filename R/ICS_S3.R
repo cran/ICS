@@ -303,7 +303,8 @@ ICS_scovq <- function(x, y, ...) {
 #'    \code{\link{covW}()}, or \code{\link{covAxis}()}.
 #'    For other scatter pairs, the QR algorithm is not
 #'    applicable.   See Archimbaud et al. (2023)
-#'   for details.
+#'   for details. Note that the QR algorithm requires \proglang{LAPACK} version
+#'   \eqn{\geq}{>=} 3.11.0 to attain better numerical stability.
 #'
 #' The "whiten" algorithm is the most natural version and therefore the default. The option "standard"
 #' should be only used if the scatters provided are not functions but precomputed matrices.
@@ -483,22 +484,22 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
                 algorithm = c("whiten", "standard", "QR"),
                 center = FALSE, fix_signs = c("scores", "W"),
                 na.action = na.fail) {
-  
+
   # make sure we have a suitable data matrix
   X <- na.action(X)
   X <- as.matrix(X)
   p <- ncol(X)
   if (p < 2L) stop("'X' must be at least bivariate")
-  
+
   # match algorithm
   algorithm <- match.arg(algorithm)
   QR <- ifelse(algorithm == "QR", TRUE, FALSE)
   whiten <- ifelse(algorithm == "whiten", TRUE, FALSE)
-  
+
   # obtain default labels for scatter matrices
   S1_label <- deparse(substitute(S1))
   S2_label <- deparse(substitute(S2))
-  
+
   # check argument for QR algorithm
   # QR algorithm requires a certain class of scatter pairs supplied as functions
   if (isTRUE(QR)){
@@ -521,11 +522,11 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
       algorithm <- "standard"
     }
   }
-  
+
   # check remaining arguments
   center <- isTRUE(center)
   fix_signs <- match.arg(fix_signs)
-  
+
   # obtain first scatter matrix
   if (is.function(S1)) {
     S1_X <- get_scatter(X, fun = S1, args = S1_args, label = S1_label)
@@ -538,40 +539,40 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
   }
   # update label for first scatter matrix
   S1_label <- S1_X$label
-  
+
   # obtain second scatter matrix
   if (QR) {
-    
+
     ## perform numerically stable algorithm based on QR decomposition (second
     ## scatter matrix is specified as a function for a one-step M-estimator)
-    
+
     # further initializations
     n <- nrow(X)
-    
+
     # obtain column means: if ICS_cov() is used, we may already have them in
     # location component of S1_X (S1 is either cov() or ICS_cov())
     T1_X <- S1_X$location
     if (is.null(T1_X)) T1_X <- colMeans(X)
     # center the columns of data matrix by the mean
     X_centered <- sweep(X, 2L, T1_X, "-")
-    
+
     # reorder rows by decreasing by infinity norm (maximum in absolute value)
     norm_inf <- apply(abs(X_centered), 1L, max)
     order_rows <- order(norm_inf, decreasing = TRUE)
     X_reordered <- X_centered[order_rows, ]
-    
+
     # compute QR decomposition with column pivoting from LAPACK: note that this
     # changes the order of the columns internally, which we need to take into
     # account when returning the matrix W of coefficients (or other output)
     qr_X <- qr(X_reordered / sqrt(n-1), LAPACK = TRUE)
-    
+
     # extract components of the QR decomposition
     Q <- qr.Q(qr_X)  # should be nxp
     R <- qr.R(qr_X)  # should be pxp
-    
+
     # compute squared Mahalanobis distances (leverage scores)
     d <- (n-1) * rowSums(Q^2)
-    
+
     # obtain arguments for one-step M-estimator and update label for S2
     if (have_cov4) {
       alpha <- 1
@@ -589,22 +590,22 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
       if (is.null(cf)) cf <- formals(covW)$cf
       S2_label <- get_covW_label()
     }
-    
+
     # compute the second scatter matrix: this works for one-step M-estimators
     S2_Y <- cf*(n-1)/n * crossprod(sweep(Q, 1L, d^alpha, "*"), Q)
-    
+
     # convert second scatter matrix to class "ICS_scatter"
     S2_Y <- to_ICS_scatter(S2_Y, label = S2_label)
-    
+
     # set flag that we don't have location component in S2_X for fixing
     # signs in W (since we don't have S2_X)
     missing_T2_X <- TRUE
-    
+
   } else {
-    
+
     # compute inverse of the square root of the first scatter matrix
     W1 <- mat_sqrt(S1_X$scatter, inverse = TRUE)
-    
+
     # obtain second scatter matrix
     if (whiten) {
       # whiten the data with respect to the first scatter matrix
@@ -634,7 +635,7 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
       T2_X <- S2_X$location
       missing_T2_X <- is.null(T2_X)
     }
-    
+
     # if requested, center the columns of the data matrix
     if (center) {
       # center by the location estimate from S1_X or give warning
@@ -646,9 +647,9 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
         center <- FALSE
       } else X_centered <- sweep(X, 2L, T1_X, "-")
     }
-    
+
   }
-  
+
   # compute eigendecomposition of second scatter matrix
   S2_Y_eigen <- eigen(S2_Y$scatter, symmetric = TRUE)
   # extract generalized kurtosis values
@@ -663,10 +664,10 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
     # reorder columns of W to correspond to original order of columns in X
     W <- W[, order(qr_X$pivot)]
   } else W <- crossprod(S2_Y_eigen$vectors, W1)
-  
+
   # fix the signs in matrix W of coefficients
   if (fix_signs == "scores") {
-    
+
     # the condition is phrased so that the last part is only evaluated when
     # necessary (and it is guaranteed that T1_X and T2_X actually exist)
     if (center && !(missing_T2_X || isTRUE(all.equal(T1_X, T2_X)))) {
@@ -680,13 +681,13 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
       # compute skewness values of each component
       gen_skewness <- colMeans(Z) - apply(Z, 2L, median)
     }
-    
+
     # compute signs of (generalized) skewness values for each component
     skewness_signs <- ifelse(gen_skewness >= 0, 1, -1)
     # fix signs in W so that generalized skewness values are positive
     gen_skewness <- skewness_signs * gen_skewness
     W_final <- sweep(W, 1L, skewness_signs, "*")
-    
+
   } else {
     # fix signs in W so that the maximum element per row is positive
     # and that each row has norm 1
@@ -696,20 +697,20 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
     # we don't have (generalized) skewness values in this case
     gen_skewness <- NULL
   }
-  
+
   # compute the component scores
   if (center) Z_final <- tcrossprod(X_centered, W_final)
   else Z_final <- tcrossprod(X, W_final)
-  
+
   # set names for different parts of the output
   IC_names <- paste("IC", seq_len(p), sep = ".")
   names(gen_kurtosis) <- IC_names
   dimnames(W_final) <- list(IC_names, colnames(X))
   dimnames(Z_final) <- list(rownames(X), IC_names)
   if (!is.null(gen_skewness)) names(gen_skewness) <- IC_names
-  
-  
-  
+
+
+
   # construct object to be returned
   res <- list(gen_kurtosis = gen_kurtosis, W = W_final, scores = Z_final,
               gen_skewness = gen_skewness, S1_label = S1_label,
@@ -717,7 +718,7 @@ ICS <- function(X, S1 = ICS_cov, S2 = ICS_cov4, S1_args = list(),
               algorithm = algorithm, center = center, fix_signs = fix_signs)
   class(res) <- "ICS"
   res
-  
+
 }
 
 
